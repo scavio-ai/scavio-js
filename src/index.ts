@@ -41,3 +41,13 @@ export type {
   TikTokUserFollowersOptions,
   TikTokUserFollowingsOptions,
 } from "./namespaces/tiktok.js";
+export type {
+  InstagramProfileOptions,
+  InstagramUserFeedOptions,
+  InstagramStoriesOptions,
+  InstagramPostOptions,
+  InstagramPostCommentsOptions,
+  InstagramCommentRepliesOptions,
+  InstagramSearchOptions,
+  InstagramFollowOptions,
+} from "./namespaces/instagram.js";

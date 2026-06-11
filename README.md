@@ -1,6 +1,6 @@
 # Scavio
 
-TypeScript SDK for the [Scavio Search API](https://scavio.dev) — real-time Google, Amazon, Walmart, YouTube, Reddit, and TikTok data.
+TypeScript SDK for the [Scavio Search API](https://scavio.dev) — real-time Google, Amazon, Walmart, YouTube, Reddit, TikTok, and Instagram data.
 
 ## Install
 
@@ -156,6 +156,36 @@ await client.tiktok.userFollowers({ sec_user_id: "abc123" });
 
 // User followings
 await client.tiktok.userFollowings({ sec_user_id: "abc123" });
+```
+
+### Instagram
+
+```typescript
+// User profile
+await client.instagram.profile({ username: "instagram" });
+
+// User posts / reels / tagged
+await client.instagram.userPosts({ username: "instagram", count: 12 });
+await client.instagram.userReels({ username: "instagram" });
+await client.instagram.userTagged({ username: "instagram" });
+
+// User stories
+await client.instagram.userStories({ username: "instagram" });
+
+// Post detail (by url, media_id, or shortcode)
+await client.instagram.post({ shortcode: "DUajw4YkorV" });
+
+// Post comments and replies
+await client.instagram.postComments({ shortcode: "DUajw4YkorV", sort_order: "newest" });
+await client.instagram.commentReplies({ media_id: "123", comment_id: "456" });
+
+// Search
+await client.instagram.searchUsers({ keyword: "justin" });
+await client.instagram.searchHashtags({ keyword: "fashion" });
+
+// Followers / followings
+await client.instagram.userFollowers({ username: "instagram", count: 50 });
+await client.instagram.userFollowings({ username: "instagram" });
 ```
 
 ### Usage
