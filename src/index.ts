@@ -11,7 +11,22 @@ export {
   ScavioAPIError,
 } from "./errors.js";
 
-export type { GoogleSearchOptions } from "./namespaces/google.js";
+export type {
+  GoogleSearchOptions,
+  GoogleAiModeOptions,
+  GoogleMapsSearchOptions,
+  GoogleMapsPlaceOptions,
+  GoogleMapsReviewsOptions,
+  GoogleShoppingOptions,
+  GoogleShoppingProductOptions,
+  GoogleShoppingStoresOptions,
+  GoogleFlightsOptions,
+  GoogleHotelsOptions,
+  GoogleHotelsDetailOptions,
+  GoogleNewsOptions,
+  GoogleTrendsOptions,
+  GoogleTrendingOptions,
+} from "./namespaces/google.js";
 export type {
   AmazonSearchOptions,
   AmazonProductOptions,

@@ -40,17 +40,27 @@ const client = new Scavio({
 
 ### Google
 
+Every method hits `/api/v2/google` and returns Google's full response (raw
+passthrough); each costs 1 credit. Any scrape.do parameter can be passed
+through.
+
 ```typescript
+// SERP search (includes the AI Overview when Google shows one)
 await client.google.search({
   query: "web scraping",
-  country_code: "us",     // optional
-  language: "en",          // optional
-  page: 1,                 // optional
-  search_type: "news",     // optional
+  gl: "us",                // optional — geo (country)
+  hl: "en",                // optional — UI language
   device: "desktop",       // optional
-  nfpr: false,             // optional — no auto-correct
-  light_request: false,    // optional
 });
+
+// Other Google surfaces
+await client.google.aiMode({ query: "how does rag work" });
+await client.google.mapsSearch({ query: "coffee near me" });
+await client.google.shopping({ query: "laptop" });
+await client.google.flights({ departure_id: "JFK", arrival_id: "LAX", outbound_date: "2026-12-15" });
+await client.google.hotels({ query: "Bali", check_in_date: "2026-08-01", check_out_date: "2026-08-03" });
+await client.google.news({ query: "openai" });
+await client.google.trends({ query: "bitcoin" });
 ```
 
 ### Amazon
