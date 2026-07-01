@@ -47,6 +47,38 @@ describe("YouTubeNamespace", () => {
     });
   });
 
+  it("maps digit-named fields to their wire names", async () => {
+    await client.youtube.search({
+      query: "drone footage",
+      fourK: true,
+      video_360: true,
+      video_3d: false,
+      hdr: true,
+    });
+
+    const call = vi.mocked(fetch).mock.calls[0]!;
+    const body = JSON.parse((call[1] as RequestInit).body as string);
+    expect(body).toEqual({
+      search: "drone footage",
+      "4k": true,
+      "360": true,
+      "3d": false,
+      hdr: true,
+    });
+    // The friendly identifiers must not leak into the wire body.
+    expect(body).not.toHaveProperty("fourK");
+    expect(body).not.toHaveProperty("video_360");
+    expect(body).not.toHaveProperty("video_3d");
+  });
+
+  it("omits digit-named fields when not provided", async () => {
+    await client.youtube.search({ query: "lofi", hd: true });
+
+    const call = vi.mocked(fetch).mock.calls[0]!;
+    const body = JSON.parse((call[1] as RequestInit).body as string);
+    expect(body).toEqual({ search: "lofi", hd: true });
+  });
+
   it("metadata sends POST to /api/v1/youtube/metadata", async () => {
     await client.youtube.metadata({ video_id: "dQw4w9WgXcQ" });
 

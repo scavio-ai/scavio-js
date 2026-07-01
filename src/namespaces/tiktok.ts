@@ -1,71 +1,117 @@
 import type { Scavio } from "../client.js";
 
 export interface TikTokProfileOptions {
+  /** TikTok @username (without the @). */
   username?: string;
+  /** TikTok sec_user_id. */
   sec_user_id?: string;
+  [key: string]: unknown;
 }
 
 export interface TikTokUserPostsOptions {
+  /** TikTok sec_user_id. */
   sec_user_id: string;
+  /** Pagination cursor (default '0'). */
   cursor?: string;
+  /** Results per page (1-30). */
   count?: number;
-  sort_type?: string;
+  /** '0' = latest, '1' = popular. */
+  sort_type?: "0" | "1";
+  [key: string]: unknown;
 }
 
 export interface TikTokVideoOptions {
+  /** TikTok video id. */
   video_id: string;
+  [key: string]: unknown;
 }
 
 export interface TikTokVideoCommentsOptions {
+  /** TikTok video id. */
   video_id: string;
+  /** Pagination cursor (default '0'). */
   cursor?: string;
+  /** Results per page (1-50). */
   count?: number;
+  [key: string]: unknown;
 }
 
 export interface TikTokCommentRepliesOptions {
+  /** TikTok video id. */
   video_id: string;
+  /** Parent comment id. */
   comment_id: string;
+  /** Pagination cursor (default '0'). */
   cursor?: string;
+  /** Results per page (1-50). */
   count?: number;
+  [key: string]: unknown;
 }
 
 export interface TikTokSearchVideosOptions {
+  /** Search keyword (1-500 characters). */
   keyword: string;
+  /** Pagination cursor (default '0'). */
   cursor?: string;
+  /** Results per page (1-30). */
   count?: number;
-  sort_type?: string;
-  publish_time?: string;
+  /** '0' = relevance, '1' = most likes. */
+  sort_type?: "0" | "1";
+  /** Age filter in days: 0 = all time, 1, 7, 30, 90, 180. */
+  publish_time?: "0" | "1" | "7" | "30" | "90" | "180";
+  [key: string]: unknown;
 }
 
 export interface TikTokSearchUsersOptions {
+  /** Search keyword (1-500 characters). */
   keyword: string;
+  /** Pagination cursor (default '0'). */
   cursor?: string;
+  /** Results per page (1-30). */
   count?: number;
+  [key: string]: unknown;
 }
 
 export interface TikTokHashtagOptions {
+  /** Hashtag name (without the #). */
   hashtag_name?: string;
+  /** Hashtag id. */
   hashtag_id?: string;
+  [key: string]: unknown;
 }
 
 export interface TikTokHashtagVideosOptions {
+  /** Hashtag id. */
   hashtag_id: string;
+  /** Pagination cursor (default '0'). */
   cursor?: string;
+  /** Results per page (1-30). */
   count?: number;
+  [key: string]: unknown;
 }
 
 export interface TikTokUserFollowersOptions {
+  /** TikTok sec_user_id. */
   sec_user_id: string;
+  /** Results per page (1-20). */
   count?: number;
+  /** Pagination token from a prior response. */
   page_token?: string;
+  /** Minimum timestamp cursor. */
   min_time?: number;
+  [key: string]: unknown;
 }
 
 export interface TikTokUserFollowingsOptions {
+  /** TikTok sec_user_id. */
   sec_user_id: string;
+  /** Results per page (1-20). */
   count?: number;
+  /** Pagination token from a prior response. */
   page_token?: string;
+  /** Minimum timestamp cursor. */
   min_time?: number;
+  [key: string]: unknown;
 }
 
 export class TikTokNamespace {

@@ -1,51 +1,83 @@
 import type { Scavio } from "../client.js";
 
 export interface InstagramProfileOptions {
+  /** Instagram username (without the @). */
   username?: string;
+  /** Instagram numeric user id. */
   user_id?: string;
+  [key: string]: unknown;
 }
 
 export interface InstagramUserFeedOptions {
+  /** Instagram username (without the @). */
   username?: string;
+  /** Instagram numeric user id. */
   user_id?: string;
+  /** Results per page (1-50). */
   count?: number;
+  /** Pagination cursor from a prior response. */
   cursor?: string;
+  [key: string]: unknown;
 }
 
 export interface InstagramStoriesOptions {
+  /** Instagram username (without the @). */
   username?: string;
+  /** Instagram numeric user id. */
   user_id?: string;
+  [key: string]: unknown;
 }
 
 export interface InstagramPostOptions {
+  /** Full Instagram post URL. */
   url?: string;
+  /** Instagram media id. */
   media_id?: string;
+  /** Instagram shortcode (from the post URL). */
   shortcode?: string;
+  [key: string]: unknown;
 }
 
 export interface InstagramPostCommentsOptions {
+  /** Instagram shortcode (from the post URL). */
   shortcode?: string;
+  /** Full Instagram post URL. */
   url?: string;
+  /** Pagination cursor from a prior response. */
   cursor?: string;
-  sort_order?: string;
+  /** Comment sort order. */
+  sort_order?: "popular" | "newest";
+  [key: string]: unknown;
 }
 
 export interface InstagramCommentRepliesOptions {
+  /** Instagram media id. */
   media_id: string;
+  /** Parent comment id. */
   comment_id: string;
+  /** Pagination cursor from a prior response. */
   cursor?: string;
+  [key: string]: unknown;
 }
 
 export interface InstagramSearchOptions {
+  /** Search keyword (1-500 characters). */
   keyword: string;
+  /** Pagination cursor from a prior response. */
   cursor?: string;
+  [key: string]: unknown;
 }
 
 export interface InstagramFollowOptions {
+  /** Instagram username (without the @). */
   username?: string;
+  /** Instagram numeric user id. */
   user_id?: string;
+  /** Results per page (1-100). */
   count?: number;
+  /** Pagination cursor from a prior response. */
   cursor?: string;
+  [key: string]: unknown;
 }
 
 export class InstagramNamespace {

@@ -5,18 +5,23 @@ import {
   BadRequestError,
   InvalidAPIKeyError,
   InsufficientCreditsError,
+  NotFoundError,
   RateLimitError,
   ScavioAPIError,
+  ScavioConnectionError,
+  ScavioTimeoutError,
 } from "../src/errors.js";
 
 describe("request", () => {
   const rateLimiter = new RateLimiter(10);
 
+  // Error-mapping tests use maxRetries: 0 so a single response is enough.
   const baseOpts = {
     apiKey: "sk_test",
     baseUrl: "https://api.scavio.dev",
     timeout: 5000,
     rateLimiter,
+    maxRetries: 0,
   };
 
   beforeEach(() => {
@@ -180,5 +185,113 @@ describe("request", () => {
     await expect(
       request({ ...baseOpts, method: "GET", path: "/test" }),
     ).rejects.toThrow(ScavioAPIError);
+  });
+
+  it("throws NotFoundError on 404", async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: () => Promise.resolve({ error: "Not found" }),
+    } as Response);
+
+    await expect(
+      request({ ...baseOpts, method: "GET", path: "/test" }),
+    ).rejects.toThrow(NotFoundError);
+  });
+
+  it("does not retry 404", async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: () => Promise.resolve({ error: "Not found" }),
+    } as Response);
+
+    await expect(
+      request({ ...baseOpts, method: "GET", path: "/test", maxRetries: 3 }),
+    ).rejects.toThrow(NotFoundError);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("retries a 503 and returns the eventual success", async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        headers: new Headers(),
+        json: () => Promise.resolve({ error: "unavailable" }),
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: "ok" }),
+      } as Response);
+
+    const result = await request({
+      ...baseOpts,
+      method: "GET",
+      path: "/test",
+      maxRetries: 2,
+    });
+
+    expect(result).toEqual({ data: "ok" });
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("honors Retry-After on a 429 retry", async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 429,
+        headers: new Headers({ "Retry-After": "0" }),
+        json: () => Promise.resolve({ error: "slow down" }),
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ ok: true }),
+      } as Response);
+
+    const start = Date.now();
+    const result = await request({
+      ...baseOpts,
+      method: "GET",
+      path: "/test",
+      maxRetries: 2,
+    });
+
+    expect(result).toEqual({ ok: true });
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(Date.now() - start).toBeLessThan(500);
+  });
+
+  it("gives up after exhausting retries on 500", async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: false,
+      status: 500,
+      headers: new Headers(),
+      json: () => Promise.resolve({ error: "boom" }),
+    } as Response);
+
+    await expect(
+      request({ ...baseOpts, method: "GET", path: "/test", maxRetries: 1 }),
+    ).rejects.toThrow(ScavioAPIError);
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("wraps a network failure in ScavioConnectionError after retries", async () => {
+    vi.mocked(fetch).mockRejectedValue(new TypeError("fetch failed"));
+
+    await expect(
+      request({ ...baseOpts, method: "GET", path: "/test", maxRetries: 1 }),
+    ).rejects.toThrow(ScavioConnectionError);
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("wraps an aborted request in ScavioTimeoutError", async () => {
+    const abortErr = new Error("aborted");
+    abortErr.name = "AbortError";
+    vi.mocked(fetch).mockRejectedValue(abortErr);
+
+    await expect(
+      request({ ...baseOpts, method: "GET", path: "/test", maxRetries: 0 }),
+    ).rejects.toThrow(ScavioTimeoutError);
   });
 });

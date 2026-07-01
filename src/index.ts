@@ -7,8 +7,11 @@ export {
   InvalidAPIKeyError,
   InsufficientCreditsError,
   BadRequestError,
+  NotFoundError,
   RateLimitError,
   ScavioAPIError,
+  ScavioConnectionError,
+  ScavioTimeoutError,
 } from "./errors.js";
 
 export type {

@@ -74,4 +74,54 @@ describe("GoogleNamespace (v2)", () => {
       expect(lastUrl(), path).toBe(`https://api.scavio.dev${path}`);
     }
   });
+
+  it("forwards typed params on search verbatim in the body", async () => {
+    await client.google.search({
+      query: "coffee",
+      device: "mobile",
+      start: 10,
+      include_html: false,
+      hl: "en",
+      gl: "us",
+      safe: "active",
+      time_period: "last_week",
+    });
+
+    const call = vi.mocked(fetch).mock.calls[0]!;
+    const body = JSON.parse((call[1] as RequestInit).body as string);
+    expect(body).toEqual({
+      query: "coffee",
+      device: "mobile",
+      start: 10,
+      include_html: false,
+      hl: "en",
+      gl: "us",
+      safe: "active",
+      time_period: "last_week",
+    });
+  });
+
+  it("forwards typed params on flights verbatim in the body", async () => {
+    await client.google.flights({
+      departure_id: "JFK",
+      arrival_id: "LAX",
+      outbound_date: "2026-12-15",
+      type: 2,
+      adults: 2,
+      travel_class: 3,
+      currency: "USD",
+    });
+
+    const call = vi.mocked(fetch).mock.calls[0]!;
+    const body = JSON.parse((call[1] as RequestInit).body as string);
+    expect(body).toEqual({
+      departure_id: "JFK",
+      arrival_id: "LAX",
+      outbound_date: "2026-12-15",
+      type: 2,
+      adults: 2,
+      travel_class: 3,
+      currency: "USD",
+    });
+  });
 });

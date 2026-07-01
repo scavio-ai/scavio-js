@@ -15,40 +15,89 @@ export class MissingAPIKeyError extends ScavioError {
   }
 }
 
+/** The request could not reach the API (DNS, connection reset, TLS, ...). */
+export class ScavioConnectionError extends ScavioError {
+  constructor(message = "Connection error") {
+    super(message);
+    this.name = "ScavioConnectionError";
+  }
+}
+
+/** The request did not complete within the configured timeout. */
+export class ScavioTimeoutError extends ScavioError {
+  constructor(message = "Request timed out") {
+    super(message);
+    this.name = "ScavioTimeoutError";
+  }
+}
+
 export class InvalidAPIKeyError extends ScavioError {
-  constructor(message = "Invalid API key") {
+  public readonly statusCode = 401;
+  public readonly responseBody?: Record<string, unknown>;
+
+  constructor(message = "Invalid API key", responseBody?: Record<string, unknown>) {
     super(message);
     this.name = "InvalidAPIKeyError";
+    this.responseBody = responseBody;
   }
 }
 
 export class InsufficientCreditsError extends ScavioError {
-  constructor(message = "Insufficient credits") {
+  public readonly statusCode = 402;
+  public readonly responseBody?: Record<string, unknown>;
+
+  constructor(message = "Insufficient credits", responseBody?: Record<string, unknown>) {
     super(message);
     this.name = "InsufficientCreditsError";
+    this.responseBody = responseBody;
   }
 }
 
 export class BadRequestError extends ScavioError {
-  constructor(message = "Bad request") {
+  public readonly statusCode = 400;
+  public readonly responseBody?: Record<string, unknown>;
+
+  constructor(message = "Bad request", responseBody?: Record<string, unknown>) {
     super(message);
     this.name = "BadRequestError";
+    this.responseBody = responseBody;
+  }
+}
+
+export class NotFoundError extends ScavioError {
+  public readonly statusCode = 404;
+  public readonly responseBody?: Record<string, unknown>;
+
+  constructor(message = "Not found", responseBody?: Record<string, unknown>) {
+    super(message);
+    this.name = "NotFoundError";
+    this.responseBody = responseBody;
   }
 }
 
 export class RateLimitError extends ScavioError {
-  constructor(message = "Rate limit exceeded") {
+  public readonly statusCode = 429;
+  public readonly responseBody?: Record<string, unknown>;
+
+  constructor(message = "Rate limit exceeded", responseBody?: Record<string, unknown>) {
     super(message);
     this.name = "RateLimitError";
+    this.responseBody = responseBody;
   }
 }
 
 export class ScavioAPIError extends ScavioError {
   public readonly statusCode: number;
+  public readonly responseBody?: Record<string, unknown>;
 
-  constructor(statusCode: number, message: string) {
+  constructor(
+    statusCode: number,
+    message: string,
+    responseBody?: Record<string, unknown>,
+  ) {
     super(`API error ${statusCode}: ${message}`);
     this.name = "ScavioAPIError";
     this.statusCode = statusCode;
+    this.responseBody = responseBody;
   }
 }

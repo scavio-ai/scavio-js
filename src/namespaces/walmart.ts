@@ -1,25 +1,43 @@
 import type { Scavio } from "../client.js";
 
 export interface WalmartSearchOptions {
+  /** Product search query (1-500 characters). */
   query: string;
+  /** Walmart domain. */
   domain?: string;
-  device?: string;
-  sort_by?: string;
+  /** Device to emulate. */
+  device?: "desktop" | "mobile" | "tablet";
+  /** Result sort order. */
+  sort_by?: "best_match" | "price_low" | "price_high" | "best_seller";
+  /** Starting page (1-indexed). */
   start_page?: number;
+  /** Minimum price filter (USD). */
   min_price?: number;
+  /** Maximum price filter (USD). */
   max_price?: number;
-  fulfillment_speed?: string;
-  fulfillment_type?: string;
+  /** Delivery speed filter. */
+  fulfillment_speed?: "today" | "tomorrow" | "2_days" | "anytime";
+  /** Fulfillment type filter. */
+  fulfillment_type?: "in_store";
+  /** ZIP code for localized results. */
   delivery_zip?: string;
+  /** Store id for in-store availability. */
   store_id?: string;
+  [key: string]: unknown;
 }
 
 export interface WalmartProductOptions {
+  /** Walmart product id. */
   product_id: string;
+  /** Walmart domain. */
   domain?: string;
-  device?: string;
+  /** Device to emulate. */
+  device?: "desktop" | "mobile" | "tablet";
+  /** ZIP code for localized pricing. */
   delivery_zip?: string;
+  /** Store id for in-store availability. */
   store_id?: string;
+  [key: string]: unknown;
 }
 
 export class WalmartNamespace {

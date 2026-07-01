@@ -56,4 +56,21 @@ describe("AmazonNamespace", () => {
       country: "gb",
     });
   });
+
+  it("options sends a GET to /api/v1/amazon/options with no body", async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ domains: ["com", "co.uk"] }),
+    } as Response);
+
+    const result = await client.amazon.options();
+
+    expect(result).toEqual({ domains: ["com", "co.uk"] });
+    expect(fetch).toHaveBeenCalledWith(
+      "https://api.scavio.dev/api/v1/amazon/options",
+      expect.objectContaining({ method: "GET" }),
+    );
+    const call = vi.mocked(fetch).mock.calls[0]!;
+    expect((call[1] as RequestInit).body).toBeUndefined();
+  });
 });
