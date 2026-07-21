@@ -42,12 +42,12 @@ describe("request", () => {
     await request({
       ...baseOpts,
       method: "POST",
-      path: "/api/v1/google",
-      body: { query: "test", country_code: "us" },
+      path: "/api/v2/google",
+      body: { query: "test", gl: "us" },
     });
 
     expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/google",
+      "https://api.scavio.dev/api/v2/google",
       expect.objectContaining({
         method: "POST",
         headers: {
@@ -55,7 +55,7 @@ describe("request", () => {
           "Content-Type": "application/json",
           "X-Client-Source": "scavio-js",
         },
-        body: JSON.stringify({ query: "test", country_code: "us" }),
+        body: JSON.stringify({ query: "test", gl: "us" }),
       }),
     );
   });
