@@ -40,7 +40,21 @@ export type {
 } from "./namespaces/walmart.js";
 export type {
   YouTubeSearchOptions,
+  YouTubeShortsOptions,
+  YouTubeSuggestionsOptions,
+  YouTubeVideoOptions,
   YouTubeMetadataOptions,
+  YouTubeCommentsOptions,
+  YouTubeCommentRepliesOptions,
+  YouTubeTranscriptOptions,
+  YouTubeRelatedOptions,
+  YouTubeChannelSearchOptions,
+  YouTubeChannelOptions,
+  YouTubeChannelVideosOptions,
+  YouTubeChannelShortsOptions,
+  YouTubeChannelCommunityOptions,
+  YouTubeChannelResolveOptions,
+  YouTubeStreamsOptions,
 } from "./namespaces/youtube.js";
 export type {
   RedditSearchOptions,

@@ -104,15 +104,45 @@ await client.walmart.product({
 // Search videos
 await client.youtube.search({
   query: "typescript tutorial",
-  upload_date: "week",     // optional
-  sort_by: "relevance",   // optional
-  hd: true,                // optional
+  upload_date: "this_week",       // optional
+  sort_by: "relevance",           // optional
+  features: ["hd", "4k"],         // optional
+  cursor: "...",                  // optional (pagination)
 });
 
-// Get video metadata
-await client.youtube.metadata({
+// Search Shorts
+await client.youtube.shorts({ query: "cooking" });
+
+// Search-as-you-type suggestions
+await client.youtube.suggestions({ query: "how to" });
+
+// Get video details (accepts an id or a full watch URL)
+await client.youtube.video({ video_id: "dQw4w9WgXcQ" });
+// youtube.metadata() is a deprecated alias of youtube.video()
+
+// Video comments and threaded replies
+await client.youtube.comments({ video_id: "dQw4w9WgXcQ" });
+await client.youtube.commentReplies({
   video_id: "dQw4w9WgXcQ",
+  reply_cursor: "...",            // from a comment's reply_cursor
 });
+
+// Transcript / subtitles (format: 'text' or 'srt')
+await client.youtube.transcript({ video_id: "dQw4w9WgXcQ", format: "srt" });
+
+// Related videos
+await client.youtube.related({ video_id: "dQw4w9WgXcQ" });
+
+// Playable / downloadable stream URLs
+await client.youtube.streams({ video_id: "dQw4w9WgXcQ" });
+
+// Channels
+await client.youtube.channelSearch({ query: "mkbhd" });
+await client.youtube.channel({ channel_id: "@mkbhd" }); // id, @handle, or URL
+await client.youtube.channelVideos({ channel_id: "UC..." });
+await client.youtube.channelShorts({ channel_id: "UC..." });
+await client.youtube.channelCommunity({ channel_id: "UC..." });
+await client.youtube.channelResolve({ channel: "@mkbhd" }); // handle/URL -> id
 ```
 
 ### Reddit
