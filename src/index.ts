@@ -94,14 +94,14 @@ export type {
   InstagramFollowOptions,
 } from "./namespaces/instagram.js";
 export type {
-  TwitterSearchOptions,
-  TwitterTweetOptions,
-  TwitterTweetCommentsOptions,
-  TwitterTweetRetweetersOptions,
-  TwitterUserOptions,
-  TwitterUserFeedOptions,
-  TwitterTrendingOptions,
-} from "./namespaces/twitter.js";
+  XSearchOptions,
+  XTweetOptions,
+  XTweetCommentsOptions,
+  XTweetRetweetersOptions,
+  XUserOptions,
+  XUserFeedOptions,
+  XTrendingOptions,
+} from "./namespaces/x.js";
 export type {
   LinkedInPersonOptions,
   LinkedInPersonRefOptions,

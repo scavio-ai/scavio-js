@@ -1,6 +1,6 @@
 # Scavio
 
-TypeScript SDK for the [Scavio Search API](https://scavio.dev) — real-time Google, Amazon, Walmart, YouTube, Reddit, TikTok, Instagram, Twitter, and LinkedIn data.
+TypeScript SDK for the [Scavio Search API](https://scavio.dev) — real-time Google, Amazon, Walmart, YouTube, Reddit, TikTok, Instagram, X, and LinkedIn data.
 
 ## Install
 
@@ -179,27 +179,27 @@ await client.reddit.popular();
 await client.reddit.trending();
 ```
 
-### Twitter
+### X
 
 ```typescript
 // Search tweets and people
-await client.twitter.search({ search: "artificial intelligence", search_type: "Latest" });
+await client.x.search({ search: "artificial intelligence", search_type: "Latest" });
 
 // Tweet detail, comments, and retweeters
-await client.twitter.tweet({ tweet_id: "1808168603721650364" });
-await client.twitter.tweetComments({ tweet_id: "1808168603721650364", rank: "top" });
-await client.twitter.tweetRetweeters({ tweet_id: "1808168603721650364" });
+await client.x.tweet({ tweet_id: "1808168603721650364" });
+await client.x.tweetComments({ tweet_id: "1808168603721650364", rank: "top" });
+await client.x.tweetRetweeters({ tweet_id: "1808168603721650364" });
 
 // User profile and feeds
-await client.twitter.user({ screen_name: "elonmusk" });
-await client.twitter.userTweets({ screen_name: "elonmusk" });
-await client.twitter.userReplies({ screen_name: "elonmusk" });
-await client.twitter.userMedia({ screen_name: "elonmusk" });
-await client.twitter.userFollowers({ screen_name: "elonmusk" });
-await client.twitter.userFollowings({ screen_name: "elonmusk" });
+await client.x.user({ screen_name: "elonmusk" });
+await client.x.userTweets({ screen_name: "elonmusk" });
+await client.x.userReplies({ screen_name: "elonmusk" });
+await client.x.userMedia({ screen_name: "elonmusk" });
+await client.x.userFollowers({ screen_name: "elonmusk" });
+await client.x.userFollowings({ screen_name: "elonmusk" });
 
 // Trending topics
-await client.twitter.trending({ country: "UnitedStates" });
+await client.x.trending({ country: "UnitedStates" });
 ```
 
 ### LinkedIn
@@ -349,7 +349,7 @@ MIT
 - [Amazon Product API](https://scavio.dev/amazon-product-api) and [Walmart Product API](https://scavio.dev/walmart-product-api) — product search and details
 - [YouTube API](https://scavio.dev/youtube-transcript-api), [TikTok API](https://scavio.dev/tiktok-api), and [Instagram API](https://scavio.dev/instagram-api) — video and social media data
 - [Reddit API](https://scavio.dev/reddit-api) — posts and threaded comments
-- [Twitter API](https://scavio.dev/twitter-api) and [LinkedIn API](https://scavio.dev/linkedin-api) — tweets, profiles, companies, and jobs
+- [X API](https://scavio.dev/x-api) and [LinkedIn API](https://scavio.dev/linkedin-api) — tweets, profiles, companies, and jobs
 
 Teams choosing between providers can [compare Scavio vs alternatives](https://scavio.dev/compare) side by side.
 

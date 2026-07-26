@@ -1,7 +1,7 @@
 {
   "name": "scavio",
-  "version": "0.7.0",
-  "description": "TypeScript SDK for the Scavio Search API — real-time Google, Amazon, Walmart, YouTube, Reddit, TikTok, Instagram, Twitter, and LinkedIn data",
+  "version": "0.8.0",
+  "description": "TypeScript SDK for the Scavio Search API — real-time Google, Amazon, Walmart, YouTube, Reddit, TikTok, Instagram, X, and LinkedIn data",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -48,7 +48,7 @@
     "serp",
     "scraping",
     "instagram",
-    "twitter",
+    "x",
     "linkedin",
     "tavily-alternative",
     "serpapi-alternative"

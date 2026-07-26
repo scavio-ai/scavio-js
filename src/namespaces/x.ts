@@ -1,6 +1,6 @@
 import type { Scavio } from "../client.js";
 
-export interface TwitterSearchOptions {
+export interface XSearchOptions {
   /** Search query (1-500 characters). */
   search: string;
   /** Result category (default 'Top'). */
@@ -10,13 +10,13 @@ export interface TwitterSearchOptions {
   [key: string]: unknown;
 }
 
-export interface TwitterTweetOptions {
+export interface XTweetOptions {
   /** Tweet id. */
   tweet_id: string;
   [key: string]: unknown;
 }
 
-export interface TwitterTweetCommentsOptions {
+export interface XTweetCommentsOptions {
   /** Tweet id. */
   tweet_id: string;
   /** 'top' (ranked) or 'latest' (chronological); default 'top'. */
@@ -26,7 +26,7 @@ export interface TwitterTweetCommentsOptions {
   [key: string]: unknown;
 }
 
-export interface TwitterTweetRetweetersOptions {
+export interface XTweetRetweetersOptions {
   /** Tweet id. */
   tweet_id: string;
   /** Pagination cursor from a prior response. */
@@ -34,92 +34,92 @@ export interface TwitterTweetRetweetersOptions {
   [key: string]: unknown;
 }
 
-export interface TwitterUserOptions {
-  /** A Twitter handle (without the @). */
+export interface XUserOptions {
+  /** An X handle (without the @). */
   screen_name: string;
   [key: string]: unknown;
 }
 
-export interface TwitterUserFeedOptions {
-  /** A Twitter handle (without the @). */
+export interface XUserFeedOptions {
+  /** An X handle (without the @). */
   screen_name: string;
   /** Pagination cursor from a prior response. */
   cursor?: string;
   [key: string]: unknown;
 }
 
-export interface TwitterTrendingOptions {
+export interface XTrendingOptions {
   /** Country name (default 'UnitedStates'). */
   country?: string;
   [key: string]: unknown;
 }
 
-export class TwitterNamespace {
+export class XNamespace {
   constructor(private client: Scavio) {}
 
   async search(
-    options: TwitterSearchOptions,
+    options: XSearchOptions,
   ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/twitter/search", options);
+    return this.client._post("/api/v1/x/search", options);
   }
 
   async tweet(
-    options: TwitterTweetOptions,
+    options: XTweetOptions,
   ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/twitter/tweet", options);
+    return this.client._post("/api/v1/x/tweet", options);
   }
 
   async tweetComments(
-    options: TwitterTweetCommentsOptions,
+    options: XTweetCommentsOptions,
   ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/twitter/tweet/comments", options);
+    return this.client._post("/api/v1/x/tweet/comments", options);
   }
 
   async tweetRetweeters(
-    options: TwitterTweetRetweetersOptions,
+    options: XTweetRetweetersOptions,
   ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/twitter/tweet/retweeters", options);
+    return this.client._post("/api/v1/x/tweet/retweeters", options);
   }
 
   async user(
-    options: TwitterUserOptions,
+    options: XUserOptions,
   ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/twitter/user", options);
+    return this.client._post("/api/v1/x/user", options);
   }
 
   async userTweets(
-    options: TwitterUserFeedOptions,
+    options: XUserFeedOptions,
   ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/twitter/user/tweets", options);
+    return this.client._post("/api/v1/x/user/tweets", options);
   }
 
   async userReplies(
-    options: TwitterUserFeedOptions,
+    options: XUserFeedOptions,
   ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/twitter/user/replies", options);
+    return this.client._post("/api/v1/x/user/replies", options);
   }
 
   async userMedia(
-    options: TwitterUserFeedOptions,
+    options: XUserFeedOptions,
   ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/twitter/user/media", options);
+    return this.client._post("/api/v1/x/user/media", options);
   }
 
   async userFollowers(
-    options: TwitterUserFeedOptions,
+    options: XUserFeedOptions,
   ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/twitter/user/followers", options);
+    return this.client._post("/api/v1/x/user/followers", options);
   }
 
   async userFollowings(
-    options: TwitterUserFeedOptions,
+    options: XUserFeedOptions,
   ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/twitter/user/followings", options);
+    return this.client._post("/api/v1/x/user/followings", options);
   }
 
   async trending(
-    options: TwitterTrendingOptions = {},
+    options: XTrendingOptions = {},
   ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/twitter/trending", options);
+    return this.client._post("/api/v1/x/trending", options);
   }
 }

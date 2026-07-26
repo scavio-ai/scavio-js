@@ -9,7 +9,7 @@ import { TikTokNamespace } from "./namespaces/tiktok.js";
 import { InstagramNamespace } from "./namespaces/instagram.js";
 import { WalmartNamespace } from "./namespaces/walmart.js";
 import { YouTubeNamespace } from "./namespaces/youtube.js";
-import { TwitterNamespace } from "./namespaces/twitter.js";
+import { XNamespace } from "./namespaces/x.js";
 import { LinkedInNamespace } from "./namespaces/linkedin.js";
 
 export interface ScavioConfig {
@@ -33,7 +33,7 @@ export class Scavio {
   readonly reddit: RedditNamespace;
   readonly tiktok: TikTokNamespace;
   readonly instagram: InstagramNamespace;
-  readonly twitter: TwitterNamespace;
+  readonly x: XNamespace;
   readonly linkedin: LinkedInNamespace;
 
   private readonly apiKey: string;
@@ -65,7 +65,7 @@ export class Scavio {
     this.reddit = new RedditNamespace(this);
     this.tiktok = new TikTokNamespace(this);
     this.instagram = new InstagramNamespace(this);
-    this.twitter = new TwitterNamespace(this);
+    this.x = new XNamespace(this);
     this.linkedin = new LinkedInNamespace(this);
   }
 
