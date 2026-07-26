@@ -57,8 +57,18 @@ export type {
   YouTubeStreamsOptions,
 } from "./namespaces/youtube.js";
 export type {
+  RedditSort,
+  RedditFeedSort,
   RedditSearchOptions,
+  RedditSearchSuggestionsOptions,
   RedditPostOptions,
+  RedditPostCommentsOptions,
+  RedditCommentRepliesOptions,
+  RedditSubredditOptions,
+  RedditSubredditPostsOptions,
+  RedditUserOptions,
+  RedditUserFeedOptions,
+  RedditPopularOptions,
 } from "./namespaces/reddit.js";
 export type {
   TikTokProfileOptions,
@@ -83,3 +93,27 @@ export type {
   InstagramSearchOptions,
   InstagramFollowOptions,
 } from "./namespaces/instagram.js";
+export type {
+  TwitterSearchOptions,
+  TwitterTweetOptions,
+  TwitterTweetCommentsOptions,
+  TwitterTweetRetweetersOptions,
+  TwitterUserOptions,
+  TwitterUserFeedOptions,
+  TwitterTrendingOptions,
+} from "./namespaces/twitter.js";
+export type {
+  LinkedInPersonOptions,
+  LinkedInPersonRefOptions,
+  LinkedInPersonPostsOptions,
+  LinkedInPersonContactOptions,
+  LinkedInCompanyOptions,
+  LinkedInCompanyPostsOptions,
+  LinkedInCompanyRefOptions,
+  LinkedInSearchPeopleOptions,
+  LinkedInSearchJobsOptions,
+  LinkedInSearchPostsOptions,
+  LinkedInJobOptions,
+  LinkedInPostOptions,
+  LinkedInPostCommentsOptions,
+} from "./namespaces/linkedin.js";

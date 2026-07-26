@@ -1,6 +1,6 @@
 # Scavio
 
-TypeScript SDK for the [Scavio Search API](https://scavio.dev) — real-time Google, Amazon, Walmart, YouTube, Reddit, TikTok, and Instagram data.
+TypeScript SDK for the [Scavio Search API](https://scavio.dev) — real-time Google, Amazon, Walmart, YouTube, Reddit, TikTok, Instagram, Twitter, and LinkedIn data.
 
 ## Install
 
@@ -149,16 +149,83 @@ await client.youtube.channelResolve({ channel: "@mkbhd" }); // handle/URL -> id
 
 ```typescript
 // Search posts
-await client.reddit.search({
-  query: "typescript",
-  sort: "relevance",       // optional
-  type: "link",            // optional
+await client.reddit.search({ query: "typescript", cursor: "..." });
+
+// Search-as-you-type suggestions
+await client.reddit.searchSuggestions({ query: "python" });
+
+// Post detail (by post_id or url)
+await client.reddit.post({ post_id: "t3_1v6ngaf" });
+await client.reddit.post({ url: "https://reddit.com/r/typescript/comments/abc123" });
+
+// Post comments and threaded replies
+await client.reddit.postComments({ post_id: "t3_1v6ngaf", sort: "TOP" });
+await client.reddit.commentReplies({
+  post_id: "t3_1v6ngaf",
+  cursor: "...",            // reply_cursor from a comment
 });
 
-// Get specific post
-await client.reddit.post({
-  url: "https://reddit.com/r/typescript/comments/abc123",
-});
+// Subreddit info and feed
+await client.reddit.subreddit({ subreddit: "AskReddit" });
+await client.reddit.subredditPosts({ subreddit: "AskReddit", sort: "HOT" });
+
+// Redditor profile, posts, and comments
+await client.reddit.user({ username: "spez" });
+await client.reddit.userPosts({ username: "spez", sort: "NEW" });
+await client.reddit.userComments({ username: "spez" });
+
+// Site-wide popular feed and trending searches
+await client.reddit.popular();
+await client.reddit.trending();
+```
+
+### Twitter
+
+```typescript
+// Search tweets and people
+await client.twitter.search({ search: "artificial intelligence", search_type: "Latest" });
+
+// Tweet detail, comments, and retweeters
+await client.twitter.tweet({ tweet_id: "1808168603721650364" });
+await client.twitter.tweetComments({ tweet_id: "1808168603721650364", rank: "top" });
+await client.twitter.tweetRetweeters({ tweet_id: "1808168603721650364" });
+
+// User profile and feeds
+await client.twitter.user({ screen_name: "elonmusk" });
+await client.twitter.userTweets({ screen_name: "elonmusk" });
+await client.twitter.userReplies({ screen_name: "elonmusk" });
+await client.twitter.userMedia({ screen_name: "elonmusk" });
+await client.twitter.userFollowers({ screen_name: "elonmusk" });
+await client.twitter.userFollowings({ screen_name: "elonmusk" });
+
+// Trending topics
+await client.twitter.trending({ country: "UnitedStates" });
+```
+
+### LinkedIn
+
+```typescript
+// Person profile, about, posts, and contact
+await client.linkedin.person({ username: "williamhgates" });
+await client.linkedin.personAbout({ username: "williamhgates" });
+await client.linkedin.personPosts({ username: "williamhgates" });
+await client.linkedin.personContact({ username: "williamhgates" });
+
+// Company profile, posts, people, and jobs
+await client.linkedin.company({ company: "microsoft" });
+await client.linkedin.companyPosts({ company: "microsoft" });
+await client.linkedin.companyPeople({ company: "microsoft" });
+await client.linkedin.companyJobs({ company: "microsoft" });
+
+// Search people, jobs, and posts
+await client.linkedin.searchPeople({ search: "john", title: "engineer" });
+await client.linkedin.searchJobs({ search: "software engineer" });
+await client.linkedin.searchPosts({ search: "AI agents" });
+
+// Job, post, and post comments
+await client.linkedin.job({ job_id: "3900000000" });
+await client.linkedin.post({ post_id: "7486820977411145728" });
+await client.linkedin.postComments({ post_id: "7486820977411145728", sort_order: "relevance" });
 ```
 
 ### TikTok
@@ -282,6 +349,7 @@ MIT
 - [Amazon Product API](https://scavio.dev/amazon-product-api) and [Walmart Product API](https://scavio.dev/walmart-product-api) — product search and details
 - [YouTube API](https://scavio.dev/youtube-transcript-api), [TikTok API](https://scavio.dev/tiktok-api), and [Instagram API](https://scavio.dev/instagram-api) — video and social media data
 - [Reddit API](https://scavio.dev/reddit-api) — posts and threaded comments
+- [Twitter API](https://scavio.dev/twitter-api) and [LinkedIn API](https://scavio.dev/linkedin-api) — tweets, profiles, companies, and jobs
 
 Teams choosing between providers can [compare Scavio vs alternatives](https://scavio.dev/compare) side by side.
 
