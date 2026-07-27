@@ -1,5 +1,11 @@
 import type { Scavio } from "../client.js";
 
+/**
+ * Instagram endpoints (/api/v1/instagram). Credit cost varies by endpoint:
+ * `userPosts` costs 2 credits, every other endpoint costs 8.
+ * See https://scavio.dev/docs/instagram-api.
+ */
+
 export interface InstagramProfileOptions {
   /** Instagram username (without the @). */
   username?: string;

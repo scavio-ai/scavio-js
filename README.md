@@ -267,6 +267,9 @@ await client.tiktok.userFollowings({ sec_user_id: "abc123" });
 
 ### Instagram
 
+Credit cost varies by endpoint: `userPosts` costs 2 credits, every other
+Instagram endpoint costs 8.
+
 ```typescript
 // User profile
 await client.instagram.profile({ username: "instagram" });
