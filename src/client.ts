@@ -6,6 +6,7 @@ import type { GoogleSearchOptions } from "./namespaces/google.js";
 import { GoogleNamespace } from "./namespaces/google.js";
 import { RedditNamespace } from "./namespaces/reddit.js";
 import { TikTokNamespace } from "./namespaces/tiktok.js";
+import { TikTokShopNamespace } from "./namespaces/tiktok-shop.js";
 import { InstagramNamespace } from "./namespaces/instagram.js";
 import { WalmartNamespace } from "./namespaces/walmart.js";
 import { YouTubeNamespace } from "./namespaces/youtube.js";
@@ -32,6 +33,7 @@ export class Scavio {
   readonly youtube: YouTubeNamespace;
   readonly reddit: RedditNamespace;
   readonly tiktok: TikTokNamespace;
+  readonly tiktokShop: TikTokShopNamespace;
   readonly instagram: InstagramNamespace;
   readonly x: XNamespace;
   readonly linkedin: LinkedInNamespace;
@@ -64,6 +66,7 @@ export class Scavio {
     this.youtube = new YouTubeNamespace(this);
     this.reddit = new RedditNamespace(this);
     this.tiktok = new TikTokNamespace(this);
+    this.tiktokShop = new TikTokShopNamespace(this);
     this.instagram = new InstagramNamespace(this);
     this.x = new XNamespace(this);
     this.linkedin = new LinkedInNamespace(this);

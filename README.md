@@ -1,6 +1,6 @@
 # Scavio
 
-TypeScript SDK for the [Scavio Search API](https://scavio.dev) — real-time Google, Amazon, Walmart, YouTube, Reddit, TikTok, Instagram, X, and LinkedIn data.
+TypeScript SDK for the [Scavio Search API](https://scavio.dev) — real-time Google, Amazon, Walmart, YouTube, Reddit, TikTok, TikTok Shop, Instagram, X, and LinkedIn data.
 
 ## Install
 
@@ -265,6 +265,65 @@ await client.tiktok.userFollowers({ sec_user_id: "abc123" });
 await client.tiktok.userFollowings({ sec_user_id: "abc123" });
 ```
 
+### TikTok Shop
+
+Every TikTok Shop endpoint costs 1 credit. Two limits to design around:
+
+- `product()` resolves only about 44% of the product ids returned by `search()`.
+  Upstream has no detail data for the rest, so an HTTP 404 is a normal outcome, not an
+  error — skip the item instead of retrying. Search to product is not a reliable
+  pipeline. `product()` **throws** `NotFoundError` on that 404 (there is no `data`
+  field in the body to test), so a loop over search ids must catch it:
+
+  ```typescript
+  import { NotFoundError } from "scavio";
+
+  for (const productId of productIds) {
+    try {
+      const detail = await client.tiktokShop.product({ product_id: productId });
+    } catch (e) {
+      if (e instanceof NotFoundError) continue; // no detail upstream; skip
+      throw e;
+    }
+  }
+  ```
+
+  `productReviews()` often works for ids `product()` cannot resolve: of 8 such ids
+  tested, 8 returned HTTP 200 and 7 carried at least one review, so it is a useful
+  fallback source of product detail.
+- `product()` does not return a price; upstream masks it on the product page. Exact
+  prices come from `search()`, `shopProducts()`, and `categoryProducts()`.
+
+```typescript
+// Search products (US catalog, exact prices, cursor pagination)
+await client.tiktokShop.search({ search: "phone case" });
+
+// Keyword suggestions (8 regions)
+await client.tiktokShop.searchSuggestions({ search: "wireless", region: "US" });
+
+// Product detail (no price; a 404 is normal, see above)
+await client.tiktokShop.product({ product_id: "1732293553906094315" });
+
+// Product reviews (up to 200 per call)
+await client.tiktokShop.productReviews({
+  product_id: "1732293553906094315",
+  page_size: 200,
+  sort: "relevant",
+});
+
+// Category tree (28 top-level, 240 nodes)
+await client.tiktokShop.categories();
+
+// Products in a category (US and GB only)
+await client.tiktokShop.categoryProducts({ category_id: "601450" });
+
+// A shop's catalog, 30 per page
+await client.tiktokShop.shopProducts({ shop_id: "7495514739648989419" });
+
+// Resolve any TikTok Shop URL or share link to a product_id / shop_id
+await client.tiktokShop.resolve({ url: "https://vt.tiktok.com/ZT2AHoGsE/" });
+```
+
 ### Instagram
 
 Credit cost varies by endpoint: `userPosts` costs 2 credits, every other
@@ -352,7 +411,7 @@ MIT
 - [Amazon Product API](https://scavio.dev/amazon-product-api) and [Walmart Product API](https://scavio.dev/walmart-product-api) — product search and details
 - [YouTube API](https://scavio.dev/youtube-transcript-api), [TikTok API](https://scavio.dev/tiktok-api), and [Instagram API](https://scavio.dev/instagram-api) — video and social media data
 - [Reddit API](https://scavio.dev/reddit-api) — posts and threaded comments
-- [X API](https://scavio.dev/x-api) and [LinkedIn API](https://scavio.dev/linkedin-api) — tweets, profiles, companies, and jobs
+- [X API](https://scavio.dev/docs/x-search) and [LinkedIn API](https://scavio.dev/docs/linkedin-person) — tweets, profiles, companies, and jobs
 
 Teams choosing between providers can [compare Scavio vs alternatives](https://scavio.dev/compare) side by side.
 

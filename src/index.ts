@@ -84,6 +84,18 @@ export type {
   TikTokUserFollowingsOptions,
 } from "./namespaces/tiktok.js";
 export type {
+  TikTokShopRegion,
+  TikTokShopListingRegion,
+  TikTokShopReviewSort,
+  TikTokShopSearchOptions,
+  TikTokShopSuggestionsOptions,
+  TikTokShopProductOptions,
+  TikTokShopProductReviewsOptions,
+  TikTokShopCategoryProductsOptions,
+  TikTokShopShopProductsOptions,
+  TikTokShopResolveOptions,
+} from "./namespaces/tiktok-shop.js";
+export type {
   InstagramProfileOptions,
   InstagramUserFeedOptions,
   InstagramStoriesOptions,
