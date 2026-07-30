@@ -1,229 +1,215 @@
 import type { Scavio } from "../client.js";
 
+// The provider retired the `linkedin/web/*` namespace these were built on. Live
+// endpoints now run on `web_v2`, which is URL-native: public params are
+// unchanged (the permalink is built server-side) and `url` is accepted
+// everywhere as a direct alternative. Params web_v2 has no equivalent for (the
+// include_* flags, feed cursors, the member urn) are gone.
+//
+// Five endpoints have no upstream left and always return HTTP 410 unbilled:
+// personContact, companyPeople, companyJobs, searchPeople, searchPosts. They are
+// kept so existing code fails loudly rather than with a TypeError.
+
+/** A member reference: a vanity handle, or a full profile URL. */
 export interface LinkedInPersonOptions {
-  /** Public identifier (vanity handle). */
-  username: string;
-  /** Include the experiences section (default true server-side). */
-  include_experiences?: boolean;
-  /** Include the educations section (default true server-side). */
-  include_educations?: boolean;
-  /** Include the skills section (default true server-side). */
-  include_skills?: boolean;
-  /** Include the certifications section (default true server-side). */
-  include_certifications?: boolean;
-  /** Include follower and connection counts (default true server-side). */
-  include_follower_and_connection?: boolean;
-  [key: string]: unknown;
-}
-
-export interface LinkedInPersonRefOptions {
-  /** Member urn. */
-  urn?: string;
-  /** Public identifier; resolved to a urn if urn is omitted. */
+  /** Public identifier (vanity handle), e.g. "williamhgates". */
   username?: string;
+  /** Full LinkedIn profile URL, as an alternative to username. */
+  url?: string;
   [key: string]: unknown;
 }
 
-export interface LinkedInPersonPostsOptions {
-  /** Member urn. */
-  urn?: string;
-  /** Public identifier; resolved to a urn if urn is omitted. */
-  username?: string;
-  /** Pagination cursor from a prior response. */
-  cursor?: string;
-  [key: string]: unknown;
-}
-
-export interface LinkedInPersonContactOptions {
-  /** Public identifier (vanity handle). */
-  username: string;
-  [key: string]: unknown;
-}
-
+/** A company reference: a universal name (slug), or a full company URL. */
 export interface LinkedInCompanyOptions {
-  /** Company universal name (slug) or LinkedIn company URL. */
-  company: string;
-  [key: string]: unknown;
-}
-
-export interface LinkedInCompanyPostsOptions {
-  /** Company universal name (slug) or LinkedIn company URL. */
-  company: string;
-  /** Pagination cursor from a prior response. */
-  cursor?: string;
-  /** Results per page (1-100). */
-  count?: number;
-  [key: string]: unknown;
-}
-
-export interface LinkedInCompanyRefOptions {
-  /** Numeric company id. */
-  company_id?: string;
-  /** Company slug/url; resolved to a company_id if company_id is omitted. */
+  /** Company universal name (slug), e.g. "microsoft". */
   company?: string;
-  /** Pagination cursor from a prior response. */
-  cursor?: string;
+  /** Full LinkedIn company URL, as an alternative to company. */
+  url?: string;
   [key: string]: unknown;
 }
 
-export interface LinkedInSearchPeopleOptions {
-  /** Name to search for. */
-  search?: string;
-  /** Job title filter. */
-  title?: string;
-  /** Company filter. */
-  company?: string;
-  /** School filter. */
-  school?: string;
-  /** A geo name or id to filter by. */
-  location?: string;
-  /** Page cursor (page number). */
-  cursor?: string;
-  [key: string]: unknown;
-}
+// The person/company option shapes collapsed into one apiece when the urn,
+// cursor and count params lost their upstream. These aliases keep the old type
+// names importable so existing TypeScript code still compiles.
+/** @deprecated Use {@link LinkedInPersonOptions}. */
+export type LinkedInPersonRefOptions = LinkedInPersonOptions;
+/** @deprecated Use {@link LinkedInPersonOptions}. */
+export type LinkedInPersonPostsOptions = LinkedInPersonOptions;
+/** @deprecated Use {@link LinkedInCompanyOptions}. */
+export type LinkedInCompanyPostsOptions = LinkedInCompanyOptions;
 
 export interface LinkedInSearchJobsOptions {
-  /** Search query (1-500 characters). */
+  /** Search keyword. */
   search: string;
-  /** Page cursor (page number). */
-  cursor?: string;
-  /** Date-posted filter. */
-  date_posted?: string;
-  /** Geo code to filter by. */
-  geocode?: string;
-  /** Experience level filter. */
-  experience_level?: string;
-  /** Remote filter. */
-  remote?: string;
-  /** Job type filter. */
-  job_type?: string;
-  [key: string]: unknown;
-}
-
-export interface LinkedInSearchPostsOptions {
-  /** Search query (1-500 characters). */
-  search: string;
-  /** Page cursor (page number). */
-  cursor?: string;
-  /** Date-posted filter. */
-  date_posted?: string;
-  /** Sort order. */
-  sort_by?: string;
-  /** Content type filter. */
-  content_type?: string;
+  /** Geographic filter; omit to search everywhere. */
+  location?: string;
   [key: string]: unknown;
 }
 
 export interface LinkedInJobOptions {
   /** Job listing id. */
-  job_id: string;
-  /** Include the required-skills section. */
-  include_skills?: boolean;
+  job_id?: string;
+  /** Full LinkedIn job URL, as an alternative to job_id. */
+  url?: string;
   [key: string]: unknown;
 }
 
 export interface LinkedInPostOptions {
   /** Post id or activity urn. */
-  post_id: string;
+  post_id?: string;
+  /** Full LinkedIn post URL, as an alternative to post_id. */
+  url?: string;
   [key: string]: unknown;
 }
 
-export interface LinkedInPostCommentsOptions {
-  /** Post id or activity urn. */
-  post_id: string;
-  /** Pagination cursor from a prior response. */
-  cursor?: string;
-  /** Comment sort order. */
-  sort_order?: "relevance" | "recent";
-  /** Post type. */
-  post_type?: "activity" | "ugc";
+export interface LinkedInPostCommentsOptions extends LinkedInPostOptions {
+  /** 1-based page number, 10 comments per page. */
+  page?: number;
+}
+
+/** @deprecated Retired upstream; always returns HTTP 410. */
+export interface LinkedInPersonContactOptions {
+  username?: string;
+  [key: string]: unknown;
+}
+
+/** @deprecated Retired upstream; always returns HTTP 410. */
+export interface LinkedInCompanyRefOptions {
+  company_id?: string;
+  company?: string;
+  [key: string]: unknown;
+}
+
+/** @deprecated Retired upstream; always returns HTTP 410. */
+export interface LinkedInSearchPeopleOptions {
+  search?: string;
+  title?: string;
+  company?: string;
+  school?: string;
+  location?: string;
+  [key: string]: unknown;
+}
+
+/** @deprecated Retired upstream; always returns HTTP 410. */
+export interface LinkedInSearchPostsOptions {
+  search?: string;
   [key: string]: unknown;
 }
 
 export class LinkedInNamespace {
   constructor(private client: Scavio) {}
 
+  /** Full profile: about text, experience, education, honours and links. */
   async person(
     options: LinkedInPersonOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/linkedin/person", options);
   }
 
+  /** The about-only slice of the profile payload. */
   async personAbout(
-    options: LinkedInPersonRefOptions,
+    options: LinkedInPersonOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/linkedin/person/about", options);
   }
 
+  /** Recent posts, up to 50. Upstream exposes no further pages. */
   async personPosts(
-    options: LinkedInPersonPostsOptions,
+    options: LinkedInPersonOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/linkedin/person/posts", options);
   }
 
-  async personContact(
-    options: LinkedInPersonContactOptions,
-  ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/linkedin/person/contact", options);
-  }
-
+  /** Company profile, including locations and featured employees. */
   async company(
     options: LinkedInCompanyOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/linkedin/company", options);
   }
 
+  /** Recent company posts, up to 50. Upstream exposes no further pages. */
   async companyPosts(
-    options: LinkedInCompanyPostsOptions,
+    options: LinkedInCompanyOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/linkedin/company/posts", options);
   }
 
-  async companyPeople(
-    options: LinkedInCompanyRefOptions,
-  ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/linkedin/company/people", options);
-  }
-
-  async companyJobs(
-    options: LinkedInCompanyRefOptions,
-  ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/linkedin/company/jobs", options);
-  }
-
-  async searchPeople(
-    options: LinkedInSearchPeopleOptions,
-  ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/linkedin/search/people", options);
-  }
-
+  /** Job search. Upstream rotates its result set, so repeat calls differ. */
   async searchJobs(
     options: LinkedInSearchJobsOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/linkedin/search/jobs", options);
   }
 
-  async searchPosts(
-    options: LinkedInSearchPostsOptions,
-  ): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/linkedin/search/posts", options);
-  }
-
+  /** Full detail for one job listing, including the hiring company. */
   async job(
     options: LinkedInJobOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/linkedin/job", options);
   }
 
+  /** Full detail for one post, including its top visible comments. */
   async post(
     options: LinkedInPostOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/linkedin/post", options);
   }
 
+  /** Comments with their replies, 10 per page. */
   async postComments(
     options: LinkedInPostCommentsOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/linkedin/post/comments", options);
+  }
+
+  /**
+   * @deprecated Retired by the upstream provider. Always returns HTTP 410 and is
+   * never billed.
+   */
+  async personContact(
+    options: LinkedInPersonContactOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/linkedin/person/contact", options);
+  }
+
+  /**
+   * @deprecated Retired by the upstream provider. Always returns HTTP 410 and is
+   * never billed. `company()` returns `featured_employees`, a small sample of
+   * staff profiles.
+   */
+  async companyPeople(
+    options: LinkedInCompanyRefOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/linkedin/company/people", options);
+  }
+
+  /**
+   * @deprecated Retired by the upstream provider. Always returns HTTP 410 and is
+   * never billed. Use `searchJobs()` with the company name as the search term.
+   */
+  async companyJobs(
+    options: LinkedInCompanyRefOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/linkedin/company/jobs", options);
+  }
+
+  /**
+   * @deprecated Retired by the upstream provider. Always returns HTTP 410 and is
+   * never billed.
+   */
+  async searchPeople(
+    options: LinkedInSearchPeopleOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/linkedin/search/people", options);
+  }
+
+  /**
+   * @deprecated Retired by the upstream provider. Always returns HTTP 410 and is
+   * never billed.
+   */
+  async searchPosts(
+    options: LinkedInSearchPostsOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/linkedin/search/posts", options);
   }
 }

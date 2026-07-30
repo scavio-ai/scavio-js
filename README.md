@@ -205,28 +205,35 @@ await client.x.trending({ country: "UnitedStates" });
 ### LinkedIn
 
 ```typescript
-// Person profile, about, posts, and contact
+// Person profile, about, and posts. A handle or a full LinkedIn URL works
+// anywhere a reference is taken.
 await client.linkedin.person({ username: "williamhgates" });
-await client.linkedin.personAbout({ username: "williamhgates" });
+await client.linkedin.personAbout({ url: "https://www.linkedin.com/in/williamhgates/" });
 await client.linkedin.personPosts({ username: "williamhgates" });
-await client.linkedin.personContact({ username: "williamhgates" });
 
-// Company profile, posts, people, and jobs
+// Company profile and posts
 await client.linkedin.company({ company: "microsoft" });
 await client.linkedin.companyPosts({ company: "microsoft" });
-await client.linkedin.companyPeople({ company: "microsoft" });
-await client.linkedin.companyJobs({ company: "microsoft" });
 
-// Search people, jobs, and posts
-await client.linkedin.searchPeople({ search: "john", title: "engineer" });
-await client.linkedin.searchJobs({ search: "software engineer" });
-await client.linkedin.searchPosts({ search: "AI agents" });
+// Jobs: search, then pull detail for one listing
+await client.linkedin.searchJobs({ search: "software engineer", location: "United States" });
+await client.linkedin.job({ job_id: "4415427228" });
 
-// Job, post, and post comments
-await client.linkedin.job({ job_id: "3900000000" });
-await client.linkedin.post({ post_id: "7486820977411145728" });
-await client.linkedin.postComments({ post_id: "7486820977411145728", sort_order: "relevance" });
+// A post and its comments (10 per page)
+await client.linkedin.post({ post_id: "7488618410256523265" });
+await client.linkedin.postComments({ post_id: "7488618410256523265", page: 1 });
 ```
+
+All LinkedIn endpoints cost 1 credit.
+
+> **Retired endpoints.** The upstream provider withdrew the datasets behind
+> `personContact`, `companyPeople`, `companyJobs`, `searchPeople` and
+> `searchPosts`. They remain callable but always return HTTP 410 and are never
+> billed. `company()` returns `featured_employees` (a small sample of staff), and
+> `searchJobs()` with a company name substitutes for `companyJobs()`.
+>
+> `personPosts` and `companyPosts` return up to 50 posts; the provider exposes no
+> further pages, so those endpoints no longer take a cursor.
 
 ### TikTok
 

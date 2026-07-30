@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Scavio } from "../../src/index.js";
 
+// The provider retired the `linkedin/web/*` namespace; live endpoints now run on
+// `web_v2`, which is URL-native. These assert the wire format: public params are
+// unchanged, `url` works anywhere, the params web_v2 dropped are gone, and the
+// five retired endpoints are still callable so old code fails loudly at the API
+// rather than with a TypeError.
+
 describe("LinkedInNamespace", () => {
   let client: Scavio;
 
@@ -22,161 +28,98 @@ describe("LinkedInNamespace", () => {
     return JSON.parse((call[1] as RequestInit).body as string);
   }
 
-  it("person posts username and include flags to /linkedin/person", async () => {
-    await client.linkedin.person({
-      username: "williamhgates",
-      include_experiences: true,
-      include_skills: false,
-    });
+  function urlOf() {
+    return vi.mocked(fetch).mock.calls[0]![0];
+  }
 
-    expect(bodyOf()).toEqual({
-      username: "williamhgates",
-      include_experiences: true,
-      include_skills: false,
-    });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/person",
-      expect.objectContaining({ method: "POST" }),
-    );
+  it("person posts a handle to /linkedin/person", async () => {
+    await client.linkedin.person({ username: "williamhgates" });
+
+    expect(bodyOf()).toEqual({ username: "williamhgates" });
+    expect(urlOf()).toBe("https://api.scavio.dev/api/v1/linkedin/person");
   });
 
-  it("personAbout accepts urn or username", async () => {
+  it("accepts a full profile url instead of a handle", async () => {
+    await client.linkedin.person({ url: "https://www.linkedin.com/in/williamhgates/" });
+
+    expect(bodyOf()).toEqual({ url: "https://www.linkedin.com/in/williamhgates/" });
+  });
+
+  it("personAbout posts to /linkedin/person/about", async () => {
     await client.linkedin.personAbout({ username: "williamhgates" });
 
     expect(bodyOf()).toEqual({ username: "williamhgates" });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/person/about",
-      expect.anything(),
-    );
+    expect(urlOf()).toBe("https://api.scavio.dev/api/v1/linkedin/person/about");
   });
 
   it("personPosts posts to /linkedin/person/posts", async () => {
-    await client.linkedin.personPosts({ urn: "ACoAAA", cursor: "C" });
-
-    expect(bodyOf()).toEqual({ urn: "ACoAAA", cursor: "C" });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/person/posts",
-      expect.anything(),
-    );
-  });
-
-  it("personContact posts username to /linkedin/person/contact", async () => {
-    await client.linkedin.personContact({ username: "williamhgates" });
+    await client.linkedin.personPosts({ username: "williamhgates" });
 
     expect(bodyOf()).toEqual({ username: "williamhgates" });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/person/contact",
-      expect.anything(),
-    );
+    expect(urlOf()).toBe("https://api.scavio.dev/api/v1/linkedin/person/posts");
   });
 
-  it("company posts company to /linkedin/company", async () => {
+  it("company posts a slug to /linkedin/company", async () => {
     await client.linkedin.company({ company: "microsoft" });
 
     expect(bodyOf()).toEqual({ company: "microsoft" });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/company",
-      expect.anything(),
-    );
+    expect(urlOf()).toBe("https://api.scavio.dev/api/v1/linkedin/company");
   });
 
-  it("companyPosts posts company/cursor/count to /linkedin/company/posts", async () => {
-    await client.linkedin.companyPosts({ company: "microsoft", count: 50 });
+  it("companyPosts posts to /linkedin/company/posts", async () => {
+    await client.linkedin.companyPosts({ company: "microsoft" });
 
-    expect(bodyOf()).toEqual({ company: "microsoft", count: 50 });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/company/posts",
-      expect.anything(),
-    );
+    expect(bodyOf()).toEqual({ company: "microsoft" });
+    expect(urlOf()).toBe("https://api.scavio.dev/api/v1/linkedin/company/posts");
   });
 
-  it("companyPeople accepts company_id or company", async () => {
-    await client.linkedin.companyPeople({ company_id: "1035" });
+  it("searchJobs sends search and optional location", async () => {
+    await client.linkedin.searchJobs({ search: "software engineer", location: "United States" });
 
-    expect(bodyOf()).toEqual({ company_id: "1035" });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/company/people",
-      expect.anything(),
-    );
+    expect(bodyOf()).toEqual({ search: "software engineer", location: "United States" });
+    expect(urlOf()).toBe("https://api.scavio.dev/api/v1/linkedin/search/jobs");
   });
 
-  it("companyJobs posts to /linkedin/company/jobs", async () => {
-    await client.linkedin.companyJobs({ company: "microsoft" });
+  it("searchJobs works without a location", async () => {
+    await client.linkedin.searchJobs({ search: "software engineer" });
 
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/company/jobs",
-      expect.anything(),
-    );
-  });
-
-  it("searchPeople posts filters to /linkedin/search/people", async () => {
-    await client.linkedin.searchPeople({ search: "john", title: "engineer" });
-
-    expect(bodyOf()).toEqual({ search: "john", title: "engineer" });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/search/people",
-      expect.anything(),
-    );
-  });
-
-  it("searchJobs posts search to /linkedin/search/jobs", async () => {
-    await client.linkedin.searchJobs({
-      search: "software engineer",
-      remote: "true",
-    });
-
-    expect(bodyOf()).toEqual({ search: "software engineer", remote: "true" });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/search/jobs",
-      expect.anything(),
-    );
-  });
-
-  it("searchPosts posts search to /linkedin/search/posts", async () => {
-    await client.linkedin.searchPosts({ search: "AI agents" });
-
-    expect(bodyOf()).toEqual({ search: "AI agents" });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/search/posts",
-      expect.anything(),
-    );
+    expect(bodyOf()).toEqual({ search: "software engineer" });
   });
 
   it("job posts job_id to /linkedin/job", async () => {
-    await client.linkedin.job({ job_id: "3900000000", include_skills: true });
+    await client.linkedin.job({ job_id: "4415427228" });
 
-    expect(bodyOf()).toEqual({ job_id: "3900000000", include_skills: true });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/job",
-      expect.anything(),
-    );
+    expect(bodyOf()).toEqual({ job_id: "4415427228" });
+    expect(urlOf()).toBe("https://api.scavio.dev/api/v1/linkedin/job");
   });
 
   it("post posts post_id to /linkedin/post", async () => {
-    await client.linkedin.post({ post_id: "7486820977411145728" });
+    await client.linkedin.post({ post_id: "7488618410256523265" });
 
-    expect(bodyOf()).toEqual({ post_id: "7486820977411145728" });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/post",
-      expect.anything(),
-    );
+    expect(bodyOf()).toEqual({ post_id: "7488618410256523265" });
+    expect(urlOf()).toBe("https://api.scavio.dev/api/v1/linkedin/post");
   });
 
-  it("postComments posts to /linkedin/post/comments", async () => {
-    await client.linkedin.postComments({
-      post_id: "7486820977411145728",
-      sort_order: "recent",
-      post_type: "activity",
-    });
+  it("postComments sends a 1-based page", async () => {
+    await client.linkedin.postComments({ post_id: "7488618410256523265", page: 2 });
 
-    expect(bodyOf()).toEqual({
-      post_id: "7486820977411145728",
-      sort_order: "recent",
-      post_type: "activity",
+    expect(bodyOf()).toEqual({ post_id: "7488618410256523265", page: 2 });
+    expect(urlOf()).toBe("https://api.scavio.dev/api/v1/linkedin/post/comments");
+  });
+
+  describe("retired endpoints", () => {
+    // Kept so existing code reaches the API and receives its 410 with a reason,
+    // instead of dying on an undefined method.
+    it.each([
+      ["personContact", "person/contact"],
+      ["companyPeople", "company/people"],
+      ["companyJobs", "company/jobs"],
+      ["searchPeople", "search/people"],
+      ["searchPosts", "search/posts"],
+    ])("%s still reaches /linkedin/%s", async (method, path) => {
+      await (client.linkedin as any)[method]({});
+
+      expect(urlOf()).toBe(`https://api.scavio.dev/api/v1/linkedin/${path}`);
     });
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.scavio.dev/api/v1/linkedin/post/comments",
-      expect.anything(),
-    );
   });
 });
