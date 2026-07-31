@@ -4,7 +4,9 @@ import type { Scavio } from "../client.js";
 // endpoints now run on `web_v2`, which is URL-native: public params are
 // unchanged (the permalink is built server-side) and `url` is accepted
 // everywhere as a direct alternative. Params web_v2 has no equivalent for (the
-// include_* flags, feed cursors, the member urn) are gone.
+// include_* flags, the member urn) are gone. Pagination is back as of the
+// provider's 2026-07-31 release: list endpoints take an opaque `cursor` and
+// return `next_cursor`, and personPosts gained a `type` feed selector.
 //
 // Five endpoints have no upstream left and always return HTTP 410 unbilled:
 // personContact, companyPeople, companyJobs, searchPeople, searchPosts. They are
@@ -19,6 +21,13 @@ export interface LinkedInPersonOptions {
   [key: string]: unknown;
 }
 
+export interface LinkedInPersonPostsRequest extends LinkedInPersonOptions {
+  /** Which feed: the member's own posts (default), posts they commented on, or posts they reacted to. */
+  type?: "posts" | "comments" | "reactions";
+  /** Opaque cursor from a previous response's next_cursor. */
+  cursor?: string;
+}
+
 /** A company reference: a universal name (slug), or a full company URL. */
 export interface LinkedInCompanyOptions {
   /** Company universal name (slug), e.g. "microsoft". */
@@ -28,21 +37,28 @@ export interface LinkedInCompanyOptions {
   [key: string]: unknown;
 }
 
-// The person/company option shapes collapsed into one apiece when the urn,
-// cursor and count params lost their upstream. These aliases keep the old type
-// names importable so existing TypeScript code still compiles.
+export interface LinkedInCompanyPostsRequest extends LinkedInCompanyOptions {
+  /** Opaque cursor from a previous response's next_cursor. */
+  cursor?: string;
+}
+
+// The person/company option shapes were reworked when the urn and count params
+// lost their upstream. These aliases keep the old type names importable so
+// existing TypeScript code still compiles.
 /** @deprecated Use {@link LinkedInPersonOptions}. */
 export type LinkedInPersonRefOptions = LinkedInPersonOptions;
-/** @deprecated Use {@link LinkedInPersonOptions}. */
-export type LinkedInPersonPostsOptions = LinkedInPersonOptions;
-/** @deprecated Use {@link LinkedInCompanyOptions}. */
-export type LinkedInCompanyPostsOptions = LinkedInCompanyOptions;
+/** @deprecated Use {@link LinkedInPersonPostsRequest}. */
+export type LinkedInPersonPostsOptions = LinkedInPersonPostsRequest;
+/** @deprecated Use {@link LinkedInCompanyPostsRequest}. */
+export type LinkedInCompanyPostsOptions = LinkedInCompanyPostsRequest;
 
 export interface LinkedInSearchJobsOptions {
   /** Search keyword. */
   search: string;
   /** Geographic filter; omit to search everywhere. */
   location?: string;
+  /** Opaque cursor from a previous response's next_cursor. */
+  cursor?: string;
   [key: string]: unknown;
 }
 
@@ -63,7 +79,7 @@ export interface LinkedInPostOptions {
 }
 
 export interface LinkedInPostCommentsOptions extends LinkedInPostOptions {
-  /** 1-based page number, 10 comments per page. */
+  /** 1-based page number. Page size varies, so page until a page comes back empty. */
   page?: number;
 }
 
@@ -113,9 +129,12 @@ export class LinkedInNamespace {
     return this.client._post("/api/v1/linkedin/person/about", options);
   }
 
-  /** Recent posts, up to 50. Upstream exposes no further pages. */
+  /**
+   * A member's posts, or the posts they commented on or reacted to via `type`.
+   * 50 per page; pass the previous response's `next_cursor` to advance.
+   */
   async personPosts(
-    options: LinkedInPersonOptions,
+    options: LinkedInPersonPostsRequest,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/linkedin/person/posts", options);
   }
@@ -127,14 +146,17 @@ export class LinkedInNamespace {
     return this.client._post("/api/v1/linkedin/company", options);
   }
 
-  /** Recent company posts, up to 50. Upstream exposes no further pages. */
+  /** Recent company posts, 50 per page; advance with `next_cursor`. */
   async companyPosts(
-    options: LinkedInCompanyOptions,
+    options: LinkedInCompanyPostsRequest,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/linkedin/company/posts", options);
   }
 
-  /** Job search. Upstream rotates its result set, so repeat calls differ. */
+  /**
+   * Job search, 25 per page; advance with `next_cursor`. Upstream rotates its
+   * result set, so pages overlap slightly - dedupe by job id.
+   */
   async searchJobs(
     options: LinkedInSearchJobsOptions,
   ): Promise<Record<string, unknown>> {
@@ -155,7 +177,7 @@ export class LinkedInNamespace {
     return this.client._post("/api/v1/linkedin/post", options);
   }
 
-  /** Comments with their replies, 10 per page. */
+  /** Comments with their replies. Page size varies - keep paging until empty. */
   async postComments(
     options: LinkedInPostCommentsOptions,
   ): Promise<Record<string, unknown>> {
