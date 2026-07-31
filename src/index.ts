@@ -33,6 +33,7 @@ export type {
 export type {
   AmazonSearchOptions,
   AmazonProductOptions,
+  AmazonOffersOptions,
 } from "./namespaces/amazon.js";
 export type {
   WalmartSearchOptions,

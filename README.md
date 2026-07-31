@@ -65,22 +65,51 @@ await client.google.trends({ query: "bitcoin" });
 
 ### Amazon
 
+Responses are normalized to a stable shape (see the breaking-change note
+below); each call costs 1 credit. `country` is an ISO 3166-1 alpha-2
+marketplace code (`us`, `gb`, `de`, ...) and defaults to `us`.
+
 ```typescript
 // Search products
 await client.amazon.search({
   query: "laptop",
-  domain: "amazon.com",    // optional
-  country: "us",           // optional
-  sort_by: "price_asc",   // optional
-  pages: 1,                // optional
+  country: "de",           // optional, marketplace
+  page: 2,                 // optional, 1-based
 });
 
 // Get product by ASIN
 await client.amazon.product({
   asin: "B09V3KXJPB",
-  domain: "amazon.com",    // optional
+  country: "us",           // optional
 });
+
+// Every seller offering that ASIN, with the buy box winner flagged
+const res = await client.amazon.offers({ asin: "B09V3KXJPB" });
+// res.data   -> { asin, title, count, total_offers, has_more_pages, page, offers[] }
+// res.data.offers[i] -> { price, currency, condition, seller_name,
+//                         is_buy_box_winner, is_fulfilled_by_amazon,
+//                         shipping_price, list_price, delivery, prime_delivery }
+
+// Supported marketplaces (no API key required)
+await client.amazon.options();
 ```
+
+There is no sort parameter: the marketplace was verified to ignore every sort
+value and return the same unordered set, so exposing one would be a filter that
+silently does nothing.
+
+#### Amazon changed in 0.12.0 (breaking)
+
+Amazon moved to a new upstream and the API now returns a normalized shape
+instead of the previous raw provider payload.
+
+- `search` returns `{query, page, total_results, total_results_text, count, products[], filters[], related_searches[]}`.
+  Each product is `{asin, title, url, image, price, currency, rating, reviews_count, is_sponsored, position, badge, sales_volume, delivery{is_free, date, fastest_date}}`.
+- `product` returns flat fields: `price`, `list_price`, `currency`, `rating`, `reviews_count`, `features`, `images`, `videos`, `variants`, `specifications`, `best_sellers_rank`, `shipping`, and more. The old `buybox[]` array no longer exists — use `offers` for per-seller pricing.
+- `offers` is new: every seller for one ASIN. 1 credit, page 1 only.
+- `country` (ISO 3166-1 alpha-2) is the marketplace selector and replaces `domain`; `page` replaces `start_page`. Both old names still work as deprecated aliases.
+- Nine options were removed: `language`, `currency`, `device`, `sort_by`, `pages`, `category_id`, `merchant_id`, `zip_code`, `autoselect_variant`. Sending one anyway still returns 200, with a top-level `warnings` array naming what was ignored.
+- `options()` still returns `domains` and `countries`; `languages` and `currencies` are now always empty, because neither is a request parameter any more.
 
 ### Walmart
 
