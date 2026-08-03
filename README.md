@@ -253,7 +253,9 @@ await client.linkedin.post({ post_id: "7488618410256523265" });
 await client.linkedin.postComments({ post_id: "7488618410256523265", page: 1 });
 ```
 
-All LinkedIn endpoints cost 1 credit.
+Credit cost varies by endpoint: `job` costs 30; `personPosts`, `companyPosts`,
+`searchJobs` and `postComments` cost 10 per page; `person`, `personAbout`,
+`company` and `post` cost 1.
 
 > **Retired endpoints.** The upstream provider withdrew the datasets behind
 > `personContact`, `companyPeople`, `companyJobs`, `searchPeople` and
