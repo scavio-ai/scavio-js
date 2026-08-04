@@ -11,14 +11,14 @@ export type RedditFeedSort =
   | "CONTROVERSIAL"
   | "RISING";
 
+/**
+ * Search takes only `query` and `cursor`. There is no result-type or sort
+ * filter upstream: anything else is dropped server-side.
+ */
 export interface RedditSearchOptions {
   /** Search query (1-500 characters). */
   query: string;
-  /** Result type (server default 'posts'). */
-  type?: "posts" | "comments";
-  /** Sort order (server default 'new'). */
-  sort?: "new" | "relevance" | "hot" | "top" | "comments";
-  /** Pagination cursor from a prior response. */
+  /** Pagination cursor from a prior response's next_cursor. */
   cursor?: string;
   [key: string]: unknown;
 }
@@ -98,6 +98,7 @@ export interface RedditPopularOptions {
 export class RedditNamespace {
   constructor(private client: Scavio) {}
 
+  /** Returns `data.results` plus `next_cursor` / `has_more` (not `data.posts`). */
   async search(
     options: RedditSearchOptions,
   ): Promise<Record<string, unknown>> {
@@ -110,6 +111,10 @@ export class RedditNamespace {
     return this.client._post("/api/v1/reddit/search/suggestions", options);
   }
 
+  /**
+   * Returns a flat post object under `data` (post_id, title, text, url,
+   * subreddit, author, score, ...). Comments are a separate call.
+   */
   async post(options: RedditPostOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/reddit/post", options);
   }

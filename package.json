@@ -1,6 +1,6 @@
 {
   "name": "scavio",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "TypeScript SDK for the Scavio Search API — real-time Google, Amazon, Walmart, YouTube, Reddit, TikTok, TikTok Shop, Instagram, X, and LinkedIn data",
   "type": "module",
   "main": "./dist/index.cjs",

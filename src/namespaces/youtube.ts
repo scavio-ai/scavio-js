@@ -28,8 +28,6 @@ export interface YouTubeSearchOptions {
   live?: boolean;
   /** HDR videos only. */
   hdr?: boolean;
-  /** Videos with location metadata only. */
-  location?: boolean;
   /** VR180 videos only. */
   vr180?: boolean;
   /** 4K videos only. Sent to the API as '4k'. */

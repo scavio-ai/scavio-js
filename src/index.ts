@@ -118,9 +118,11 @@ export type {
 export type {
   LinkedInPersonOptions,
   LinkedInPersonRefOptions,
+  LinkedInPersonPostsRequest,
   LinkedInPersonPostsOptions,
   LinkedInPersonContactOptions,
   LinkedInCompanyOptions,
+  LinkedInCompanyPostsRequest,
   LinkedInCompanyPostsOptions,
   LinkedInCompanyRefOptions,
   LinkedInSearchPeopleOptions,

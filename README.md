@@ -33,16 +33,31 @@ const client = new Scavio({
   baseUrl: "https://api.scavio.dev", // default
   timeout: 30_000,                   // ms, default
   maxRequestsPerSecond: 1,           // 1-10, default 1
+  maxRetries: 2,                     // default 2, set 0 to disable
 });
 ```
+
+`maxRetries` is the number of extra attempts after the first request, applied
+only to transient failures — HTTP 429, 500, 502, 503, 504 and network or timeout
+errors. Backoff is exponential with full jitter, capped at 8s, and a
+`Retry-After` header is honored when the API sends one. Non-transient errors
+(400, 401, 402, 404) are never retried.
+
+`maxRequestsPerSecond` throttles the client so it never sends more than N
+requests in any one-second window. Your plan also has a server-side concurrency
+limit on simultaneous in-flight requests: 1 on free and pay-as-you-go, 2 on
+Project, 3 on Bootstrap, 5 on Startup, 10 on Growth.
 
 ## API Reference
 
 ### Google
 
-Every method hits `/api/v2/google` and returns Google's full response (raw
-passthrough); each costs 1 credit. Any scrape.do parameter can be passed
-through.
+Each method hits its own `/api/v2/google*` endpoint and returns Google's full
+response (raw passthrough); each costs 1 credit. Results come back as
+`organic_results[]` with `link` and `snippet`. Geo and paging use `gl`, `hl`,
+`start`, `google_domain` and `device` — the old v1 vocabulary (`light_request`,
+`country_code`, `language`, `search_type`, `page`) does not exist on v2 and is
+dropped server-side.
 
 ```typescript
 // SERP search (includes the AI Overview when Google shows one)
@@ -129,6 +144,9 @@ await client.walmart.product({
 
 ### YouTube
 
+Credit cost varies by endpoint: `transcript` costs 8; `streams` costs 3;
+`search` and `shorts` cost 2; every other YouTube endpoint costs 1.
+
 ```typescript
 // Search videos
 await client.youtube.search({
@@ -175,6 +193,14 @@ await client.youtube.channelResolve({ channel: "@mkbhd" }); // handle/URL -> id
 ```
 
 ### Reddit
+
+Every Reddit endpoint costs 1 credit.
+
+`search()` takes only `query` and `cursor` — there is no result-type or sort
+filter upstream, so anything else is dropped server-side. It returns
+`data.results` with `next_cursor` and `has_more`. `post()` returns a flat post
+object under `data` and carries no comments; use `postComments()` for those.
+The subreddit and user feeds return `data.posts`.
 
 ```typescript
 // Search posts
@@ -262,9 +288,11 @@ Credit cost varies by endpoint: `job` costs 30; `personPosts`, `companyPosts`,
 > `searchPosts`. They remain callable but always return HTTP 410 and are never
 > billed. `company()` returns `featured_employees` (a small sample of staff), and
 > `searchJobs()` with a company name substitutes for `companyJobs()`.
->
-> `personPosts` and `companyPosts` return up to 50 posts; the provider exposes no
-> further pages, so those endpoints no longer take a cursor.
+
+`personPosts`, `companyPosts` and `searchJobs` paginate: pass the previous
+response's `next_cursor` as `cursor` to fetch the next page. `personPosts` also
+takes `type` (`"posts"`, `"comments"` or `"reactions"`) to pick the feed.
+`postComments` pages with a 1-based `page` instead.
 
 ### TikTok
 
@@ -284,8 +312,8 @@ await client.tiktok.videoComments({ video_id: "vid123", count: 20 });
 // Comment replies
 await client.tiktok.commentReplies({ video_id: "vid123", comment_id: "c456" });
 
-// Search videos
-await client.tiktok.searchVideos({ keyword: "dance", sort_type: "likes" });
+// Search videos (sort_type: '0' = relevance, '1' = most likes)
+await client.tiktok.searchVideos({ keyword: "dance", sort_type: "1" });
 
 // Search users
 await client.tiktok.searchUsers({ keyword: "cooking" });
@@ -364,8 +392,16 @@ await client.tiktokShop.resolve({ url: "https://vt.tiktok.com/ZT2AHoGsE/" });
 
 ### Instagram
 
-Credit cost varies by endpoint: `userPosts` costs 2 credits, every other
-Instagram endpoint costs 8.
+Credit cost varies by endpoint, in three tiers:
+
+| Credits | Methods |
+|---|---|
+| 2 | `userPosts` |
+| 8 | `post`, `commentReplies` |
+| 10 | `profile`, `userReels`, `userTagged`, `userStories`, `postComments`, `searchUsers`, `searchHashtags`, `userFollowers`, `userFollowings` |
+
+The 10-credit endpoints run two upstream providers in parallel and bill both
+legs; the 8-credit ones have no fallback leg to hedge against.
 
 ```typescript
 // User profile
@@ -422,11 +458,18 @@ All error classes:
 | Class | HTTP Status | Description |
 |-------|------------|-------------|
 | `MissingAPIKeyError` | — | No API key provided |
+| `ScavioConnectionError` | — | Request never reached the API (DNS, reset, TLS) |
+| `ScavioTimeoutError` | — | Request exceeded the configured `timeout` |
+| `BadRequestError` | 400 | Invalid request parameters |
 | `InvalidAPIKeyError` | 401 | Invalid API key |
 | `InsufficientCreditsError` | 402 | No credits remaining |
-| `BadRequestError` | 400 | Invalid request parameters |
+| `NotFoundError` | 404 | No data upstream for that id (see TikTok Shop above) |
 | `RateLimitError` | 429 | Rate limit exceeded |
 | `ScavioAPIError` | other | Catch-all (has `.statusCode`) |
+
+Every class extends `ScavioError`, so `catch (e) { if (e instanceof ScavioError) }`
+matches all of them. All except `MissingAPIKeyError`, `ScavioConnectionError` and
+`ScavioTimeoutError` carry `.statusCode` and `.responseBody`.
 
 ## Runtime Support
 
