@@ -50,7 +50,12 @@ function handleError(statusCode: number, body: Record<string, unknown>): never {
   const msg = String(error);
   const responseBody = Object.keys(body).length > 0 ? body : undefined;
 
-  if (statusCode === 400) throw new BadRequestError(msg, responseBody);
+  // 422 is Threads' and Kuaishou's validation status - those routes have no
+  // 400 - so it maps to BadRequestError too and a caller catching one class
+  // handles validation failures on every platform.
+  if (statusCode === 400 || statusCode === 422) {
+    throw new BadRequestError(msg, responseBody, statusCode);
+  }
   if (statusCode === 401) throw new InvalidAPIKeyError(msg, responseBody);
   if (statusCode === 402) throw new InsufficientCreditsError(msg, responseBody);
   if (statusCode === 404) throw new NotFoundError(msg, responseBody);

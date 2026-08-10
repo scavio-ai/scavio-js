@@ -53,14 +53,25 @@ export class InsufficientCreditsError extends ScavioError {
   }
 }
 
+/**
+ * The request body failed validation. Raised for HTTP 400 and for HTTP 422,
+ * which is what Threads and Kuaishou return when an identifier is missing or
+ * conflicting - those routes have no 400. `statusCode` reports whichever the
+ * API actually sent.
+ */
 export class BadRequestError extends ScavioError {
-  public readonly statusCode = 400;
+  public readonly statusCode: number;
   public readonly responseBody?: Record<string, unknown>;
 
-  constructor(message = "Bad request", responseBody?: Record<string, unknown>) {
+  constructor(
+    message = "Bad request",
+    responseBody?: Record<string, unknown>,
+    statusCode = 400,
+  ) {
     super(message);
     this.name = "BadRequestError";
     this.responseBody = responseBody;
+    this.statusCode = statusCode;
   }
 }
 

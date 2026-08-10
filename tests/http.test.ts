@@ -114,6 +114,33 @@ describe("request", () => {
     ).rejects.toThrow(BadRequestError);
   });
 
+  // Threads and Kuaishou answer a missing identifier with 422 and have no 400,
+  // so both map to BadRequestError.
+  it("throws BadRequestError on 422", async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: false,
+      status: 422,
+      json: () =>
+        Promise.resolve({ error: "Provide either user_id or username" }),
+    } as Response);
+
+    await expect(
+      request({ ...baseOpts, method: "POST", path: "/test", body: {} }),
+    ).rejects.toThrow(BadRequestError);
+  });
+
+  it("keeps the real status code on a 422", async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: false,
+      status: 422,
+      json: () => Promise.resolve({ error: "Provide post_id or url" }),
+    } as Response);
+
+    await expect(
+      request({ ...baseOpts, method: "POST", path: "/test", body: {} }),
+    ).rejects.toMatchObject({ statusCode: 422 });
+  });
+
   it("throws InvalidAPIKeyError on 401", async () => {
     vi.mocked(fetch).mockResolvedValue({
       ok: false,
