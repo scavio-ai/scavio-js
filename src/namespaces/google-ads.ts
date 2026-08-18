@@ -22,7 +22,9 @@ export interface GoogleAdsAdvertisersOptions {
   query: string;
   /**
    * ISO alpha-2 country (US, GB, DE) or a Google geo criteria id as a string.
-   * Default: no region filter.
+   * DEFAULTS TO THE UNITED STATES, not worldwide - the lookup runs against one
+   * country's index at a time, so an advertiser who runs no US ads comes back as
+   * an empty list. Set it to a country the advertiser actually advertises in.
    */
   region?: string;
   /**
