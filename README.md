@@ -49,7 +49,7 @@ const client = new Scavio({
   apiKey: "sk_...",               // or set SCAVIO_API_KEY env var
   baseUrl: "https://api.scavio.dev", // default
   timeout: 30_000,                   // ms, default
-  maxRequestsPerSecond: 1,           // 1-10, default 1
+  maxRequestsPerSecond: 1,           // 1-50, default 1
   maxRetries: 2,                     // default 2, set 0 to disable
 });
 ```
@@ -62,8 +62,9 @@ errors. Backoff is exponential with full jitter, capped at 8s, and a
 
 `maxRequestsPerSecond` throttles the client so it never sends more than N
 requests in any one-second window. Your plan also has a server-side concurrency
-limit on simultaneous in-flight requests: 1 on free and pay-as-you-go, 2 on
-Project, 3 on Bootstrap, 5 on Startup, 10 on Growth.
+limit on simultaneous in-flight requests: 1 on free and pay-as-you-go, 5 on
+Project, 10 on Bootstrap, 15 on Startup, 50 on Growth, and unlimited on
+Enterprise.
 
 ## API Reference
 

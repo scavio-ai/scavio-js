@@ -1,4 +1,8 @@
-export { Scavio } from "./client.js";
+export {
+  Scavio,
+  DEFAULT_MAX_REQUESTS_PER_SECOND,
+  MAX_REQUESTS_PER_SECOND,
+} from "./client.js";
 export type { ScavioConfig, ExtractOptions } from "./client.js";
 
 export {

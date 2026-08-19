@@ -1,6 +1,6 @@
 {
   "name": "scavio",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "TypeScript SDK for the Scavio API — real-time web scraping and data extraction across 31 platforms on one API key: Google SERP, Amazon, Walmart, eBay, Zillow, Redfin, Booking, Airbnb, Yelp, Indeed, Glassdoor, G2, App Store, Google Play, SEC EDGAR, Google Ads and Meta Ad Library, YouTube, TikTok, Instagram, X, LinkedIn, Reddit and more, plus extract() to read any URL as clean Markdown",
   "type": "module",
   "main": "./dist/index.cjs",

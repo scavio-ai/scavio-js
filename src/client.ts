@@ -34,6 +34,16 @@ import { CompaniesHouseNamespace } from "./namespaces/companies-house.js";
 import { GoogleAdsNamespace } from "./namespaces/google-ads.js";
 import { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 
+/**
+ * Default client-side rate limit, safe on every plan including free.
+ */
+export const DEFAULT_MAX_REQUESTS_PER_SECOND = 1;
+
+/**
+ * Highest client-side rate limit accepted, matching the largest plan limit.
+ */
+export const MAX_REQUESTS_PER_SECOND = 50;
+
 export interface ScavioConfig {
   apiKey?: string;
   baseUrl?: string;
@@ -128,9 +138,11 @@ export class Scavio {
     this.timeout = config?.timeout ?? DEFAULT_TIMEOUT;
     this.maxRetries = config?.maxRetries ?? DEFAULT_MAX_RETRIES;
 
-    const rps = config?.maxRequestsPerSecond ?? 1;
-    if (rps < 1 || rps > 10) {
-      throw new ScavioError("maxRequestsPerSecond must be between 1 and 10");
+    const rps = config?.maxRequestsPerSecond ?? DEFAULT_MAX_REQUESTS_PER_SECOND;
+    if (rps < 1 || rps > MAX_REQUESTS_PER_SECOND) {
+      throw new ScavioError(
+        `maxRequestsPerSecond must be between 1 and ${MAX_REQUESTS_PER_SECOND}`,
+      );
     }
     this.rateLimiter = new RateLimiter(rps);
 

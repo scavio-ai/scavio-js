@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { Scavio, MissingAPIKeyError, ScavioError } from "../src/index.js";
+import {
+  Scavio,
+  MissingAPIKeyError,
+  ScavioError,
+  MAX_REQUESTS_PER_SECOND,
+} from "../src/index.js";
 
 describe("Scavio", () => {
   const originalEnv = process.env.SCAVIO_API_KEY;
@@ -42,8 +47,14 @@ describe("Scavio", () => {
       () => new Scavio({ apiKey: "sk_test", maxRequestsPerSecond: 0 }),
     ).toThrow(ScavioError);
     expect(
-      () => new Scavio({ apiKey: "sk_test", maxRequestsPerSecond: 11 }),
+      () => new Scavio({ apiKey: "sk_test", maxRequestsPerSecond: 51 }),
     ).toThrow(ScavioError);
+  });
+
+  it("accepts maxRequestsPerSecond up to the ceiling", () => {
+    expect(
+      new Scavio({ apiKey: "sk_test", maxRequestsPerSecond: MAX_REQUESTS_PER_SECOND }),
+    ).toBeInstanceOf(Scavio);
   });
 
   it("exposes all 6 namespaces", () => {
