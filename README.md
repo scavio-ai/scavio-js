@@ -178,8 +178,8 @@ instead of the previous raw provider payload.
 
 ### Walmart
 
-Seven endpoints. `search` and `product` changed shape in 0.15.0 and the other
-five are new.
+Eight endpoints. `stores` and store targeting on `search` / `product` are new in
+0.17.0.
 
 ```typescript
 await client.walmart.search({
@@ -197,18 +197,49 @@ await client.walmart.category({ category_id: "3944_133251_1095191" });
 await client.walmart.offers({ product_id: "13544111159" });
 await client.walmart.seller({ seller_id: "101138578" });
 await client.walmart.sellerProducts({ seller_id: "101138578" });
+
+// Store targeting: find stores for a ZIP, then pass one with the ZIP.
+const { data } = await client.walmart.stores({ zipcode: "50036" });
+await client.walmart.search({
+  query: "whole milk",
+  delivery_zip: "50036",
+  store_id: data.stores[0].store_id!, // "1389", Boone Supercenter
+});
+
+// walmart.ca works the same way with a postal code and domain "ca".
+await client.walmart.stores({ zipcode: "M5V 2T6", domain: "ca" });
+await client.walmart.product({
+  product_id: "10220526",
+  domain: "ca",
+  delivery_zip: "M5V 2T6",
+  store_id: "3106",
+});
 ```
 
-Credits are a function of the body on `search` and `category`: `domain` "com" and
-"ca" cost 1 credit, "com.mx" costs 2. The other five endpoints always cost 1.
+Credits are a function of the body: `search` and `category` cost 1 credit on
+`domain` "com" or "ca" and 2 on "com.mx"; a store-targeted `search` or `product`
+costs 2. `stores` and the other endpoints cost 1.
+
+#### Walmart store targeting (0.17.0)
+
+- `delivery_zip` and `store_id` must be sent **together**, on `search` or
+  `product`. They work on walmart.com and walmart.ca (`domain: "ca"` with a
+  Canadian postal code); walmart.com.mx does not support store targeting.
+- Get `store_id` from `stores()` on the same domain. `store_id` decides the
+  store; `data.location` in the response confirms which store was used.
+- Store-targeted calls take 10-60 seconds — set a generous timeout. A
+  `store_id` that does not exist returns 400, and a product the store does not
+  carry returns 404.
+- `product` accepts `domain: "ca"` only together with a store target.
 
 #### Walmart changed in 0.15.0 (breaking)
 
-- `device`, `delivery_zip` and `store_id` are retired. Sending one still returns
-  200, with a top-level `warnings` array naming what was ignored.
+- `device` is retired. Sending it still returns 200, with a top-level `warnings`
+  array naming what was ignored. (`delivery_zip` and `store_id` were retired in
+  0.15.0 and came back in 0.17.0 as store targeting.)
 - `domain` is **not** retired — it is the price-bearing param, and it is accepted
-  on `search` and `category` only. Walmart.ca product pages cannot be fetched, so
-  every product-keyed endpoint is walmart.com only.
+  on `search` and `category`. Product-keyed endpoints are walmart.com only,
+  except `product` with a store target (0.17.0).
 - `page` (1-indexed) is the paging param; `start_page` remains a deprecated alias.
 - `sort_by` gained `rating_high` and `new`.
 - `fulfillment_speed` is `today` or `tomorrow` only. There is deliberately no

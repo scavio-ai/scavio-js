@@ -79,6 +79,10 @@ export type {
   WalmartOffersOptions,
   WalmartSellerOptions,
   WalmartSellerProductsOptions,
+  WalmartStoresOptions,
+  WalmartStore,
+  WalmartStoresData,
+  WalmartStoresResponse,
 } from "./namespaces/walmart.js";
 export type {
   YouTubeSearchOptions,

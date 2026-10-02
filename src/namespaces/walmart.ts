@@ -1,18 +1,23 @@
 import type { Scavio } from "../client.js";
 
-// Walmart runs on a generic scraper over Walmart's own server-rendered payload.
-// search and product changed shape in this release, and reviews, category,
-// offers, seller and sellerProducts are new.
+// Walmart: search, product, reviews, category, offers, seller, sellerProducts
+// and stores.
 //
-// Three params were retired: `device`, `delivery_zip` and `store_id`. They are
-// no longer typed here. Sending them anyway does not fail the request - the
-// response carries a `warnings[]` array explaining that they were ignored.
-// `domain` was NOT retired: it is live, it is the price-bearing param, and it
-// is accepted on search and category only (walmart.ca product pages cannot be
-// fetched at all, so product-keyed endpoints are .com only).
+// `device` is the only retired param. It is no longer typed here; sending it
+// anyway does not fail the request - the response carries a `warnings[]` array
+// explaining that it was ignored.
 //
-// CREDITS ARE BODY-PRICED on search and category: domain "com" and "ca" cost 1
-// credit, domain "com.mx" costs 2. The other five endpoints are always 1.
+// STORE TARGETING (search and product): pass `delivery_zip` and `store_id`
+// TOGETHER to get one store's assortment and availability. Works on walmart.com
+// and walmart.ca (a Canadian postal code such as "M5V 2T6" with domain "ca").
+// Get `store_id` from `stores()` for a ZIP or postal code, on the same domain.
+// The store actually used is echoed in `data.location`. A store-targeted call
+// costs 2 credits and takes 10-60 seconds; a store_id that does not exist
+// returns 400. walmart.com.mx does not support store targeting.
+//
+// CREDITS ARE BODY-PRICED: search and category cost 1 credit on domain "com" or
+// "ca" and 2 on "com.mx"; a store-targeted search or product costs 2. Product,
+// reviews, offers, seller, sellerProducts and stores are otherwise 1.
 
 export interface WalmartSearchOptions {
   /** Product search query (1-500 characters). */
@@ -45,12 +50,95 @@ export interface WalmartSearchOptions {
   fulfillment_speed?: "today" | "tomorrow";
   /** Fulfillment type filter. */
   fulfillment_type?: "in_store";
+  /**
+   * Shopper's postal code for store targeting: a 5-digit US ZIP, or a Canadian
+   * postal code ("M5V 2T6") with domain "ca". Must be sent together with
+   * `store_id`. Store-targeted calls cost 2 credits.
+   */
+  delivery_zip?: string;
+  /**
+   * Walmart store to target, from `stores()` on the same domain. Must be sent
+   * together with `delivery_zip`. Supported on domain "com" and "ca".
+   */
+  store_id?: string | number;
   [key: string]: unknown;
 }
 
 export interface WalmartProductOptions {
   /** Walmart item id (usItemId), e.g. "13544111159". */
   product_id: string;
+  /**
+   * Walmart storefront, "com" (default) or "ca". "ca" is only available
+   * together with `delivery_zip` + `store_id`.
+   */
+  domain?: "com" | "ca";
+  /**
+   * Shopper's postal code for store targeting: a 5-digit US ZIP, or a Canadian
+   * postal code with domain "ca". Must be sent together with `store_id`.
+   */
+  delivery_zip?: string;
+  /**
+   * Walmart store to target, from `stores()` on the same domain. Must be sent
+   * together with `delivery_zip`.
+   */
+  store_id?: string | number;
+  [key: string]: unknown;
+}
+
+export interface WalmartStoresOptions {
+  /**
+   * A 5-digit US ZIP, or a Canadian postal code ("M5V 2T6" or "M5V2T6") with
+   * domain "ca".
+   */
+  zipcode: string;
+  /** "com" (walmart.com, default) or "ca" (walmart.ca). */
+  domain?: "com" | "ca";
+  [key: string]: unknown;
+}
+
+/** One store returned by `stores()`. */
+export interface WalmartStore {
+  store_id: string | null;
+  name: string | null;
+  type: string | null;
+  node_type: string | null;
+  distance_miles: number | null;
+  address: {
+    line1: string | null;
+    line2: string | null;
+    city: string | null;
+    state: string | null;
+    zipcode: string | null;
+    country: string | null;
+  };
+  latitude: number | null;
+  longitude: number | null;
+  open_24_hours: boolean | null;
+  hours: {
+    day: string | null;
+    start: string | null;
+    end: string | null;
+    closed: boolean | null;
+  }[];
+  pickup_types: string[];
+}
+
+/** The `data` object of a `stores()` response. */
+export interface WalmartStoresData {
+  /** The ZIP or postal code searched, normalized ("M5V 2T6"). */
+  zipcode: string;
+  domain: "com" | "ca";
+  count: number;
+  /** Nearest first. */
+  stores: WalmartStore[];
+}
+
+export interface WalmartStoresResponse {
+  data: WalmartStoresData;
+  response_time: number;
+  credits_used: number;
+  credits_remaining: number;
+  warnings?: string[];
   [key: string]: unknown;
 }
 
@@ -135,7 +223,11 @@ export class WalmartNamespace {
    * Structured Walmart search results: `products[]`, `products_count` and the
    * resolved `location`. Page through with `page` (1-indexed).
    *
-   * Costs 1 credit for `domain` "com" or "ca", 2 credits for "com.mx".
+   * Pass `delivery_zip` + `store_id` to get one store's results (walmart.com
+   * and walmart.ca); `data.location` confirms the store.
+   *
+   * Costs 1 credit for `domain` "com" or "ca", 2 credits for "com.mx", and 2
+   * credits when store-targeted.
    */
   async search(
     options: WalmartSearchOptions,
@@ -147,8 +239,11 @@ export class WalmartNamespace {
    * Full product detail: price, rating, images, specifications, availability
    * and seller.
    *
-   * Costs 1 credit. Walmart.ca product pages are not fetchable, so this is
-   * walmart.com only.
+   * Pass `delivery_zip` + `store_id` for one store's price and availability.
+   * `domain: "ca"` is available only together with a store target.
+   *
+   * Costs 1 credit, or 2 when store-targeted. A store that does not carry the
+   * item returns 404.
    */
   async product(
     options: WalmartProductOptions,
@@ -215,5 +310,20 @@ export class WalmartNamespace {
     options: WalmartSellerProductsOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/walmart/seller-products", options);
+  }
+
+  /**
+   * Walmart stores near a US ZIP (or a Canadian postal code with `domain: "ca"`),
+   * nearest first, with `store_id`, address, distance, coordinates and hours.
+   * Use a `store_id` with `delivery_zip` on `search()` or `product()`, on the
+   * same domain, to target that store.
+   *
+   * Costs 1 credit.
+   */
+  async stores(options: WalmartStoresOptions): Promise<WalmartStoresResponse> {
+    return (await this.client._post(
+      "/api/v1/walmart/stores",
+      options,
+    )) as unknown as WalmartStoresResponse;
   }
 }
