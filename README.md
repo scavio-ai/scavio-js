@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time web scraping
-and data extraction across 33 platforms on one API key, plus `extract()` to read
+and data extraction across 35 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown.
 
 Structured JSON in, structured JSON out. No proxies, no headless browsers, no
@@ -9,7 +9,7 @@ per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **E-commerce** — Amazon, Walmart, Costco, eBay, Target, Home Depot, TikTok Shop
-- **Real estate and travel** — Zillow, Redfin, Booking, Airbnb, Tripadvisor
+- **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
 - **Ads transparency** — Google Ads Transparency Center, Meta Ad Library
@@ -717,6 +717,79 @@ redfin.com region URL (`/city/`, `/neighborhood/`, `/county/`, `/zipcode/`) or
 a ZIP code. `sold_within_days` is only valid with `listing_status: "sold"`.
 `days_on_market` is always null in the response — do not build on it.
 
+### Realtor.com
+
+Six endpoints, new in 0.20.0, 1 credit each.
+
+```typescript
+// Sold land comps: up to 200 listings per call.
+const comps = await client.realtor.search({
+  location: "Maricopa County, AZ",
+  listing_status: "sold",
+  property_types: ["land"],
+  sold_within_days: 365,
+  lot_sqft_min: 43560,    // 1 acre
+  page_size: 200,
+});
+
+// Listing-text keyword watch, a radius search, or one agent's listings.
+await client.realtor.search({ location: "Austin, TX", keywords: ["workshop"] });
+await client.realtor.search({ latitude: 30.27, longitude: -97.74, radius_miles: 5 });
+await client.realtor.search({ agent_id: "1918615" });
+
+await client.realtor.property({ property_id: "9564057635" });
+await client.realtor.locations({ query: "Austin" });     // slug_id for market()
+await client.realtor.market({ location: "Austin_TX" });
+await client.realtor.agents({ postal_code: "78744" });
+await client.realtor.agent({ agent_id: "1918615" });
+```
+
+`listing_status` is `for_sale` (default; includes pending and contingent, as
+on the site), `pending`, `for_rent` or `sold`. Each row carries price, sold
+price and date, lot size, address with coordinates, MLS id and listing agent.
+Realtor.com serves the first 10,000 results of a search (`page` x `page_size`
+may not exceed 10,000), so slice big areas by price band, property type or
+radius. Sold prices are null in US sold-price non-disclosure states (Texas,
+Utah, Wyoming and others); sold dates still come back. `property` returns price
+and tax history, three valuations with history and forecast, schools,
+flood/wildfire/noise risk and the listing agent; valuations, schools and risk
+can be null for land or new construction. An unknown property, market or agent
+is a billed 404.
+
+### Rightmove
+
+Seven endpoints, new in 0.20.0, 1 credit each. The `sold-property` endpoint is
+`soldProperty()`.
+
+```typescript
+// Resolve a place, then search for sale (24 per page, up to 42 pages).
+const places = await client.rightmove.locations({ query: "Bristol" });
+await client.rightmove.search({
+  location_id: "REGION^219",
+  property_types: ["terraced", "semi_detached"],
+  max_price: 350000,      // GBP; monthly rent on for_rent
+  must_have: ["garden"],
+});
+await client.rightmove.search({ location: "Bristol", listing_status: "for_rent", furnishing: ["furnished"] });
+await client.rightmove.property({ property_id: "93577917" });
+
+// Sold prices since 1995 for an outcode, then one address's full history.
+await client.rightmove.sold({ location: "BS3", sold_within_years: 5, sort: "price_high" });
+await client.rightmove.soldProperty({ sold_id: "921d33f4-d206-4991-be4d-75cbe71981ce" });
+
+// Agent branches in an area, then one branch.
+await client.rightmove.agents({ location: "Bristol" });
+await client.rightmove.agent({ branch_id: "201404" });
+```
+
+`search` takes exactly one of `location_id`, `location` (a place name) or
+`branch_id`. There is **no keyword filter** — a request with `keywords` is a
+400 and is not billed; match on `summary` and `key_features` in the results.
+Rightmove serves 42 search pages, 40 sold pages (25 addresses each, England and
+Wales) and 50 agent pages per query. Live listings carry no price history; use
+`soldProperty` for an address's past sales. An unknown or removed listing, sold
+id or branch is a billed 404.
+
 ### Booking
 
 ```typescript
@@ -1097,7 +1170,7 @@ What teams build on it:
 
 - **SERP and answer engines** — [Google Search API](https://scavio.dev/google-search-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) for organic results, news, images, maps and the knowledge graph
 - **Price and catalog monitoring** — [Amazon Product API](https://scavio.dev/amazon-product-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [Walmart Product API](https://scavio.dev/walmart-product-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), eBay, Target and Home Depot product, review and seller data
-- **Real estate and travel pipelines** — Zillow and Redfin listings and market stats, Booking, Airbnb and Tripadvisor rates and reviews
+- **Real estate and travel pipelines** — Zillow, Redfin and Realtor.com listings and market stats, Rightmove UK listings and sold prices since 1995, Booking, Airbnb and Tripadvisor rates and reviews
 - **Review mining and competitive research** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store and Google Play reviews on one shape
 - **Recruiting and company intelligence** — Indeed jobs, Glassdoor salaries, SEC EDGAR filings and XBRL facts, UK Companies House officers and filing history
 - **Ad and creative intelligence** — Google Ads Transparency Center and Meta Ad Library creatives

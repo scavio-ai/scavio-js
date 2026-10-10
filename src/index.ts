@@ -51,6 +51,8 @@ export { GoogleAdsNamespace } from "./namespaces/google-ads.js";
 export { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 export { CostcoNamespace } from "./namespaces/costco.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
+export { RealtorNamespace } from "./namespaces/realtor.js";
+export { RightmoveNamespace } from "./namespaces/rightmove.js";
 
 export type {
   GoogleSearchOptions,
@@ -340,3 +342,34 @@ export type {
   TrustpilotCategoryOptions,
   TrustpilotReviewOptions,
 } from "./namespaces/trustpilot.js";
+export type {
+  RealtorListingStatus,
+  RealtorPropertyType,
+  RealtorSort,
+  RealtorSearchOptions,
+  RealtorPropertyOptions,
+  RealtorLocationsOptions,
+  RealtorMarketOptions,
+  RealtorAgentsOptions,
+  RealtorAgentOptions,
+} from "./namespaces/realtor.js";
+export type {
+  RightmoveListingStatus,
+  RightmovePropertyType,
+  RightmoveMustHave,
+  RightmoveExclude,
+  RightmoveTenure,
+  RightmoveRadius,
+  RightmoveFurnishing,
+  RightmoveLetType,
+  RightmoveSort,
+  RightmoveSoldPropertyType,
+  RightmoveSoldSort,
+  RightmoveLocationsOptions,
+  RightmoveSearchOptions,
+  RightmovePropertyOptions,
+  RightmoveSoldOptions,
+  RightmoveSoldPropertyOptions,
+  RightmoveAgentsOptions,
+  RightmoveAgentOptions,
+} from "./namespaces/rightmove.js";
