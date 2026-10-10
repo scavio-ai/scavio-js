@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time web scraping
-and data extraction across 32 platforms on one API key, plus `extract()` to read
+and data extraction across 33 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown.
 
 Structured JSON in, structured JSON out. No proxies, no headless browsers, no
@@ -10,7 +10,7 @@ per-site parsers to maintain.
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **E-commerce** — Amazon, Walmart, Costco, eBay, Target, Home Depot, TikTok Shop
 - **Real estate and travel** — Zillow, Redfin, Booking, Airbnb, Tripadvisor
-- **Reviews and local** — Yelp, G2, Capterra, Glassdoor, App Store, Google Play
+- **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
 - **Ads transparency** — Google Ads Transparency Center, Meta Ad Library
 - **Social and video** — YouTube, TikTok, Instagram, Threads, X, LinkedIn, Reddit, Kuaishou
@@ -898,6 +898,52 @@ under a billed 200, so pass back the `slug` or `reviews_url` that `search` or
 already ships inside `product`. `vendor` is null on the product profile —
 Capterra does not publish it there.
 
+### Trustpilot
+
+Six endpoints, new in 0.19.0, 2 credits each.
+
+```typescript
+// Businesses matching a keyword, up to 100 per page.
+const found = await client.trustpilot.search({ query: "vpn", country: "US", page_size: 10 });
+
+// Full profile: TrustScore, rating distribution, reply rate and days to reply on
+// negative reviews, AI summary and topics, similar businesses, 20 newest reviews.
+const profile = await client.trustpilot.business({ domain: "nordvpn.com" });
+
+// Filtered reviews, 20 per page.
+const bad = await client.trustpilot.reviews({
+  domain: "nordvpn.com",
+  stars: [1, 2],
+  language: "en",
+  date_range: "last30days",
+});
+
+// The category tree, then ranked businesses in one category.
+const tree = await client.trustpilot.categories();
+const ranked = await client.trustpilot.category({
+  category_id: "vpn_service",
+  sort: "reviews_count",
+  min_trust_score: 4,
+  claimed_only: true,
+});
+
+// One review by id, with the business it is about.
+const one = await client.trustpilot.review({ review_id: "6aca2504b52cc4b518bf4b75" });
+```
+
+`business` and `reviews` take exactly one of `domain` or `url` (any
+trustpilot.com/review/ page). Reviews are capped at 10 pages of 20 (200) per
+filter combination; `max_page` says how far one goes, and slicing by `stars`,
+`language`, `date_range`, `topics` or `search` reaches more. `total_filtered`
+counts every match, so a date range doubles as review velocity. Topic ids for
+the `topics` filter come from `business`'s `topics`. Search and category rows
+carry `email` and `phone` only when the business published them; the AI summary
+and topics appear only when Trustpilot has them for the requested `language`.
+`min_trust_score` is a minimum star rating (3, 4 or 4.5): Trustpilot rounds
+TrustScore to stars, so 4 includes TrustScore 3.8 and up. An unknown business,
+review or category returns a 404 (`NotFoundError`) and is billed. No TrustScore
+history is returned.
+
 ### SEC EDGAR
 
 **Start with `lookup()`.** Callers hold a ticker; EDGAR is keyed by CIK.
@@ -1052,7 +1098,7 @@ What teams build on it:
 - **SERP and answer engines** — [Google Search API](https://scavio.dev/google-search-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) for organic results, news, images, maps and the knowledge graph
 - **Price and catalog monitoring** — [Amazon Product API](https://scavio.dev/amazon-product-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [Walmart Product API](https://scavio.dev/walmart-product-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), eBay, Target and Home Depot product, review and seller data
 - **Real estate and travel pipelines** — Zillow and Redfin listings and market stats, Booking, Airbnb and Tripadvisor rates and reviews
-- **Review mining and competitive research** — Yelp, G2, Capterra, Glassdoor, App Store and Google Play reviews on one shape
+- **Review mining and competitive research** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store and Google Play reviews on one shape
 - **Recruiting and company intelligence** — Indeed jobs, Glassdoor salaries, SEC EDGAR filings and XBRL facts, UK Companies House officers and filing history
 - **Ad and creative intelligence** — Google Ads Transparency Center and Meta Ad Library creatives
 - **Social listening** — [YouTube API](https://scavio.dev/youtube-transcript-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [TikTok API](https://scavio.dev/tiktok-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [Instagram API](https://scavio.dev/instagram-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [Reddit API](https://scavio.dev/reddit-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [X API](https://scavio.dev/docs/x-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [LinkedIn API](https://scavio.dev/docs/linkedin-person?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), Threads and Kuaishou

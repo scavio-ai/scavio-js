@@ -34,6 +34,7 @@ import { CompaniesHouseNamespace } from "./namespaces/companies-house.js";
 import { GoogleAdsNamespace } from "./namespaces/google-ads.js";
 import { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 import { CostcoNamespace } from "./namespaces/costco.js";
+import { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 
 /**
  * Default client-side rate limit, safe on every plan including free.
@@ -123,6 +124,7 @@ export class Scavio {
   readonly googleAds: GoogleAdsNamespace;
   readonly metaAds: MetaAdsNamespace;
   readonly costco: CostcoNamespace;
+  readonly trustpilot: TrustpilotNamespace;
 
   private readonly apiKey: string;
   private readonly baseUrl: string;
@@ -180,6 +182,7 @@ export class Scavio {
     this.googleAds = new GoogleAdsNamespace(this);
     this.metaAds = new MetaAdsNamespace(this);
     this.costco = new CostcoNamespace(this);
+    this.trustpilot = new TrustpilotNamespace(this);
   }
 
   /** @internal */

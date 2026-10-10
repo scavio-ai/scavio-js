@@ -50,6 +50,7 @@ export { CompaniesHouseNamespace } from "./namespaces/companies-house.js";
 export { GoogleAdsNamespace } from "./namespaces/google-ads.js";
 export { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 export { CostcoNamespace } from "./namespaces/costco.js";
+export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 
 export type {
   GoogleSearchOptions,
@@ -326,3 +327,16 @@ export type {
   CostcoClearanceOptions,
   CostcoAutocompleteOptions,
 } from "./namespaces/costco.js";
+export type {
+  TrustpilotReviewsDateRange,
+  TrustpilotReviewsSort,
+  TrustpilotCategorySort,
+  TrustpilotStars,
+  TrustpilotBusinessAddress,
+  TrustpilotSearchOptions,
+  TrustpilotBusinessOptions,
+  TrustpilotReviewsOptions,
+  TrustpilotCategoriesOptions,
+  TrustpilotCategoryOptions,
+  TrustpilotReviewOptions,
+} from "./namespaces/trustpilot.js";
