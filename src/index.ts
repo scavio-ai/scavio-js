@@ -49,6 +49,7 @@ export { SECNamespace } from "./namespaces/sec.js";
 export { CompaniesHouseNamespace } from "./namespaces/companies-house.js";
 export { GoogleAdsNamespace } from "./namespaces/google-ads.js";
 export { MetaAdsNamespace } from "./namespaces/meta-ads.js";
+export { CostcoNamespace } from "./namespaces/costco.js";
 
 export type {
   GoogleSearchOptions,
@@ -304,3 +305,24 @@ export type {
   MetaAdsAdvertiserOptions,
   MetaAdsAdOptions,
 } from "./namespaces/meta-ads.js";
+export type {
+  CostcoNaCountry,
+  CostcoCountry,
+  CostcoSortBy,
+  CostcoDealType,
+  CostcoPriceCode,
+  CostcoListingFilters,
+  CostcoSearchOptions,
+  CostcoCategoryOptions,
+  CostcoCategoriesOptions,
+  CostcoProductOptions,
+  CostcoPricesOptions,
+  CostcoAvailabilityOptions,
+  CostcoReviewsOptions,
+  CostcoWarehousesOptions,
+  CostcoGasOptions,
+  CostcoCouponsOptions,
+  CostcoDealsOptions,
+  CostcoClearanceOptions,
+  CostcoAutocompleteOptions,
+} from "./namespaces/costco.js";

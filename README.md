@@ -1,14 +1,14 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev) — real-time web scraping
-and data extraction across 31 platforms on one API key, plus `extract()` to read
+and data extraction across 32 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown.
 
 Structured JSON in, structured JSON out. No proxies, no headless browsers, no
 per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
-- **E-commerce** — Amazon, Walmart, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, eBay, Target, Home Depot, TikTok Shop
 - **Real estate and travel** — Zillow, Redfin, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
@@ -249,6 +249,60 @@ costs 2. `stores` and the other endpoints cost 1.
   `product` and `offers`). The GUID form of the id returns 404.
 - `sellerProducts` has **no pagination** — roughly the first 40 server-rendered
   items. `total_count` reports the seller's real catalog size.
+
+### Costco
+
+Thirteen endpoints, new in 0.18.0. `country` is `"us"` (costco.com, default) or
+`"ca"` (costco.ca); `search`, `product` and `warehouses` also take `"uk"`,
+`"au"`, `"mx"`, `"jp"`, `"kr"` and `"tw"` (keyword, sort and paging only).
+
+```typescript
+// Warehouse numbers come from warehouses().
+await client.costco.warehouses({ zip: "10025", limit: 3 });
+
+// warehouse_id adds that warehouse's in-store price, stock and price code to
+// every result on search, category and deals.
+await client.costco.search({ query: "olive oil", warehouse_id: "1062", page_size: 5 });
+await client.costco.category({ category: "televisions", sort_by: "price_low" });
+await client.costco.categories();                         // departments
+await client.costco.categories({ category_id: "30001" }); // one department's tree
+await client.costco.product({ item_ids: ["100334960", "1492456"] }); // up to 20
+await client.costco.reviews({ product_id: "100334960", sort_by: "most_helpful" });
+await client.costco.autocomplete({ query: "kirk" });
+
+// Online vs in-warehouse price at up to 10 warehouses, with discount, final
+// price, promotion dates and price code.
+await client.costco.prices({ item_id: "1492456", warehouse_ids: ["1062", "1107"] });
+
+// In-warehouse stock status (never a quantity), pickup and same-day delivery.
+await client.costco.availability({ item_number: "1492456", warehouse_ids: ["1062"] });
+
+// Regular, premium and diesel prices near a location, or at given warehouses.
+await client.costco.gas({ zip: "90001" });
+await client.costco.gas({ warehouse_ids: ["1062", "1107"] });
+
+// The current member coupon book (US only, no parameters).
+await client.costco.coupons();
+
+// Deal feeds: new, while_supplies_last, treasure_hunt, member_favorites,
+// online_only, on_sale.
+await client.costco.deals({ type: "treasure_hunt", warehouse_id: "1062" });
+
+// Markdown finder at one warehouse: .97 clearance and .00/.88 manager
+// markdowns by default; add special_buy for .49/.79/.89 endings.
+await client.costco.clearance({
+  warehouse_id: "1062",
+  query: "snacks",
+  price_codes: ["clearance", "manager_markdown", "special_buy"],
+});
+```
+
+1 credit per call except where the body scales the work: `prices` costs 2 at 10
+warehouses, `availability` 1 per 5 warehouses, `warehouses` 2 with
+`country: "ca"`, and `gas` 2 by location on ca (by `warehouse_ids`, 1 per 5
+warehouses on us and 2 per warehouse on ca). The clearance price codes are the
+member-community decode of Costco shelf prices; Costco does not publish them,
+and only items Costco lists online are covered.
 
 ### YouTube
 
