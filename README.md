@@ -717,9 +717,9 @@ redfin.com region URL (`/city/`, `/neighborhood/`, `/county/`, `/zipcode/`) or
 a ZIP code. `sold_within_days` is only valid with `listing_status: "sold"`.
 `days_on_market` is always null in the response — do not build on it.
 
-### Realtor.com
+### [Realtor.com](https://scavio.dev/docs/realtor-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
-Six endpoints, new in 0.20.0, 1 credit each.
+Six endpoints, new in 0.20.0, 1 credit each. Docs: [search](https://scavio.dev/docs/realtor-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [property](https://scavio.dev/docs/realtor-property?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [locations](https://scavio.dev/docs/realtor-locations?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [market](https://scavio.dev/docs/realtor-market?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [agents](https://scavio.dev/docs/realtor-agents?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [agent](https://scavio.dev/docs/realtor-agent?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme); overview at the [Realtor.com API](https://scavio.dev/realtor-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) page.
 
 ```typescript
 // Sold land comps: up to 200 listings per call.
@@ -756,13 +756,13 @@ flood/wildfire/noise risk and the listing agent; valuations, schools and risk
 can be null for land or new construction. An unknown property, market or agent
 is a billed 404.
 
-### Rightmove
+### [Rightmove](https://scavio.dev/docs/rightmove-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
 Seven endpoints, new in 0.20.0, 1 credit each. The `sold-property` endpoint is
-`soldProperty()`.
+`soldProperty()`. Docs: [search](https://scavio.dev/docs/rightmove-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [property](https://scavio.dev/docs/rightmove-property?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [sold](https://scavio.dev/docs/rightmove-sold?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [sold property](https://scavio.dev/docs/rightmove-sold-property?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [locations](https://scavio.dev/docs/rightmove-locations?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [agents](https://scavio.dev/docs/rightmove-agents?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [agent](https://scavio.dev/docs/rightmove-agent?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme); overview at the [Rightmove API](https://scavio.dev/rightmove-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) page.
 
 ```typescript
-// Resolve a place, then search for sale (24 per page, up to 42 pages).
+// Resolve a place, then search for sale (24-25 per page, up to 42 pages).
 const places = await client.rightmove.locations({ query: "Bristol" });
 await client.rightmove.search({
   location_id: "REGION^219",
@@ -773,7 +773,8 @@ await client.rightmove.search({
 await client.rightmove.search({ location: "Bristol", listing_status: "for_rent", furnishing: ["furnished"] });
 await client.rightmove.property({ property_id: "93577917" });
 
-// Sold prices since 1995 for an outcode, then one address's full history.
+// Sold prices since 1995 for an outcode (England and Wales only), then one
+// address's full history.
 await client.rightmove.sold({ location: "BS3", sold_within_years: 5, sort: "price_high" });
 await client.rightmove.soldProperty({ sold_id: "921d33f4-d206-4991-be4d-75cbe71981ce" });
 
@@ -786,7 +787,7 @@ await client.rightmove.agent({ branch_id: "201404" });
 `branch_id`. There is **no keyword filter** — a request with `keywords` is a
 400 and is not billed; match on `summary` and `key_features` in the results.
 Rightmove serves 42 search pages, 40 sold pages (25 addresses each, England and
-Wales) and 50 agent pages per query. Live listings carry no price history; use
+Wales only, not Scotland or Northern Ireland) and 50 agent pages per query. Live listings carry no price history; use
 `soldProperty` for an address's past sales. An unknown or removed listing, sold
 id or branch is a billed 404.
 
@@ -1170,7 +1171,7 @@ What teams build on it:
 
 - **SERP and answer engines** — [Google Search API](https://scavio.dev/google-search-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) for organic results, news, images, maps and the knowledge graph
 - **Price and catalog monitoring** — [Amazon Product API](https://scavio.dev/amazon-product-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [Walmart Product API](https://scavio.dev/walmart-product-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), eBay, Target and Home Depot product, review and seller data
-- **Real estate and travel pipelines** — Zillow, Redfin and Realtor.com listings and market stats, Rightmove UK listings and sold prices since 1995, Booking, Airbnb and Tripadvisor rates and reviews
+- **Real estate and travel pipelines** — Zillow, Redfin and Realtor.com listings and market stats, Rightmove UK listings and England and Wales sold prices since 1995, Booking, Airbnb and Tripadvisor rates and reviews
 - **Review mining and competitive research** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store and Google Play reviews on one shape
 - **Recruiting and company intelligence** — Indeed jobs, Glassdoor salaries, SEC EDGAR filings and XBRL facts, UK Companies House officers and filing history
 - **Ad and creative intelligence** — Google Ads Transparency Center and Meta Ad Library creatives

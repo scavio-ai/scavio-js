@@ -78,7 +78,7 @@ export interface RightmoveSearchOptions {
   let_type?: RightmoveLetType;
   /** Result order (default "newest"). */
   sort?: RightmoveSort;
-  /** Results page, 1-42 (24 per page). */
+  /** Results page, 1-42 (24-25 per page). */
   page?: number;
   [key: string]: unknown;
 }
