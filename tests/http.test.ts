@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { request } from "../src/http.js";
+import { readFileSync } from "node:fs";
+import { buildHeaders, request, USER_AGENT } from "../src/http.js";
 import { RateLimiter } from "../src/rate-limiter.js";
 import {
   BadRequestError,
@@ -11,6 +12,35 @@ import {
   ScavioConnectionError,
   ScavioTimeoutError,
 } from "../src/errors.js";
+
+const pkg = JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+) as { version: string };
+
+describe("client identification headers", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("User-Agent carries the package.json version", () => {
+    expect(USER_AGENT).toBe(`scavio-js/${pkg.version}`);
+  });
+
+  it("sends User-Agent and X-Client-Source in Node", () => {
+    const h = buildHeaders("sk_test");
+    expect(h["User-Agent"]).toBe(`scavio-js/${pkg.version}`);
+    expect(h["X-Client-Source"]).toBe("scavio-js");
+  });
+
+  it("omits User-Agent in a browser but keeps X-Client-Source", () => {
+    vi.stubGlobal("window", {});
+    vi.stubGlobal("document", {});
+    const h = buildHeaders("sk_test");
+    expect(h["User-Agent"]).toBeUndefined();
+    expect(h["X-Client-Source"]).toBe("scavio-js");
+    expect(h.Authorization).toBe("Bearer sk_test");
+  });
+});
 
 describe("request", () => {
   const rateLimiter = new RateLimiter(10);
@@ -54,6 +84,7 @@ describe("request", () => {
           Authorization: "Bearer sk_test",
           "Content-Type": "application/json",
           "X-Client-Source": "scavio-js",
+          "User-Agent": `scavio-js/${pkg.version}`,
         },
         body: JSON.stringify({ query: "test", gl: "us" }),
       }),

@@ -1,6 +1,6 @@
 # Scavio
 
-TypeScript SDK for the [Scavio API](https://scavio.dev) — real-time web scraping
+TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time web scraping
 and data extraction across 32 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown.
 
@@ -65,6 +65,10 @@ requests in any one-second window. Your plan also has a server-side concurrency
 limit on simultaneous in-flight requests: 1 on free and pay-as-you-go, 5 on
 Project, 10 on Bootstrap, 15 on Startup, 50 on Growth, and unlimited on
 Enterprise.
+
+Every request carries `X-Client-Source: scavio-js`. From Node.js (and other
+server runtimes) it also sends `User-Agent: scavio-js/<version>` (since 0.18.1);
+browsers do not allow a script to set `User-Agent`, so it is omitted there.
 
 ## API Reference
 
@@ -1036,24 +1040,24 @@ MIT
 
 ## About Scavio
 
-[Scavio](https://scavio.dev) is a unified web data and
-[search API for AI agents](https://scavio.dev/search-api-for-ai-agents) — one API
+[Scavio](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) is a unified web data and
+[search API for AI agents](https://scavio.dev/search-api-for-ai-agents?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — one API
 key, structured JSON, no proxies or browser farms to run. It is a real-time
-[Tavily alternative](https://scavio.dev/alternatives/tavily) and
-[SerpAPI alternative](https://scavio.dev/alternatives/serpapi), and with
+[Tavily alternative](https://scavio.dev/alternatives/tavily?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) and
+[SerpAPI alternative](https://scavio.dev/alternatives/serpapi?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), and with
 `extract()` it also covers the read-any-URL job people reach for Firecrawl to do.
 
 What teams build on it:
 
-- **SERP and answer engines** — [Google Search API](https://scavio.dev/google-search-api) for organic results, news, images, maps and the knowledge graph
-- **Price and catalog monitoring** — [Amazon Product API](https://scavio.dev/amazon-product-api), [Walmart Product API](https://scavio.dev/walmart-product-api), eBay, Target and Home Depot product, review and seller data
+- **SERP and answer engines** — [Google Search API](https://scavio.dev/google-search-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) for organic results, news, images, maps and the knowledge graph
+- **Price and catalog monitoring** — [Amazon Product API](https://scavio.dev/amazon-product-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [Walmart Product API](https://scavio.dev/walmart-product-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), eBay, Target and Home Depot product, review and seller data
 - **Real estate and travel pipelines** — Zillow and Redfin listings and market stats, Booking, Airbnb and Tripadvisor rates and reviews
 - **Review mining and competitive research** — Yelp, G2, Capterra, Glassdoor, App Store and Google Play reviews on one shape
 - **Recruiting and company intelligence** — Indeed jobs, Glassdoor salaries, SEC EDGAR filings and XBRL facts, UK Companies House officers and filing history
 - **Ad and creative intelligence** — Google Ads Transparency Center and Meta Ad Library creatives
-- **Social listening** — [YouTube API](https://scavio.dev/youtube-transcript-api), [TikTok API](https://scavio.dev/tiktok-api), [Instagram API](https://scavio.dev/instagram-api), [Reddit API](https://scavio.dev/reddit-api), [X API](https://scavio.dev/docs/x-search), [LinkedIn API](https://scavio.dev/docs/linkedin-person), Threads and Kuaishou
+- **Social listening** — [YouTube API](https://scavio.dev/youtube-transcript-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [TikTok API](https://scavio.dev/tiktok-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [Instagram API](https://scavio.dev/instagram-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [Reddit API](https://scavio.dev/reddit-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [X API](https://scavio.dev/docs/x-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [LinkedIn API](https://scavio.dev/docs/linkedin-person?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), Threads and Kuaishou
 - **RAG ingestion** — `extract()` reads any URL and hands back readability Markdown ready to chunk and embed
 
-Teams choosing between providers can [compare Scavio vs alternatives](https://scavio.dev/compare) side by side.
+Teams choosing between providers can [compare Scavio vs alternatives](https://scavio.dev/compare?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) side by side.
 
-Get a free [API key](https://dashboard.scavio.dev/sign-up) and explore the [documentation](https://scavio.dev/docs/introduction).
+Get a free [API key](https://dashboard.scavio.dev/sign-up?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) and explore the [documentation](https://scavio.dev/docs/introduction?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).

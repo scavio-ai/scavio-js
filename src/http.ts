@@ -22,12 +22,39 @@ export const BASE_URL = "https://api.scavio.dev";
 export const DEFAULT_TIMEOUT = 30_000;
 export const DEFAULT_MAX_RETRIES = 2;
 
-function buildHeaders(apiKey: string): Record<string, string> {
-  return {
+// Injected from package.json at build time (tsup and vitest `define`), so the
+// version string can never drift from the published package.
+declare const __SCAVIO_JS_VERSION__: string;
+
+export const SDK_VERSION: string =
+  typeof __SCAVIO_JS_VERSION__ === "string" ? __SCAVIO_JS_VERSION__ : "0.0.0";
+
+export const USER_AGENT = `scavio-js/${SDK_VERSION}`;
+
+// Browsers refuse (or silently drop) a script-set User-Agent, so it is only
+// sent from server runtimes. X-Client-Source identifies the SDK everywhere.
+export function isServerRuntime(): boolean {
+  const g = globalThis as {
+    process?: { versions?: { node?: string } };
+    window?: unknown;
+    document?: unknown;
+  };
+  if (typeof g.window !== "undefined" && typeof g.document !== "undefined") {
+    return false;
+  }
+  return typeof g.process?.versions?.node === "string";
+}
+
+export function buildHeaders(apiKey: string): Record<string, string> {
+  const headers: Record<string, string> = {
     Authorization: `Bearer ${apiKey}`,
     "Content-Type": "application/json",
     "X-Client-Source": "scavio-js",
   };
+  if (isServerRuntime()) {
+    headers["User-Agent"] = USER_AGENT;
+  }
+  return headers;
 }
 
 function stripUndefined(
