@@ -106,6 +106,8 @@ export type {
   YouTubeChannelCommunityOptions,
   YouTubeChannelResolveOptions,
   YouTubeStreamsOptions,
+  YouTubeCommunityPostOptions,
+  YouTubeCommunityPostCommentsOptions,
 } from "./namespaces/youtube.js";
 export type {
   RedditSort,
@@ -120,6 +122,9 @@ export type {
   RedditUserOptions,
   RedditUserFeedOptions,
   RedditPopularOptions,
+  RedditCommentSearchSort,
+  RedditSearchCommentsOptions,
+  RedditSearchSubredditsOptions,
 } from "./namespaces/reddit.js";
 export type {
   TikTokProfileOptions,
@@ -133,6 +138,16 @@ export type {
   TikTokHashtagVideosOptions,
   TikTokUserFollowersOptions,
   TikTokUserFollowingsOptions,
+  TikTokTrendingVideosOptions,
+  TikTokSearchSuggestionsOptions,
+  TikTokMusicOptions,
+  TikTokMusicVideosOptions,
+  TikTokSearchMusicOptions,
+  TikTokMusicChartOptions,
+  TikTokUserSimilarOptions,
+  TikTokUserPlaylistsOptions,
+  TikTokPlaylistVideosOptions,
+  TikTokUsernameOptions,
 } from "./namespaces/tiktok.js";
 export type {
   TikTokShopRegion,
@@ -164,6 +179,9 @@ export type {
   XUserOptions,
   XUserFeedOptions,
   XTrendingOptions,
+  XSearchCommunitiesOptions,
+  XCommunityOptions,
+  XCommunityTweetsOptions,
 } from "./namespaces/x.js";
 export type {
   LinkedInPersonOptions,

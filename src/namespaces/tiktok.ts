@@ -114,6 +114,88 @@ export interface TikTokUserFollowingsOptions {
   [key: string]: unknown;
 }
 
+export interface TikTokTrendingVideosOptions {
+  /** Requested videos (1-15, server default 15). About 6 come back per call whatever is set. */
+  count?: number;
+  [key: string]: unknown;
+}
+
+export interface TikTokSearchSuggestionsOptions {
+  /** Seed keyword (1-500 characters). */
+  keyword: string;
+  [key: string]: unknown;
+}
+
+export interface TikTokMusicOptions {
+  /** The sound's numeric id, as a string. */
+  music_id: string;
+  [key: string]: unknown;
+}
+
+export interface TikTokMusicVideosOptions {
+  /** The sound's numeric id, as a string. */
+  music_id: string;
+  /** Pagination cursor (default '0'). */
+  cursor?: string;
+  /** Videos per page (1-30). Ignored upstream; pages hold about 14. */
+  count?: number;
+  [key: string]: unknown;
+}
+
+export interface TikTokSearchMusicOptions {
+  /** Search keyword (1-500 characters). */
+  keyword: string;
+  /** Pagination offset: the previous response's cursor (default '0'). */
+  cursor?: string;
+  /** Sounds per page (1-20). */
+  count?: number;
+  [key: string]: unknown;
+}
+
+export interface TikTokMusicChartOptions {
+  /** 'top' = Top 50 (server default), 'viral' = Viral 50. */
+  chart?: "top" | "viral";
+  /** Pagination cursor (default '0'). */
+  cursor?: string;
+  /** Sounds per page (1-50). */
+  count?: number;
+  [key: string]: unknown;
+}
+
+export interface TikTokUserSimilarOptions {
+  /** TikTok sec_user_id. */
+  sec_user_id: string;
+  /** next_page_token from a prior response. */
+  page_token?: string;
+  [key: string]: unknown;
+}
+
+export interface TikTokUserPlaylistsOptions {
+  /** TikTok sec_user_id. */
+  sec_user_id: string;
+  /** Pagination cursor (default '0'). */
+  cursor?: string;
+  /** Playlists per page (1-30). */
+  count?: number;
+  [key: string]: unknown;
+}
+
+export interface TikTokPlaylistVideosOptions {
+  /** The playlist's numeric id (mixId from userPlaylists), as a string. */
+  playlist_id: string;
+  /** Pagination cursor (default '0'). */
+  cursor?: string;
+  /** Videos per page (1-30). */
+  count?: number;
+  [key: string]: unknown;
+}
+
+export interface TikTokUsernameOptions {
+  /** TikTok username, with or without the @. */
+  username: string;
+  [key: string]: unknown;
+}
+
 export class TikTokNamespace {
   constructor(private client: Scavio) {}
 
@@ -181,5 +263,138 @@ export class TikTokNamespace {
     options: TikTokUserFollowingsOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/tiktok/user/followings", options);
+  }
+
+  /**
+   * Search terms trending on TikTok now (about 90 per call, US-weighted, no
+   * region filter). Costs 1 credit.
+   */
+  async trendingSearches(): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/trending/searches", {});
+  }
+
+  /**
+   * A sample of videos trending on TikTok now, with author, stats, sound and
+   * hashtags. Each call returns about 6 videos whatever `count` is set to;
+   * call again for a fresh sample. No region filter. Costs 1 credit.
+   * Returns TikTok's raw payload: large numeric ids can lose precision as JSON
+   * numbers, so use the string forms (`id_str`, `sec_uid`).
+   */
+  async trendingVideos(
+    options: TikTokTrendingVideosOptions = {},
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/trending/videos", options);
+  }
+
+  /**
+   * TikTok search autocomplete suggestions for a keyword. Long-tail keywords
+   * can return none, which is still a billed answer. Costs 1 credit.
+   */
+  async searchSuggestions(
+    options: TikTokSearchSuggestionsOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/search/suggestions", options);
+  }
+
+  /**
+   * A TikTok sound by id: title, artist, album, duration, how many videos use
+   * it, original vs commercial, play URL, cover, and chart rank when charting.
+   * Costs 1 credit.
+   * Returns TikTok's raw payload: large numeric ids can lose precision as JSON
+   * numbers, so use the string forms (`id_str`, `sec_uid`).
+   */
+  async music(options: TikTokMusicOptions): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/music", options);
+  }
+
+  /**
+   * Videos that use a TikTok sound, about 14 per page (`count` is ignored
+   * upstream). Costs 1 credit.
+   * Returns TikTok's raw payload: large numeric ids can lose precision as JSON
+   * numbers, so use the string forms (`id_str`, `sec_uid`).
+   */
+  async musicVideos(
+    options: TikTokMusicVideosOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/music/videos", options);
+  }
+
+  /**
+   * Search TikTok sounds by keyword: id, title, artist, duration, usage count
+   * and play URL. Costs 1 credit.
+   * Returns TikTok's raw payload: large numeric ids can lose precision as JSON
+   * numbers, so use the string forms (`id_str`, `sec_uid`).
+   */
+  async searchMusic(
+    options: TikTokSearchMusicOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/search/music", options);
+  }
+
+  /**
+   * TikTok's Top 50 or Viral 50 sound chart, with each sound's details and
+   * trend. One global chart, no region filter. Costs 1 credit.
+   * Returns TikTok's raw payload: large numeric ids can lose precision as JSON
+   * numbers, so use the string forms (`id_str`, `sec_uid`).
+   */
+  async musicChart(
+    options: TikTokMusicChartOptions = {},
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/music/chart", options);
+  }
+
+  /**
+   * Creators similar to a TikTok user (about 30 per page), with follower,
+   * following, video and like counts, bio and verification. Costs 1 credit.
+   * Returns TikTok's raw payload: large numeric ids can lose precision as JSON
+   * numbers, so use the string forms (`id_str`, `sec_uid`).
+   */
+  async userSimilar(
+    options: TikTokUserSimilarOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/user/similar", options);
+  }
+
+  /**
+   * A TikTok user's playlists (series): id, name, video count and cover.
+   * Accounts without playlists return an empty list. Costs 1 credit.
+   */
+  async userPlaylists(
+    options: TikTokUserPlaylistsOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/user/playlists", options);
+  }
+
+  /**
+   * Videos in a TikTok playlist, with pagination. Costs 1 credit.
+   * Returns TikTok's raw payload: large numeric ids can lose precision as JSON
+   * numbers, so use the string forms (`id_str`, `sec_uid`).
+   */
+  async playlistVideos(
+    options: TikTokPlaylistVideosOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/playlist/videos", options);
+  }
+
+  /**
+   * Whether a TikTok user is live now: the user, live room status (2 = live,
+   * 4 = not live), title, start time and viewer counts. An unknown username is
+   * a billed 404. Costs 1 credit.
+   */
+  async userLive(
+    options: TikTokUsernameOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/user/live", options);
+  }
+
+  /**
+   * The region a TikTok account is registered in (ISO country code, not the
+   * creator's nationality), plus its user id and sec_user_id. An unknown
+   * username is a 404 and is not billed. Costs 1 credit.
+   */
+  async userRegion(
+    options: TikTokUsernameOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/user/region", options);
   }
 }

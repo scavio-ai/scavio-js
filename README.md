@@ -356,7 +356,7 @@ nickname, or a listing with no public questions, is a billed 404.
 
 ### YouTube
 
-Credit cost varies by endpoint: `transcript` costs 8; `streams` costs 3;
+Credit cost varies by endpoint: `transcript` costs 5; `streams` costs 3;
 `search` and `shorts` cost 2; every other YouTube endpoint costs 1.
 
 ```typescript
@@ -402,6 +402,10 @@ await client.youtube.channelVideos({ channel_id: "UC..." });
 await client.youtube.channelShorts({ channel_id: "UC..." });
 await client.youtube.channelCommunity({ channel_id: "UC..." });
 await client.youtube.channelResolve({ channel: "@mkbhd" }); // handle/URL -> id
+
+// One community post (text, author, likes, images, comments_cursor) and its comments
+await client.youtube.communityPost({ post_id: "Ugkx_PqHZYEoCCP7e8WIOrh-1HCvtKoFMzVp" });
+await client.youtube.communityPostComments({ post_id: "Ugkx_PqHZYEoCCP7e8WIOrh-1HCvtKoFMzVp" });
 ```
 
 ### Reddit
@@ -409,7 +413,8 @@ await client.youtube.channelResolve({ channel: "@mkbhd" }); // handle/URL -> id
 Every Reddit endpoint costs 1 credit.
 
 `search()` takes only `query` and `cursor` — there is no result-type or sort
-filter, so anything else is dropped server-side. It returns
+filter, so anything else is dropped server-side. `searchComments()` does sort
+(`RELEVANCE`, `HOT`, `TOP` or `NEW`). It returns
 `data.results` with `next_cursor` and `has_more`. `post()` returns a flat post
 object under `data` and carries no comments; use `postComments()` for those.
 The subreddit and user feeds return `data.posts`.
@@ -444,6 +449,10 @@ await client.reddit.userComments({ username: "spez" });
 // Site-wide popular feed and trending searches
 await client.reddit.popular();
 await client.reddit.trending();
+
+// Comment search (each result carries its post and subreddit) and subreddit search
+await client.reddit.searchComments({ query: "web scraping api", sort: "NEW" });
+await client.reddit.searchSubreddits({ query: "web scraping" });
 ```
 
 ### X
@@ -467,7 +476,14 @@ await client.x.userFollowings({ screen_name: "elonmusk" });
 
 // Trending topics
 await client.x.trending({ country: "UnitedStates" });
+
+// Communities: search, details (rules, member count), and posts
+await client.x.searchCommunities({ keyword: "crypto" });
+await client.x.community({ community_id: "1508567430188126209" });
+await client.x.communityTweets({ community_id: "1508567430188126209", ranking: "Recency" });
 ```
+
+Every X endpoint costs 1 credit.
 
 ### LinkedIn
 
@@ -541,7 +557,38 @@ await client.tiktok.userFollowers({ sec_user_id: "abc123" });
 
 // User followings
 await client.tiktok.userFollowings({ sec_user_id: "abc123" });
+
+// Trending searches and a sample of trending videos (about 6 per call)
+await client.tiktok.trendingSearches();
+await client.tiktok.trendingVideos();
+
+// Search autocomplete
+await client.tiktok.searchSuggestions({ keyword: "cooking" });
+
+// Sounds: detail, videos using a sound, search, Top 50 / Viral 50 chart
+await client.tiktok.music({ music_id: "7364498342501435408" });
+await client.tiktok.musicVideos({ music_id: "7364498342501435408" });
+await client.tiktok.searchMusic({ keyword: "espresso" });
+await client.tiktok.musicChart({ chart: "viral" });
+
+// Similar creators, playlists and the videos in one
+await client.tiktok.userSimilar({ sec_user_id: "abc123" });
+await client.tiktok.userPlaylists({ sec_user_id: "abc123" });
+await client.tiktok.playlistVideos({ playlist_id: "7596415294902389534" });
+
+// Live status and account region (region also returns sec_user_id)
+await client.tiktok.userLive({ username: "mrbeast" });
+await client.tiktok.userRegion({ username: "mrbeast" });
 ```
+
+Every TikTok endpoint costs 1 credit. The trending, sound, similar, playlist,
+live and region endpoints return TikTok's raw payload: large numeric ids can
+lose precision when parsed as JSON numbers, so use the string forms (`id_str`,
+`sec_uid`, `sec_user_id`). `trendingVideos()` returns about 6 videos per call
+whatever `count` is set to, and `musicVideos()` ignores `count` (about 14 per
+page). Search suggestions can be empty for long-tail keywords and still bill.
+An unknown username is a billed 404 on `userLive()` and an unbilled 404 on
+`userRegion()`.
 
 ### TikTok Shop
 

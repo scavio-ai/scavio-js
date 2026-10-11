@@ -54,6 +54,30 @@ export interface XTrendingOptions {
   [key: string]: unknown;
 }
 
+export interface XSearchCommunitiesOptions {
+  /** Search query (1-500 characters). */
+  keyword: string;
+  /** Pagination cursor from a prior response. */
+  cursor?: string;
+  [key: string]: unknown;
+}
+
+export interface XCommunityOptions {
+  /** Numeric X Community id, as a string. */
+  community_id: string;
+  [key: string]: unknown;
+}
+
+export interface XCommunityTweetsOptions {
+  /** Numeric X Community id, as a string. */
+  community_id: string;
+  /** Ordering (server default: the community's own). */
+  ranking?: "Relevance" | "Recency";
+  /** Pagination cursor from a prior response. */
+  cursor?: string;
+  [key: string]: unknown;
+}
+
 export class XNamespace {
   constructor(private client: Scavio) {}
 
@@ -121,5 +145,33 @@ export class XNamespace {
     options: XTrendingOptions = {},
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/x/trending", options);
+  }
+
+  /**
+   * Find X Communities by keyword, with member counts, topic and NSFW flag.
+   * Costs 1 credit.
+   */
+  async searchCommunities(
+    options: XSearchCommunitiesOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/x/search/communities", options);
+  }
+
+  /**
+   * An X Community: name, description, creation date, member count, topic and
+   * rules. Costs 1 credit.
+   */
+  async community(options: XCommunityOptions): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/x/community", options);
+  }
+
+  /**
+   * Posts in an X Community, by relevance or recency, with pagination.
+   * Costs 1 credit.
+   */
+  async communityTweets(
+    options: XCommunityTweetsOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/x/community/tweets", options);
   }
 }

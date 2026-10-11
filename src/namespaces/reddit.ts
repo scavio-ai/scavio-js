@@ -95,6 +95,26 @@ export interface RedditPopularOptions {
   [key: string]: unknown;
 }
 
+export type RedditCommentSearchSort = "RELEVANCE" | "HOT" | "TOP" | "NEW";
+
+export interface RedditSearchCommentsOptions {
+  /** Search query (1-500 characters). */
+  query: string;
+  /** Sort order (server default 'RELEVANCE'). */
+  sort?: RedditCommentSearchSort;
+  /** Pagination cursor from a prior response. */
+  cursor?: string;
+  [key: string]: unknown;
+}
+
+export interface RedditSearchSubredditsOptions {
+  /** Search query (1-500 characters). */
+  query: string;
+  /** Pagination cursor from a prior response. */
+  cursor?: string;
+  [key: string]: unknown;
+}
+
 export class RedditNamespace {
   constructor(private client: Scavio) {}
 
@@ -167,5 +187,26 @@ export class RedditNamespace {
 
   async trending(): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/reddit/trending", {});
+  }
+
+  /**
+   * Search Reddit comments by keyword. Each result carries the comment text,
+   * author, score and date, plus the post and subreddit it was left on.
+   * Costs 1 credit.
+   */
+  async searchComments(
+    options: RedditSearchCommentsOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/reddit/search/comments", options);
+  }
+
+  /**
+   * Find subreddits by keyword, with subscriber counts, descriptions and NSFW
+   * flags. Costs 1 credit.
+   */
+  async searchSubreddits(
+    options: RedditSearchSubredditsOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/reddit/search/subreddits", options);
   }
 }

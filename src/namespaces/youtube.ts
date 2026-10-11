@@ -158,6 +158,20 @@ export interface YouTubeStreamsOptions {
   [key: string]: unknown;
 }
 
+export interface YouTubeCommunityPostOptions {
+  /** Community post id or post URL. */
+  post_id: string;
+  [key: string]: unknown;
+}
+
+export interface YouTubeCommunityPostCommentsOptions {
+  /** Community post id or post URL. */
+  post_id: string;
+  /** next_cursor from a prior page, or comments_cursor from communityPost. */
+  cursor?: string;
+  [key: string]: unknown;
+}
+
 export class YouTubeNamespace {
   constructor(private client: Scavio) {}
 
@@ -220,6 +234,7 @@ export class YouTubeNamespace {
     return this.client._post("/api/v1/youtube/comments/replies", options);
   }
 
+  /** Transcript / captions for a YouTube video. Costs 5 credits. */
   async transcript(
     options: YouTubeTranscriptOptions,
   ): Promise<Record<string, unknown>> {
@@ -276,5 +291,26 @@ export class YouTubeNamespace {
     options: YouTubeStreamsOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/youtube/streams", options);
+  }
+
+  /**
+   * A single YouTube community post: text, author, likes, comment count,
+   * attached images, and a comments_cursor for communityPostComments.
+   * Costs 1 credit.
+   */
+  async communityPost(
+    options: YouTubeCommunityPostOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/youtube/community/post", options);
+  }
+
+  /**
+   * Comments on a YouTube community post, with likes, reply counts and
+   * pagination. Costs 1 credit.
+   */
+  async communityPostComments(
+    options: YouTubeCommunityPostCommentsOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/youtube/community/post/comments", options);
   }
 }
