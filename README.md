@@ -1,14 +1,14 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time web scraping
-and data extraction across 35 platforms on one API key, plus `extract()` to read
+and data extraction across 36 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown.
 
 Structured JSON in, structured JSON out. No proxies, no headless browsers, no
 per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
-- **E-commerce** — Amazon, Walmart, Costco, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
@@ -307,6 +307,53 @@ warehouses, `availability` 1 per 5 warehouses, `warehouses` 2 with
 warehouses on us and 2 per warehouse on ca). The clearance price codes are the
 member-community decode of Costco shelf prices; Costco does not publish them,
 and only items Costco lists online are covered.
+
+### Mercado Libre
+
+Five endpoints, new in 0.21.0: `reviews` costs 1 credit, the other four 2. The
+`best-sellers` endpoint is `bestSellers()`. Mexico (`mx`), Brazil (`br`,
+Mercado Livre), Argentina (`ar`) and Colombia (`co`); prices come back in MXN,
+BRL, ARS or COP. Chile is not supported.
+
+```typescript
+// Keyword search: about 48 rows per page, up to 42 pages.
+const found = await client.mercadolibre.search({
+  country: "mx",
+  query: "iphone 15",
+  condition: "new",
+  free_shipping: true,
+  sort: "price_asc",       // relevance (default), price_asc or price_desc
+});
+
+// A seller's catalogue: by numeric seller_id (filters and paging work), or by
+// nickname (first page, unfiltered, plus the seller_id).
+await client.mercadolibre.search({ country: "mx", seller_id: "527927603", min_discount: 20 });
+await client.mercadolibre.search({ country: "mx", seller_nickname: "MERCADOLIBRE ELECTRONICA_MX" });
+
+// One product or listing: buy-box seller with reputation, variations, star
+// distribution, specs. Exactly one of url, product_id or item_id.
+await client.mercadolibre.product({ product_id: "MLM1027172667" });
+
+// Reviews, 15 per page, optionally by star rating (1 credit).
+await client.mercadolibre.reviews({ product_id: "MLM1027172667", rating: 1 });
+
+// Buyer questions with the seller's answers; page with next_offset.
+await client.mercadolibre.questions({ item_id: "MLM3571336480" });
+
+// Top 20 best sellers in a category (mx, ar or co; not Brazil).
+await client.mercadolibre.bestSellers({ country: "mx", category_id: "MLM1055" });
+```
+
+A query reaches about 2,000 results (42 pages of 48), so slice by price range,
+condition or seller to go further. Units sold are lower bounds
+(`sold_quantity_min`, e.g. "+1000 vendidos"), not exact counts, and sort is
+relevance or price only. Mercado Libre may narrow a query to a category, brand
+or line on its own, and Brazil and Argentina may auto-apply a "new" condition;
+`auto_applied_filters` lists what it applied. `product` returns only the
+buy-box seller. Reviews translated into the site's language keep
+`original_text`. Questions carry answer dates but no question dates. A
+zero-result search is an empty, billed page; an unknown product, item or seller
+nickname, or a listing with no public questions, is a billed 404.
 
 ### YouTube
 
@@ -732,7 +779,8 @@ const comps = await client.realtor.search({
   page_size: 200,
 });
 
-// Listing-text keyword watch, a radius search, or one agent's listings.
+// Listing-text keyword watch (a listing must contain ALL the keywords, so each
+// extra keyword narrows the results), a radius search, or one agent's listings.
 await client.realtor.search({ location: "Austin, TX", keywords: ["workshop"] });
 await client.realtor.search({ latitude: 30.27, longitude: -97.74, radius_miles: 5 });
 await client.realtor.search({ agent_id: "1918615" });
@@ -1170,7 +1218,7 @@ key, structured JSON, no proxies or browser farms to run. It is a real-time
 What teams build on it:
 
 - **SERP and answer engines** — [Google Search API](https://scavio.dev/google-search-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) for organic results, news, images, maps and the knowledge graph
-- **Price and catalog monitoring** — [Amazon Product API](https://scavio.dev/amazon-product-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [Walmart Product API](https://scavio.dev/walmart-product-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), eBay, Target and Home Depot product, review and seller data
+- **Price and catalog monitoring** — [Amazon Product API](https://scavio.dev/amazon-product-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [Walmart Product API](https://scavio.dev/walmart-product-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), eBay, Target and Home Depot product, review and seller data, Mercado Libre listings, reviews and best sellers in Mexico, Brazil, Argentina and Colombia
 - **Real estate and travel pipelines** — Zillow, Redfin and Realtor.com listings and market stats, Rightmove UK listings and England and Wales sold prices since 1995, Booking, Airbnb and Tripadvisor rates and reviews
 - **Review mining and competitive research** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store and Google Play reviews on one shape
 - **Recruiting and company intelligence** — Indeed jobs, Glassdoor salaries, SEC EDGAR filings and XBRL facts, UK Companies House officers and filing history

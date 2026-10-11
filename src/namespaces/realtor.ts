@@ -88,7 +88,10 @@ export interface RealtorSearchOptions {
   sold_within_days?: number;
   /** Only listings with a price cut in the last N days (1-3650). */
   price_reduced_within_days?: number;
-  /** Only listings whose listing text matches these keywords, up to 10 (e.g. ["workshop"]). */
+  /**
+   * Only listings whose listing text contains ALL of these keywords, up to 10
+   * (e.g. ["workshop"]); each extra keyword narrows the results.
+   */
   keywords?: string[];
   /** Only new construction. */
   new_construction?: boolean;

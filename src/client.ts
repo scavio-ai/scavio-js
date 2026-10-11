@@ -37,6 +37,7 @@ import { CostcoNamespace } from "./namespaces/costco.js";
 import { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 import { RealtorNamespace } from "./namespaces/realtor.js";
 import { RightmoveNamespace } from "./namespaces/rightmove.js";
+import { MercadoLibreNamespace } from "./namespaces/mercadolibre.js";
 
 /**
  * Default client-side rate limit, safe on every plan including free.
@@ -129,6 +130,7 @@ export class Scavio {
   readonly trustpilot: TrustpilotNamespace;
   readonly realtor: RealtorNamespace;
   readonly rightmove: RightmoveNamespace;
+  readonly mercadolibre: MercadoLibreNamespace;
 
   private readonly apiKey: string;
   private readonly baseUrl: string;
@@ -189,6 +191,7 @@ export class Scavio {
     this.trustpilot = new TrustpilotNamespace(this);
     this.realtor = new RealtorNamespace(this);
     this.rightmove = new RightmoveNamespace(this);
+    this.mercadolibre = new MercadoLibreNamespace(this);
   }
 
   /** @internal */

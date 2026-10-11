@@ -53,6 +53,7 @@ export { CostcoNamespace } from "./namespaces/costco.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { RealtorNamespace } from "./namespaces/realtor.js";
 export { RightmoveNamespace } from "./namespaces/rightmove.js";
+export { MercadoLibreNamespace } from "./namespaces/mercadolibre.js";
 
 export type {
   GoogleSearchOptions,
@@ -373,3 +374,15 @@ export type {
   RightmoveAgentsOptions,
   RightmoveAgentOptions,
 } from "./namespaces/rightmove.js";
+export type {
+  MercadoLibreCountry,
+  MercadoLibreBestSellersCountry,
+  MercadoLibreCondition,
+  MercadoLibreSort,
+  MercadoLibreDiscount,
+  MercadoLibreSearchOptions,
+  MercadoLibreProductOptions,
+  MercadoLibreReviewsOptions,
+  MercadoLibreQuestionsOptions,
+  MercadoLibreBestSellersOptions,
+} from "./namespaces/mercadolibre.js";
