@@ -44,6 +44,19 @@ describe("TikTokNamespace", () => {
     expect(getBody()).toEqual({ video_id: "vid123" });
   });
 
+  it("videoTranscript sends to /api/v1/tiktok/video/transcript", async () => {
+    await client.tiktok.videoTranscript({ video_id: "7609177768793787679", language: "en" });
+    expect(getUrl()).toBe(
+      "https://api.scavio.dev/api/v1/tiktok/video/transcript",
+    );
+    expect(getBody()).toEqual({ video_id: "7609177768793787679", language: "en" });
+  });
+
+  it("videoTranscript accepts a url instead of video_id", async () => {
+    await client.tiktok.videoTranscript({ url: "https://www.tiktok.com/@u/video/7609177768793787679" });
+    expect(getBody()).toEqual({ url: "https://www.tiktok.com/@u/video/7609177768793787679" });
+  });
+
   it("videoComments sends to /api/v1/tiktok/video/comments", async () => {
     await client.tiktok.videoComments({ video_id: "vid123", count: 20 });
     expect(getUrl()).toBe(

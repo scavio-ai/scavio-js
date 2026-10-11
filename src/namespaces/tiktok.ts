@@ -26,6 +26,16 @@ export interface TikTokVideoOptions {
   [key: string]: unknown;
 }
 
+export interface TikTokVideoTranscriptOptions {
+  /** TikTok video id. Pass this or `url`. */
+  video_id?: string;
+  /** A TikTok video URL or share link (alternative to video_id, max 2000 characters). */
+  url?: string;
+  /** Preferred transcript language as a 2-letter code; defaults to the original spoken language. */
+  language?: string;
+  [key: string]: unknown;
+}
+
 export interface TikTokVideoCommentsOptions {
   /** TikTok video id. */
   video_id: string;
@@ -215,6 +225,17 @@ export class TikTokNamespace {
     options: TikTokVideoOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/tiktok/video", options);
+  }
+
+  /**
+   * Spoken-word transcript of a TikTok video, as timestamped segments and
+   * full text. Pass `video_id` or `url`. Videos with no spoken captions
+   * (music, dance, muted clips) return `available: false`. 1 credit.
+   */
+  async videoTranscript(
+    options: TikTokVideoTranscriptOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/tiktok/video/transcript", options);
   }
 
   async videoComments(

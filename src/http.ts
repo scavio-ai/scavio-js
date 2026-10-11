@@ -109,18 +109,37 @@ function getHeader(response: Response, name: string): string | null {
   return null;
 }
 
+/**
+ * Serialize a query object, dropping undefined values. Booleans become
+ * "true"/"false". Returns "" or "?a=1&b=2".
+ */
+export function buildQuery(
+  query?: Record<string, string | number | boolean | undefined>,
+): string {
+  if (!query) return "";
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (value !== undefined) params.append(key, String(value));
+  }
+  const qs = params.toString();
+  return qs ? `?${qs}` : "";
+}
+
 export async function request(options: {
-  method: "GET" | "POST";
+  method: "GET" | "POST" | "DELETE";
   path: string;
   apiKey: string;
   baseUrl: string;
   timeout: number;
   rateLimiter: RateLimiter;
   body?: Record<string, unknown>;
+  query?: Record<string, string | number | boolean | undefined>;
+  /** Extra request headers, e.g. Idempotency-Key. */
+  headers?: Record<string, string>;
   maxRetries?: number;
 }): Promise<Record<string, unknown>> {
-  const url = `${options.baseUrl}${options.path}`;
-  const headers = buildHeaders(options.apiKey);
+  const url = `${options.baseUrl}${options.path}${buildQuery(options.query)}`;
+  const headers = { ...buildHeaders(options.apiKey), ...options.headers };
   const retry: RetryConfig = makeRetryConfig(
     options.maxRetries ?? DEFAULT_MAX_RETRIES,
   );

@@ -2,7 +2,8 @@
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
 data across 36 platforms on one API key, plus `extract()` to read
-any URL as clean Markdown.
+any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
+`extract.batch()` to map, crawl and batch-extract whole websites.
 
 Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
@@ -14,6 +15,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **Ads transparency** — Google Ads Transparency Center, Meta Ad Library
 - **Social and video** — YouTube, TikTok, Instagram, Threads, X, LinkedIn, Reddit, Kuaishou
 - **Any other page** — `extract()` turns a URL into Markdown, plain text or raw HTML
+- **Whole websites** — `extract.map()` lists a site's URLs, `extract.crawl()` crawls a site, `extract.batch()` extracts a list of URLs in one job
 
 ## Install
 
@@ -102,6 +104,129 @@ extraction — a dead link, bot wall or timeout costs nothing.
 boilerplate stripped. `text` is that markdown flattened to plain text. URLs are
 http(s) only, a bare host is upgraded to https, and loopback, private,
 link-local and cloud-metadata hosts are rejected with a 400.
+
+### Website map, crawl and batch extract (new in 0.23.0)
+
+`extract` is also a namespace: calling it reads one page, exactly as before
+(`client.extract({ url })` sends the same request it did in 0.22), and its
+methods work on whole sites and URL lists, with each page returned exactly
+like [Extract](https://scavio.dev/docs/extract?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+```typescript
+// Map: every URL on a site, from its sitemaps and start page. 1 credit.
+const map = await client.extract.map({
+  url: "https://example.com",
+  limit: 500,                    // 1-5,000, default 1,000 (plan caps apply)
+  sitemap: "include",            // "include" | "only" | "skip"
+  include_paths: ["/blog/**"],   // optional path globs
+});
+map.data.links;       // [{ url, source: "sitemap" | "page", lastmod? }]
+map.data.truncated;   // true when more URLs exist than `limit`
+
+// Crawl: start a job, then poll it (polling and cancelling are free).
+const job = await client.extract.crawl(
+  { url: "https://example.com/docs", max_pages: 50, max_depth: 3, format: "markdown" },
+  { idempotencyKey: "docs-crawl-2026-10-12" }, // optional, sent as Idempotency-Key
+);
+job.data.id;          // "crawl_..."
+job.data.status_url;
+
+const page = await client.extract.crawlStatus(job.data.id, { limit: 25 });
+page.data.status;      // "queued" | "running" | "completed" | "failed" | "cancelled"
+page.data.pages;       // { discovered, queued, succeeded, failed, skipped }
+page.data.results;     // [{ url, depth, status, status_code, content, ... }]
+page.data.next_cursor; // pass as { cursor } for the next page, null at the end
+
+await client.extract.cancelCrawl(job.data.id); // 409 once the crawl has finished
+
+// Or wait for it: polls until done and returns every result in one response.
+const done = await client.extract.crawl(
+  { url: "https://example.com/docs", max_pages: 20 },
+  { wait: true, pollInterval: 2000, waitTimeout: 600_000 },
+);
+done.data.results.length;
+
+// Batch: extract a list of URLs in one job (results in input order).
+const batch = await client.extract.batch({
+  urls: ["https://example.com/a", "https://example.com/b"],
+  mode: "normal",
+});
+batch.data.invalid_urls; // rejected up front, never billed
+await client.extract.batchStatus(batch.data.id);
+await client.extract.cancelBatch(batch.data.id);
+```
+
+**Pricing.** Map costs 1 credit. Crawl and batch bill per **successful** page
+at Extract's price for the tier: `normal` 1, `advanced` 1, `ultra` 2. Failed
+and skipped pages are free, starting, polling and cancelling a job are free,
+and credits are taken page by page: if your balance runs out the job stops
+cleanly with `stopped_reason: "insufficient_credits"`.
+
+**Plan limits.**
+
+| Plan | Max pages per crawl | Active jobs | URLs per batch |
+|------|--------------------:|------------:|---------------:|
+| Free | 10 | 1 | 10 |
+| PAYG | 100 | 1 | 50 |
+| Project | 500 | 2 | 100 |
+| Bootstrap | 2,000 | 3 | 500 |
+| Startup | 5,000 | 5 | 1,000 |
+| Growth | 10,000 | 10 | 1,000 |
+
+Starting a job above your plan's active-job limit is a 429 (`RateLimitError`)
+with `Retry-After`.
+
+**Behavior.** Crawl and map always obey the site's robots.txt. A crawl stays on
+the start URL's site (`allow_subdomains` opts into subdomains) and visits URLs
+under the start path first. Batch treats each URL like a single `extract()`
+call. Results are kept for 3 days after the job finishes (`expires_at`), up to
+2 MB per page and 250 MB per job, and a job runs for at most 6 hours.
+
+**`wait: true`.** `crawl()` and `batch()` poll the status endpoint every
+`pollInterval` ms (default 2,000) until the job is completed, failed or
+cancelled, then page through every cursor and return
+`{ data: { ...summary, results: [all], next_cursor: null } }`. If the job is
+still running after `waitTimeout` ms (default 10 minutes) they throw
+`ScavioJobTimeoutError`; the job keeps running and the error carries
+`jobId`, `jobType` and `statusUrl` so you can keep polling or cancel it. For
+big crawls, prefer a webhook or your own polling loop.
+
+**Retries and idempotency.** The SDK retries 429/5xx and network errors. Pass
+`idempotencyKey` when starting a job: repeating a POST with the same key within
+24 hours returns the original job, so a retried request never starts a second
+one.
+
+#### Completion webhooks
+
+Pass `webhook_url` (https) to `crawl()` or `batch()` and Scavio POSTs the job
+summary there when it completes, fails or is cancelled (retried at 0 s, 30 s
+and 5 min). The signing secret comes back once, as `job.data.webhook_secret`.
+Each delivery is signed with
+`Scavio-Signature: t=<unix>,v1=<hex HMAC-SHA256 of "<t>.<raw body>">`; verify
+it against the **raw** body with `verifyWebhook` (async, Web Crypto, so it runs
+on Node 18+, Deno, Bun and edge runtimes):
+
+```typescript
+import { verifyWebhook } from "scavio";
+
+// e.g. a Next.js / Hono / Workers route handler
+export async function POST(req: Request) {
+  const raw = await req.text();
+  const ok = await verifyWebhook(
+    process.env.SCAVIO_WEBHOOK_SECRET!,      // the job's webhook_secret
+    req.headers.get("Scavio-Signature"),
+    raw,
+    300,                                     // max signature age in seconds (default)
+  );
+  if (!ok) return new Response("bad signature", { status: 401 });
+  const event = JSON.parse(raw);
+  // event.id, event.status, ...
+  return new Response("ok");
+}
+```
+
+`verifyWebhook` returns `false` (never throws) for a missing, malformed,
+tampered or stale signature.
 
 ### Google
 
@@ -533,6 +658,10 @@ await client.tiktok.userPosts({ sec_user_id: "abc123", count: 30 });
 
 // Video details
 await client.tiktok.video({ video_id: "vid123" });
+
+// Video transcript: timestamped segments and full text (video_id or url;
+// optional 2-letter language). Caption-less videos return available: false.
+await client.tiktok.videoTranscript({ video_id: "7609177768793787679" });
 
 // Video comments
 await client.tiktok.videoComments({ video_id: "vid123", count: 20 });
@@ -1225,7 +1354,8 @@ All error classes:
 | `InsufficientCreditsError` | 402 | No credits remaining |
 | `NotFoundError` | 404 | No data for that id (see TikTok Shop above) |
 | `RateLimitError` | 429 | Rate limit exceeded |
-| `ScavioAPIError` | other | Catch-all (has `.statusCode`) |
+| `ScavioAPIError` | other | Catch-all (has `.statusCode`; a 409 from cancelling a finished job lands here) |
+| `ScavioJobTimeoutError` | — | `crawl()`/`batch()` with `wait: true` outlived `waitTimeout`; carries `jobId` |
 
 Threads and Kuaishou answer a missing or conflicting identifier with **422**, not
 400 — those routes have no 400 at all. Both map to `BadRequestError`, so one

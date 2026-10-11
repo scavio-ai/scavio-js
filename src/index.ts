@@ -3,7 +3,8 @@ export {
   DEFAULT_MAX_REQUESTS_PER_SECOND,
   MAX_REQUESTS_PER_SECOND,
 } from "./client.js";
-export type { ScavioConfig, ExtractOptions } from "./client.js";
+export type { ScavioConfig, ExtractOptions, Extract } from "./client.js";
+export { verifyWebhook } from "./webhook.js";
 
 export {
   ScavioError,
@@ -16,7 +17,28 @@ export {
   ScavioAPIError,
   ScavioConnectionError,
   ScavioTimeoutError,
+  ScavioJobTimeoutError,
 } from "./errors.js";
+
+export { ExtractNamespace } from "./namespaces/extract.js";
+export type {
+  ExtractMode,
+  ExtractFormat,
+  ExtractSitemapMode,
+  ExtractMapOptions,
+  ExtractCrawlOptions,
+  ExtractBatchOptions,
+  ExtractJobRequestOptions,
+  ExtractJobStatusQuery,
+  ExtractMapLink,
+  ExtractMapResponse,
+  ExtractJobCreatedResponse,
+  ExtractJobState,
+  ExtractJobSummary,
+  ExtractJobResult,
+  ExtractJobStatusResponse,
+  ExtractJobSummaryResponse,
+} from "./namespaces/extract.js";
 
 export { GoogleNamespace } from "./namespaces/google.js";
 export { AmazonNamespace } from "./namespaces/amazon.js";
@@ -130,6 +152,7 @@ export type {
   TikTokProfileOptions,
   TikTokUserPostsOptions,
   TikTokVideoOptions,
+  TikTokVideoTranscriptOptions,
   TikTokVideoCommentsOptions,
   TikTokCommentRepliesOptions,
   TikTokSearchVideosOptions,

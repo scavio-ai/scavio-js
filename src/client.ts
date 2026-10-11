@@ -38,6 +38,7 @@ import { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 import { RealtorNamespace } from "./namespaces/realtor.js";
 import { RightmoveNamespace } from "./namespaces/rightmove.js";
 import { MercadoLibreNamespace } from "./namespaces/mercadolibre.js";
+import { ExtractNamespace } from "./namespaces/extract.js";
 
 /**
  * Default client-side rate limit, safe on every plan including free.
@@ -86,15 +87,66 @@ export interface ExtractOptions {
   /**
    * Fetch tier, and THE PRICE-BEARING PARAM (default "normal").
    *
-   * - "normal": plain datacenter fetch - 1 credit.
-   * - "advanced": headless browser render, for JS-built pages - 1 credit.
-   * - "ultra": residential proxy, for hard bot walls - 2 credits.
+   * - "normal": the standard fetch - 1 credit.
+   * - "advanced": renders JavaScript, for JS-built pages - 1 credit.
+   * - "ultra": the hardest pages and bot walls - 2 credits.
    */
   mode?: "normal" | "advanced" | "ultra";
   [key: string]: unknown;
 }
 
-export class Scavio {
+/**
+ * `scavio.extract`: call it to read one page, or use its methods for the
+ * website operations - `scavio.extract.map()`, `.crawl()`, `.crawlStatus()`,
+ * `.cancelCrawl()`, `.batch()`, `.batchStatus()`, `.cancelBatch()`.
+ */
+export interface Extract extends ExtractNamespace {
+  (options: ExtractOptions): Promise<Record<string, unknown>>;
+}
+
+/**
+ * Holds the single-page Extract call. TypeScript cannot declare a method and
+ * a property of the same name on one class, so the implementation lives here
+ * and `Scavio` narrows `extract` to the callable `Extract` namespace, which
+ * delegates to this method when called.
+ */
+abstract class ScavioCore {
+  /** @internal */
+  abstract _post(
+    path: string,
+    body: object,
+    headers?: Record<string, string>,
+  ): Promise<Record<string, unknown>>;
+
+  /**
+   * Read ANY web page and get it back as readability Markdown (the default),
+   * plain text, or raw HTML. Returns `{ url, format, mode, content,
+   * content_length }`.
+   *
+   * Extract is a core endpoint, not a platform: `scavio.extract({ url })`
+   * reads one page, and `scavio.extract.map()` / `.crawl()` / `.batch()` work
+   * on whole sites and URL lists.
+   *
+   * Credits are a function of `mode`, not a flat per-call constant:
+   * "normal" costs 1, "advanced" costs 1, "ultra" costs 2. Billing happens
+   * only on a successful extraction - a dead link, bot wall or timeout costs
+   * nothing.
+   *
+   * Start on "normal". Move to "advanced" when the page builds its content in
+   * the browser, and to "ultra" only when a bot wall blocks the other two.
+   *
+   * @example
+   * const page = await scavio.extract({ url: "https://example.com/pricing" });
+   * console.log(page.content);
+   */
+  async extract(options: ExtractOptions): Promise<Record<string, unknown>> {
+    return this._post("/api/v1/extract", options);
+  }
+}
+
+export class Scavio extends ScavioCore {
+  /** Read one page (call it), or map / crawl / batch-extract (its methods). */
+  declare readonly extract: Extract;
   readonly google: GoogleNamespace;
   readonly amazon: AmazonNamespace;
   readonly walmart: WalmartNamespace;
@@ -139,6 +191,7 @@ export class Scavio {
   private readonly rateLimiter: RateLimiter;
 
   constructor(config?: ScavioConfig) {
+    super();
     this.apiKey = config?.apiKey ?? process.env.SCAVIO_API_KEY ?? "";
     if (!this.apiKey) {
       throw new MissingAPIKeyError();
@@ -192,12 +245,24 @@ export class Scavio {
     this.realtor = new RealtorNamespace(this);
     this.rightmove = new RightmoveNamespace(this);
     this.mercadolibre = new MercadoLibreNamespace(this);
+
+    const extractNs = new ExtractNamespace(this);
+    this.extract = Object.assign(ScavioCore.prototype.extract.bind(this), {
+      map: extractNs.map.bind(extractNs),
+      crawl: extractNs.crawl.bind(extractNs),
+      crawlStatus: extractNs.crawlStatus.bind(extractNs),
+      cancelCrawl: extractNs.cancelCrawl.bind(extractNs),
+      batch: extractNs.batch.bind(extractNs),
+      batchStatus: extractNs.batchStatus.bind(extractNs),
+      cancelBatch: extractNs.cancelBatch.bind(extractNs),
+    }) as unknown as Extract;
   }
 
   /** @internal */
   async _post(
     path: string,
     body: object,
+    headers?: Record<string, string>,
   ): Promise<Record<string, unknown>> {
     return request({
       method: "POST",
@@ -208,13 +273,31 @@ export class Scavio {
       maxRetries: this.maxRetries,
       rateLimiter: this.rateLimiter,
       body: body as Record<string, unknown>,
+      headers,
     });
   }
 
   /** @internal */
-  async _get(path: string): Promise<Record<string, unknown>> {
+  async _get(
+    path: string,
+    query?: Record<string, string | number | boolean | undefined>,
+  ): Promise<Record<string, unknown>> {
     return request({
       method: "GET",
+      path,
+      apiKey: this.apiKey,
+      baseUrl: this.baseUrl,
+      timeout: this.timeout,
+      maxRetries: this.maxRetries,
+      rateLimiter: this.rateLimiter,
+      query,
+    });
+  }
+
+  /** @internal */
+  async _delete(path: string): Promise<Record<string, unknown>> {
+    return request({
+      method: "DELETE",
       path,
       apiKey: this.apiKey,
       baseUrl: this.baseUrl,
@@ -228,30 +311,6 @@ export class Scavio {
     options: GoogleSearchOptions,
   ): Promise<Record<string, unknown>> {
     return this.google.search(options);
-  }
-
-  /**
-   * Read ANY web page and get it back as readability Markdown (the default),
-   * plain text, or raw HTML. Returns `{ url, format, mode, content,
-   * content_length }`.
-   *
-   * This is a core endpoint, not a platform, so it lives on the client itself:
-   * `scavio.extract({ url })`, never `scavio.extract.extract()`.
-   *
-   * Credits are a function of `mode`, not a flat per-call constant:
-   * "normal" costs 1, "advanced" costs 1, "ultra" costs 2. Billing happens
-   * only on a successful extraction - a dead link, bot wall or timeout costs
-   * nothing.
-   *
-   * Start on "normal". Move to "advanced" when the page builds its content in
-   * the browser, and to "ultra" only when a bot wall blocks the other two.
-   *
-   * @example
-   * const page = await scavio.extract({ url: "https://example.com/pricing" });
-   * console.log(page.content);
-   */
-  async extract(options: ExtractOptions): Promise<Record<string, unknown>> {
-    return this._post("/api/v1/extract", options);
   }
 
   async getUsage(): Promise<Record<string, unknown>> {

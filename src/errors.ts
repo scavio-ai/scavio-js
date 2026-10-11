@@ -112,3 +112,22 @@ export class ScavioAPIError extends ScavioError {
     this.responseBody = responseBody;
   }
 }
+
+/**
+ * A crawl or batch started with `{ wait: true }` did not finish within
+ * `waitTimeout`. The job is still running: poll it with `jobId`, or cancel it.
+ */
+export class ScavioJobTimeoutError extends ScavioError {
+  constructor(
+    public readonly jobType: "crawl" | "batch",
+    public readonly jobId: string,
+    public readonly statusUrl: string,
+    public readonly lastStatus: string,
+  ) {
+    super(
+      `${jobType} ${jobId} was still ${lastStatus} when the wait timed out. ` +
+        `It keeps running: poll extract.${jobType}Status("${jobId}") or cancel it.`,
+    );
+    this.name = "ScavioJobTimeoutError";
+  }
+}
