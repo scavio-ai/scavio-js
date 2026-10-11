@@ -92,7 +92,9 @@ export interface ExtractJobRequestOptions {
   /**
    * Sent as the `Idempotency-Key` header. Repeating the POST with the same
    * key within 24 hours returns the original job instead of starting a new
-   * one, so the SDK's automatic retries can never start a second job.
+   * one. When omitted, a random key is generated for this call and reused
+   * across its automatic retries, so a retried start can never begin a
+   * second, billed job. Pass your own to dedupe across calls or processes.
    */
   idempotencyKey?: string;
   /**
@@ -203,6 +205,15 @@ export interface ExtractJobStatusResponse {
   data: ExtractJobSummary & { results: ExtractJobResult[]; next_cursor: string | null };
 }
 
+/**
+ * What `{ wait: true }` returns: the finished job with every result, plus
+ * `created`, the 202 job handle (it carries `webhook_secret`, which is only
+ * ever returned on creation).
+ */
+export interface ExtractJobWaitResponse extends ExtractJobStatusResponse {
+  created: ExtractJobCreatedResponse["data"];
+}
+
 export interface ExtractJobSummaryResponse {
   data: ExtractJobSummary;
 }
@@ -218,6 +229,14 @@ const COLLECT_PAGE_SIZE = 100;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function randomUUID(): Promise<string> {
+  const g = globalThis as { crypto?: { randomUUID?: () => string } };
+  if (typeof g.crypto?.randomUUID === "function") return g.crypto.randomUUID();
+  // Node 18 without the global Web Crypto.
+  const nodeCrypto = (await import("node:crypto")) as unknown as { randomUUID: () => string };
+  return nodeCrypto.randomUUID();
 }
 
 /**
@@ -249,16 +268,16 @@ export class ExtractNamespace {
    * limits, each returned like Extract. robots.txt is always obeyed. Returns
    * the 202 job handle, or every result when `wait` is true.
    */
-  crawl(options: ExtractCrawlOptions, request: WaitOptions): Promise<ExtractJobStatusResponse>;
+  crawl(options: ExtractCrawlOptions, request: WaitOptions): Promise<ExtractJobWaitResponse>;
   crawl(options: ExtractCrawlOptions, request?: NoWaitOptions): Promise<ExtractJobCreatedResponse>;
   crawl(
     options: ExtractCrawlOptions,
     request?: ExtractJobRequestOptions,
-  ): Promise<ExtractJobCreatedResponse | ExtractJobStatusResponse>;
+  ): Promise<ExtractJobCreatedResponse | ExtractJobWaitResponse>;
   async crawl(
     options: ExtractCrawlOptions,
     request: ExtractJobRequestOptions = {},
-  ): Promise<ExtractJobCreatedResponse | ExtractJobStatusResponse> {
+  ): Promise<ExtractJobCreatedResponse | ExtractJobWaitResponse> {
     return this.start("crawl", options, request);
   }
 
@@ -280,16 +299,16 @@ export class ExtractNamespace {
    * URLs come back in `invalid_urls` and are never billed. Returns the 202
    * job handle, or every result (in input order) when `wait` is true.
    */
-  batch(options: ExtractBatchOptions, request: WaitOptions): Promise<ExtractJobStatusResponse>;
+  batch(options: ExtractBatchOptions, request: WaitOptions): Promise<ExtractJobWaitResponse>;
   batch(options: ExtractBatchOptions, request?: NoWaitOptions): Promise<ExtractJobCreatedResponse>;
   batch(
     options: ExtractBatchOptions,
     request?: ExtractJobRequestOptions,
-  ): Promise<ExtractJobCreatedResponse | ExtractJobStatusResponse>;
+  ): Promise<ExtractJobCreatedResponse | ExtractJobWaitResponse>;
   async batch(
     options: ExtractBatchOptions,
     request: ExtractJobRequestOptions = {},
-  ): Promise<ExtractJobCreatedResponse | ExtractJobStatusResponse> {
+  ): Promise<ExtractJobCreatedResponse | ExtractJobWaitResponse> {
     return this.start("batch", options, request);
   }
 
@@ -307,15 +326,18 @@ export class ExtractNamespace {
     type: JobType,
     body: object,
     request: ExtractJobRequestOptions,
-  ): Promise<ExtractJobCreatedResponse | ExtractJobStatusResponse> {
-    const headers = request.idempotencyKey ? { "Idempotency-Key": request.idempotencyKey } : undefined;
+  ): Promise<ExtractJobCreatedResponse | ExtractJobWaitResponse> {
+    // Always keyed: one key per logical call, reused by every retry of this
+    // POST, so a retried start returns the first job instead of a second one.
+    const headers = { "Idempotency-Key": request.idempotencyKey ?? (await randomUUID()) };
     const created = (await this.client._post(
       `/api/v1/extract/${type}`,
       body,
       headers,
     )) as unknown as ExtractJobCreatedResponse;
     if (!request.wait) return created;
-    return this.waitFor(type, created.data.id, created.data.status_url, request);
+    const done = await this.waitFor(type, created.data.id, created.data.status_url, request);
+    return { ...done, created: created.data };
   }
 
   private async status(

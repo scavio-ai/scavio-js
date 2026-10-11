@@ -7,6 +7,17 @@ function ok(body: unknown): Response {
   return { ok: true, status: 200, json: () => Promise.resolve(body) } as Response;
 }
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
+function fail(status: number): Response {
+  return {
+    ok: false,
+    status,
+    headers: new Headers({ "Retry-After": "0" }),
+    json: () => Promise.resolve({ error: "transient" }),
+  } as Response;
+}
+
 function call(i = 0): { url: string; init: RequestInit; headers: Record<string, string> } {
   const [url, init] = vi.mocked(fetch).mock.calls[i]!;
   return { url: url as string, init: init as RequestInit, headers: (init as RequestInit).headers as Record<string, string> };
@@ -94,7 +105,54 @@ describe("extract website operations", () => {
       format: "text",
       mode: "advanced",
     });
-    expect(c.headers["Idempotency-Key"]).toBeUndefined();
+    // No key given: one is generated, so retries cannot start a second job.
+    expect(c.headers["Idempotency-Key"]).toMatch(UUID);
+  });
+
+  it("each crawl call without a key gets its own generated key", async () => {
+    await client.extract.crawl({ url: "https://example.com" });
+    await client.extract.crawl({ url: "https://example.com" });
+    const a = call(0).headers["Idempotency-Key"];
+    const b = call(1).headers["Idempotency-Key"];
+    expect(a).toMatch(UUID);
+    expect(b).toMatch(UUID);
+    expect(a).not.toBe(b);
+  });
+
+  it("a retried crawl start sends the same generated key on every attempt", async () => {
+    const retrying = new Scavio({ apiKey: "sk_test", maxRequestsPerSecond: 50, maxRetries: 3 });
+    const f = vi.mocked(fetch);
+    f.mockReset();
+    f.mockResolvedValueOnce(fail(503))
+      .mockRejectedValueOnce(new TypeError("fetch failed"))
+      .mockResolvedValueOnce(fail(429))
+      .mockResolvedValueOnce(ok({ data: { id: "crawl_1", status: "queued" }, credits_used: 0 }));
+    const out = await retrying.extract.crawl({ url: "https://example.com" });
+    expect(out.data.id).toBe("crawl_1");
+    expect(f).toHaveBeenCalledTimes(4);
+    const keys = [0, 1, 2, 3].map((i) => call(i).headers["Idempotency-Key"]);
+    expect(keys[0]).toMatch(UUID);
+    expect(new Set(keys).size).toBe(1);
+  });
+
+  it("a retried batch start reuses the caller's key as-is on every attempt", async () => {
+    const retrying = new Scavio({ apiKey: "sk_test", maxRequestsPerSecond: 50, maxRetries: 2 });
+    const f = vi.mocked(fetch);
+    f.mockReset();
+    f.mockResolvedValueOnce(fail(502))
+      .mockResolvedValueOnce(ok({ data: { id: "batch_1", status: "queued" }, credits_used: 0 }));
+    await retrying.extract.batch({ urls: ["https://a.com"] }, { idempotencyKey: "mine-7" });
+    expect(f).toHaveBeenCalledTimes(2);
+    expect(call(0).headers["Idempotency-Key"]).toBe("mine-7");
+    expect(call(1).headers["Idempotency-Key"]).toBe("mine-7");
+  });
+
+  it("plain extract and map send no Idempotency-Key", async () => {
+    await client.extract({ url: "https://example.com" });
+    await client.extract.map({ url: "https://example.com" });
+    expect(call(0).url).toBe(`${BASE}/api/v1/extract`);
+    expect(call(0).headers["Idempotency-Key"]).toBeUndefined();
+    expect(call(1).headers["Idempotency-Key"]).toBeUndefined();
   });
 
   it("crawl sends idempotencyKey as the Idempotency-Key header, not in the body", async () => {
@@ -159,7 +217,9 @@ describe("extract website operations", () => {
   it("wait: polls until finished and collects every result page", async () => {
     const f = vi.mocked(fetch);
     f.mockReset();
-    f.mockResolvedValueOnce(ok({ data: { id: "crawl_1", status: "queued", status_url: "u" }, credits_used: 0 }))
+    f.mockResolvedValueOnce(
+      ok({ data: { id: "crawl_1", status: "queued", status_url: "u", webhook_secret: "whsec_1" }, credits_used: 0 }),
+    )
       .mockResolvedValueOnce(ok({ data: { ...summary("running"), results: [], next_cursor: null } }))
       .mockResolvedValueOnce(ok({ data: { ...summary("completed"), results: [], next_cursor: "1" } }))
       .mockResolvedValueOnce(ok({ data: { ...summary("completed"), results: [result("https://example.com/a")], next_cursor: "1" } }))
@@ -169,6 +229,9 @@ describe("extract website operations", () => {
     expect(out.data.status).toBe("completed");
     expect(out.data.next_cursor).toBeNull();
     expect(out.data.results.map((r) => r.url)).toEqual(["https://example.com/a", "https://example.com/b"]);
+    // The 202 handle rides along, as in the Python SDK, so webhook_secret is not lost.
+    expect(out.created.id).toBe("crawl_1");
+    expect(out.created.webhook_secret).toBe("whsec_1");
     expect(call(1).url).toBe(`${BASE}/api/v1/extract/crawl/crawl_1?limit=1&include_content=false`);
     expect(call(3).url).toBe(`${BASE}/api/v1/extract/crawl/crawl_1?limit=100`);
     expect(call(4).url).toBe(`${BASE}/api/v1/extract/crawl/crawl_1?cursor=1&limit=100`);

@@ -126,7 +126,7 @@ map.data.truncated;   // true when more URLs exist than `limit`
 // Crawl: start a job, then poll it (polling and cancelling are free).
 const job = await client.extract.crawl(
   { url: "https://example.com/docs", max_pages: 50, max_depth: 3, format: "markdown" },
-  { idempotencyKey: "docs-crawl-2026-10-12" }, // optional, sent as Idempotency-Key
+  { idempotencyKey: "docs-crawl-2026-10-12" }, // optional; one is generated when omitted
 );
 job.data.id;          // "crawl_..."
 job.data.status_url;
@@ -185,16 +185,21 @@ call. Results are kept for 3 days after the job finishes (`expires_at`), up to
 **`wait: true`.** `crawl()` and `batch()` poll the status endpoint every
 `pollInterval` ms (default 2,000) until the job is completed, failed or
 cancelled, then page through every cursor and return
-`{ data: { ...summary, results: [all], next_cursor: null } }`. If the job is
+`{ data: { ...summary, results: [all], next_cursor: null }, created: {...} }`,
+where `created` is the 202 job handle (including `webhook_secret`, which is
+only returned on creation), as in the Python SDK (since 0.23.1). If the job is
 still running after `waitTimeout` ms (default 10 minutes) they throw
 `ScavioJobTimeoutError`; the job keeps running and the error carries
 `jobId`, `jobType` and `statusUrl` so you can keep polling or cancel it. For
 big crawls, prefer a webhook or your own polling loop.
 
-**Retries and idempotency.** The SDK retries 429/5xx and network errors. Pass
-`idempotencyKey` when starting a job: repeating a POST with the same key within
-24 hours returns the original job, so a retried request never starts a second
-one.
+**Retries and idempotency.** The SDK retries 429/5xx and network errors.
+`crawl()` and `batch()` always send an `Idempotency-Key`: yours when you pass
+`idempotencyKey`, otherwise a random UUID generated for that call and reused on
+every retry of it (since 0.23.1). Repeating a POST with the same key within 24
+hours returns the original job, so a retried start never begins a second,
+billed one. Pass your own key to dedupe across calls or processes. Plain
+`extract()` and `map()` are not jobs and send no key.
 
 #### Completion webhooks
 

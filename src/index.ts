@@ -37,6 +37,7 @@ export type {
   ExtractJobSummary,
   ExtractJobResult,
   ExtractJobStatusResponse,
+  ExtractJobWaitResponse,
   ExtractJobSummaryResponse,
 } from "./namespaces/extract.js";
 
