@@ -1,11 +1,10 @@
 # Scavio
 
-TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time web scraping
-and data extraction across 36 platforms on one API key, plus `extract()` to read
+TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
+data across 36 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown.
 
-Structured JSON in, structured JSON out. No proxies, no headless browsers, no
-per-site parsers to maintain.
+Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **E-commerce** — Amazon, Walmart, Costco, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
@@ -93,11 +92,11 @@ Credits depend on `mode`, not on a flat per-call price: `normal` costs 1,
 `advanced` costs 1, `ultra` costs 2. Billing happens only on a successful
 extraction — a dead link, bot wall or timeout costs nothing.
 
-- `normal` is a plain datacenter fetch. Start here.
-- `advanced` renders the page in a headless browser. Use it when the content is
-  built client-side.
-- `ultra` goes through residential IPs. Use it only when a bot wall blocks the
-  other two.
+- `normal` is the default. Start here.
+- `advanced` renders the page's JavaScript. Use it when the content is built
+  client-side.
+- `ultra` is the hardest-page tier. Use it only when a page blocks the other
+  two.
 
 `html` is the raw page. `markdown` is a readability extraction with the
 boilerplate stripped. `text` is that markdown flattened to plain text. URLs are
@@ -169,8 +168,8 @@ silently does nothing.
 
 #### Amazon changed in 0.12.0 (breaking)
 
-Amazon moved to a new upstream and the API now returns a normalized shape
-instead of the previous raw provider payload.
+The Amazon API now returns a normalized shape instead of the previous raw
+payload.
 
 - `search` returns `{query, page, total_results, total_results_text, count, products[], filters[], related_searches[]}`.
   Each product is `{asin, title, url, image, price, currency, rating, reviews_count, is_sponsored, position, badge, sales_volume, delivery{is_free, date, fastest_date}}`.
@@ -308,12 +307,12 @@ warehouses on us and 2 per warehouse on ca). The clearance price codes are the
 member-community decode of Costco shelf prices; Costco does not publish them,
 and only items Costco lists online are covered.
 
-### Mercado Libre
+### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
 Five endpoints, new in 0.21.0: `reviews` costs 1 credit, the other four 2. The
 `best-sellers` endpoint is `bestSellers()`. Mexico (`mx`), Brazil (`br`,
 Mercado Livre), Argentina (`ar`) and Colombia (`co`); prices come back in MXN,
-BRL, ARS or COP. Chile is not supported.
+BRL, ARS or COP. Chile is not supported. Docs: [search](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [product](https://scavio.dev/docs/mercadolibre-product?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [reviews](https://scavio.dev/docs/mercadolibre-reviews?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [questions](https://scavio.dev/docs/mercadolibre-questions?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), [best sellers](https://scavio.dev/docs/mercadolibre-best-sellers?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme); overview at the [Mercado Libre API](https://scavio.dev/mercadolibre-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) page.
 
 ```typescript
 // Keyword search: about 48 rows per page, up to 42 pages.
@@ -410,7 +409,7 @@ await client.youtube.channelResolve({ channel: "@mkbhd" }); // handle/URL -> id
 Every Reddit endpoint costs 1 credit.
 
 `search()` takes only `query` and `cursor` — there is no result-type or sort
-filter upstream, so anything else is dropped server-side. It returns
+filter, so anything else is dropped server-side. It returns
 `data.results` with `next_cursor` and `has_more`. `post()` returns a flat post
 object under `data` and carries no comments; use `postComments()` for those.
 The subreddit and user feeds return `data.posts`.
@@ -496,9 +495,9 @@ Credit cost varies by endpoint: `job` costs 30; `personPosts`, `companyPosts`,
 `searchJobs` and `postComments` cost 10 per page; `person`, `personAbout`,
 `company` and `post` cost 1.
 
-> **Retired endpoints.** The upstream provider withdrew the datasets behind
-> `personContact`, `companyPeople`, `companyJobs`, `searchPeople` and
-> `searchPosts`. They remain callable but always return HTTP 410 and are never
+> **Retired endpoints.** The LinkedIn data behind `personContact`,
+> `companyPeople`, `companyJobs`, `searchPeople` and `searchPosts` is no longer
+> available. They remain callable but always return HTTP 410 and are never
 > billed. `company()` returns `featured_employees` (a small sample of staff), and
 > `searchJobs()` with a company name substitutes for `companyJobs()`.
 
@@ -549,7 +548,7 @@ await client.tiktok.userFollowings({ sec_user_id: "abc123" });
 Every TikTok Shop endpoint costs 1 credit. Two limits to design around:
 
 - `product()` resolves only about 44% of the product ids returned by `search()`.
-  Upstream has no detail data for the rest, so an HTTP 404 is a normal outcome, not an
+  TikTok Shop has no detail data for the rest, so an HTTP 404 is a normal outcome, not an
   error — skip the item instead of retrying. Search to product is not a reliable
   pipeline. `product()` **throws** `NotFoundError` on that 404 (there is no `data`
   field in the body to test), so a loop over search ids must catch it:
@@ -561,7 +560,7 @@ Every TikTok Shop endpoint costs 1 credit. Two limits to design around:
     try {
       const detail = await client.tiktokShop.product({ product_id: productId });
     } catch (e) {
-      if (e instanceof NotFoundError) continue; // no detail upstream; skip
+      if (e instanceof NotFoundError) continue; // no detail data; skip
       throw e;
     }
   }
@@ -570,7 +569,7 @@ Every TikTok Shop endpoint costs 1 credit. Two limits to design around:
   `productReviews()` often works for ids `product()` cannot resolve: of 8 such ids
   tested, 8 returned HTTP 200 and 7 carried at least one review, so it is a useful
   fallback source of product detail.
-- `product()` does not return a price; upstream masks it on the product page. Exact
+- `product()` does not return a price; TikTok masks it on the product page. Exact
   prices come from `search()`, `shopProducts()`, and `categoryProducts()`.
 
 ```typescript
@@ -613,9 +612,6 @@ Credit cost varies by endpoint, in three tiers:
 | 8 | `post`, `commentReplies` |
 | 10 | `profile`, `userReels`, `userTagged`, `userStories`, `postComments`, `searchUsers`, `searchHashtags`, `userFollowers`, `userFollowings` |
 
-The 10-credit endpoints run two upstream providers in parallel and bill both
-legs; the 8-credit ones have no fallback leg to hedge against.
-
 ```typescript
 // User profile
 await client.instagram.profile({ username: "instagram" });
@@ -647,8 +643,8 @@ await client.instagram.userFollowings({ username: "instagram" });
 ### Threads
 
 Six endpoints, and the credit cost is a function of the body: **2 credits when
-you address a user by `user_id`, 4 when you address them by `username`.** The
-upstream handle lookup is dead, so a handle buys a second call. Only `profile`,
+you address a user by `user_id`, 4 when you address them by `username`.** A
+handle needs an extra lookup, so it costs a second call. Only `profile`,
 `userPosts` and `userReplies` are username-keyed; `post`, `postComments` and
 `searchUsers` always cost 2.
 
@@ -856,8 +852,8 @@ await client.booking.reviews({ hotel: "the-independente" });
 1 credit per call. `checkin` and `checkout` must be sent together — Booking
 ignores a lone check-in and prices its own date range. `hotel` and `reviews`
 take dates for the same reason: Booking prices a stay, and the response echoes
-whichever dates were used. `currency` defaults to USD; without it Booking prices
-off the proxy exit and two identical requests disagree. A search with neither
+whichever dates were used. `currency` defaults to USD; without it Booking picks
+a currency itself and two identical requests can disagree. A search with neither
 `destination` nor `dest_id` returns Booking's homepage and still costs a credit.
 
 ### Airbnb
@@ -909,7 +905,7 @@ await client.yelp.reviews({ business_id: "...", page: 2 });  // page 2, not 1
 ```
 
 2 credits per call. `location` is effectively required — without it Yelp
-geolocates off the proxy exit and the same request answers about a different
+picks a location itself and the same request can answer about a different
 metro run to run. **Reviews page 1 is redundant**: it re-fetches the document
 `business()` already returned and costs another 2 credits, so start at page 2.
 Page size is fixed at 10 and a page past the last is a 404.
@@ -944,7 +940,7 @@ only exists inside Glassdoor's `/Overview/` URLs.
 const hits = await client.glassdoor.companies({ query: "Stripe" });
 const company = await client.glassdoor.company({ employer_id: "671932" });
 
-// Pass the URLs the company response returns - halves the upstream work
+// Pass the URLs the company response returns - saves a lookup
 await client.glassdoor.reviews({ url: company.reviews_url as string });
 await client.glassdoor.salaries({ url: company.salaries_url as string });
 ```
@@ -952,8 +948,8 @@ await client.glassdoor.salaries({ url: company.salaries_url as string });
 1 credit per call. Glassdoor's login wall caps `reviews` at **three reviews per
 response** — there is deliberately no `page` param; move the window with
 `category` and `employment_status` and read `filtered_review_count` to see how
-many match. Addressing `reviews` or `salaries` by `employer_id` costs two
-upstream fetches because the slugs are case-sensitive and must be read off the
+many match. Addressing `reviews` or `salaries` by `employer_id` needs an
+extra lookup because the slugs are case-sensitive and must be read off the
 profile, so prefer the `reviews_url` / `salaries_url` the company response hands
 back. These endpoints are slow and flaky by nature (company about 3-47s, reviews
 about 75s, salaries about 41s) — raise `timeout` and keep retries on.
@@ -997,9 +993,9 @@ await client.g2.product({ product_id: "notion" });
 await client.g2.reviews({ product_id: "notion", page: 2, company_size: "enterprise" });
 ```
 
-**5 credits per call — the most expensive platform in the SDK**, because g2.com
-bills 25 upstream credits per fetch. Retries are deliberately conservative for
-that reason, and a bot wall arrives as a billed 200 rather than an error. G2
+**5 credits per call — the most expensive platform in the SDK.** Retries are
+deliberately conservative for that reason, and a blocked page arrives as a
+billed 200 rather than an error. G2
 loads review text in a separate frame, so `product` carries no reviews — call
 `reviews`, which is also the only place with exact per-star counts, pros/cons by
 theme, and company-size / role / industry / region facets.
@@ -1080,9 +1076,9 @@ await client.sec.search({ query: "climate risk", form: "10-K" });
 ```
 
 1 credit per call, including `include_history: true`, which is the one call that
-can buy up to 10 upstream fetches. Both `cik` and `ticker` accept either
-spelling. XBRL concept tags are **case-sensitive** — `netincomeloss` is a 404
-upstream, so use `facts()` to see what a filer actually reports. EDGAR's
+can take up to 10 lookups. Both `cik` and `ticker` accept either
+spelling. XBRL concept tags are **case-sensitive** — `netincomeloss` is a 404,
+so use `facts()` to see what a filer actually reports. EDGAR's
 "recent" block is not a fixed window: a decade for a quiet filer, about a year
 for a prolific one.
 
@@ -1180,7 +1176,7 @@ All error classes:
 | `BadRequestError` | 400, 422 | Invalid request parameters |
 | `InvalidAPIKeyError` | 401 | Invalid API key |
 | `InsufficientCreditsError` | 402 | No credits remaining |
-| `NotFoundError` | 404 | No data upstream for that id (see TikTok Shop above) |
+| `NotFoundError` | 404 | No data for that id (see TikTok Shop above) |
 | `RateLimitError` | 429 | Rate limit exceeded |
 | `ScavioAPIError` | other | Catch-all (has `.statusCode`) |
 
@@ -1210,7 +1206,7 @@ MIT
 
 [Scavio](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) is a unified web data and
 [search API for AI agents](https://scavio.dev/search-api-for-ai-agents?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — one API
-key, structured JSON, no proxies or browser farms to run. It is a real-time
+key, structured JSON. It is a real-time
 [Tavily alternative](https://scavio.dev/alternatives/tavily?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) and
 [SerpAPI alternative](https://scavio.dev/alternatives/serpapi?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme), and with
 `extract()` it also covers the read-any-URL job people reach for Firecrawl to do.
