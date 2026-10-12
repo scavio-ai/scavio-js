@@ -10,8 +10,7 @@ import type { Scavio } from "../client.js";
 // prices a STAY, not a property. Omit them and you get prices for a two-night
 // window Booking chose; the response echoes whichever dates were used.
 //
-// `currency` defaults to USD in the transport. Without it Booking prices off
-// the proxy exit and two identical requests disagree.
+// `currency` defaults to USD in the transport. Without it Booking picks a currency itself and two identical requests can disagree.
 //
 // A search with neither `destination` nor `dest_id` would land on Booking's
 // HOMEPAGE - a billed request that returns nothing - so it is rejected at the
@@ -19,7 +18,7 @@ import type { Scavio } from "../client.js";
 // Booking silently ignores it on its own.
 //
 // Chain the `url` a search row returns into hotel() / reviews(). A bare page
-// slug with the wrong `country_code` is a real 404 that scrape.do BILLS.
+// slug with the wrong `country_code` is a real 404 and IS BILLED.
 
 export interface BookingSearchOptions {
   /**
@@ -105,7 +104,7 @@ export interface BookingSearchOptions {
   rooms?: number;
   /**
    * ISO 4217 currency, 3 letters (default "USD"). Leave it set - without a
-   * currency Booking prices off the proxy exit.
+   * currency Booking picks a currency itself.
    */
   currency?: string;
   [key: string]: unknown;

@@ -1,7 +1,7 @@
 import type { Scavio } from "../client.js";
 
-// Threads is body-priced. The upstream handle lookup is dead, so addressing a
-// user by `username` buys a second upstream call: 2 credits by `user_id`,
+// Threads is body-priced. Addressing a user by `username` buys a second
+// lookup: 2 credits by `user_id`,
 // 4 credits by `username`. Only profile, userPosts and userReplies are
 // username-keyed - post, postComments and searchUsers are always 2 credits.
 // Resolve a handle once with searchUsers() or profile(), keep the returned
@@ -10,7 +10,7 @@ import type { Scavio } from "../client.js";
 // There is NO Threads content search. Only people search exists
 // (searchUsers). Nothing here searches posts.
 //
-// Error codes differ from the scrape.do platforms: 404 when no user matches,
+// Error codes differ from most platforms: 404 when no user matches,
 // 422 when the identifier is missing or conflicting, 502 upstream. There is no
 // 400 and no 503.
 
@@ -22,7 +22,7 @@ export interface ThreadsProfileOptions {
   user_id?: string;
   /**
    * Handle without the leading @ (1-60 characters). Costs 2 extra credits
-   * because the id has to be resolved upstream first - prefer `user_id`.
+   * because the id has to be resolved first - prefer `user_id`.
    */
   username?: string;
   [key: string]: unknown;

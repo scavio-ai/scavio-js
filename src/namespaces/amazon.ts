@@ -1,9 +1,8 @@
 import type { Scavio } from "../client.js";
 
 /**
- * Amazon moved to a new upstream in 2026-07 and the API now returns a
- * normalized shape instead of the old raw provider payload. Nine options went
- * with the old provider: language, currency, device, sort_by, pages,
+ * The Amazon API changed in 2026-07 and now returns a normalized shape
+ * instead of the old raw payload. Nine options were removed: language, currency, device, sort_by, pages,
  * category_id, merchant_id, zip_code and autoselect_variant. They are removed
  * rather than kept as no-ops - notably `sort_by`, which the marketplace was
  * verified to ignore entirely (every sort value returned the same unordered

@@ -18,8 +18,7 @@ import type { Scavio } from "../client.js";
 //
 // EDGAR's "recent" filings block is not a fixed window - a decade for a quiet
 // filer, about a year for a prolific one. filings({ include_history: true })
-// reaches back further and is the one call that can buy up to 10 upstream
-// fetches while still costing ONE credit.
+// reaches back further and is the one call that can buy up to 10 lookups while still costing ONE credit.
 //
 // Full-text search coverage STARTS IN 2001, and `page` is capped at 100
 // (100 documents per page) because the index refuses a result window past
@@ -231,7 +230,7 @@ export class SECNamespace {
    * filer had more.
    *
    * Costs 1 credit - including with `include_history`, which is the one call
-   * that can buy more than one upstream fetch.
+   * that can buy more than one lookup.
    */
   async filings(
     options: SECFilingsOptions,

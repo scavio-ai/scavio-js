@@ -1,12 +1,10 @@
 import type { Scavio } from "../client.js";
 
 // Redfin is 1 credit flat on all three endpoints. property() and market()
-// read the property / region PAGE, whose inlined request cache replaces the
-// ~40 upstream calls the page itself made - which is why they cost the same
-// as search().
+// return the whole property / region page in one call, which is why they cost
+// the same as search().
 //
-// CITY NAMES ARE NOT ACCEPTED on `location`. Redfin's own name lookup is the
-// single path its edge blocks us from, so pass a redfin.com region URL
+// CITY NAMES ARE NOT ACCEPTED on `location`. Pass a redfin.com region URL
 // (/city/, /neighborhood/, /county/, /zipcode/), a bare 5-digit ZIP, or
 // `region_id` + `region_type` TOGETHER - the transport falls back to
 // `location` unless it has both halves.
@@ -183,9 +181,8 @@ export class RedfinNamespace {
    * houses, schools, climate risk, walkability and location scores, sun
    * exposure, monthly weather, permits, zoning, comparable sales and photos.
    *
-   * Reads the property PAGE, whose inlined request cache replaces the ~40
-   * upstream calls that page made - which is why it is the same price as
-   * search().
+   * Returns the whole property page in one call, which is why it is the same
+   * price as search().
    *
    * Costs 1 credit. Single response, no pagination.
    */

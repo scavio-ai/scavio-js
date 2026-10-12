@@ -16,8 +16,7 @@ import type { Scavio } from "../client.js";
 // / $2,238. The response flags this as `dates_are_defaulted`, so pass dates
 // whenever the price matters.
 //
-// `currency` defaults to USD in the transport; without it Airbnb prices off
-// the proxy exit and two identical requests disagree.
+// `currency` defaults to USD in the transport; without it Airbnb picks a currency itself and two identical requests can disagree.
 //
 // `room_type` and amenity NAMES are validated before the scrape, because an
 // unrecognised value makes Airbnb return the UNFILTERED set under a 200.
@@ -82,7 +81,7 @@ export interface AirbnbSearchOptions {
   amenities?: string;
   /**
    * ISO 4217 currency (default "USD"). Leave it set - without a currency
-   * Airbnb prices off the proxy exit.
+   * Airbnb picks a currency itself.
    */
   currency?: string;
   /**

@@ -1,7 +1,7 @@
 import type { Scavio } from "../client.js";
 
 // Capterra, the B2B software review site. 2 credits flat on all three
-// endpoints (a premium per-domain upstream table).
+// endpoints.
 //
 // SEARCH DOES NOT PAGINATE. Capterra fixes the result set at 20 and ?page=2
 // returns identical rows, so there is deliberately NO page param on search().

@@ -1,11 +1,10 @@
 import type { Scavio } from "../client.js";
 
 // G2, the B2B software review site. 5 credits flat on all three endpoints -
-// the only 5-credit platform we serve, because g2.com bills 25 upstream
-// credits per call with neither render nor super asked for.
+// the only 5-credit platform we serve.
 //
-// A BOT WALL OR HOLLOW SHELL ARRIVES AS A BILLED 502: the upstream fetch is a
-// real HTTP 200 that was charged in full, so the call is billed for a page we
+// A BOT WALL OR HOLLOW SHELL ARRIVES AS A BILLED 502: G2 answers with a
+// real HTTP 200, so the call is billed for a page we
 // could not parse. Retry policy is deliberately conservative for that reason -
 // do not wrap these calls in an aggressive retry loop of your own.
 //

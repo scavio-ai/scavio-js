@@ -1,14 +1,13 @@
 import type { Scavio } from "../client.js";
 
-// Yelp is 2 credits flat on all three endpoints - it sits on the premium
-// per-domain proxy table.
+// Yelp is 2 credits flat on all three endpoints - it is a premium-priced
+// platform.
 //
 // REVIEWS PAGE 1 IS REDUNDANT. business() already returns the first page of
 // reviews at no extra cost, and reviews({ page: 1 }) re-fetches the exact same
 // document for another 2 credits. Start at page 2.
 //
-// `location` is effectively REQUIRED on search: Yelp geolocates a
-// location-less search off the proxy exit, so the same request can answer
+// `location` is effectively REQUIRED on search: without it Yelp picks a location itself, so the same request can answer
 // about a different metro run to run.
 //
 // Yelp fixes the page size at 10 for both search and reviews, and a page past
@@ -30,8 +29,7 @@ export interface YelpSearchOptions {
   term?: string;
   /**
    * Where to search (1-200 characters), e.g. "Austin, TX". Effectively
-   * REQUIRED - without it Yelp geolocates off the proxy exit and the same
-   * request answers about a different metro run to run.
+   * REQUIRED - without it Yelp picks a location itself and the same request can answer about a different metro run to run.
    */
   location?: string;
   /** Result page, 1-indexed. Yelp fixes the page size at 10. */
@@ -106,7 +104,7 @@ export class YelpNamespace {
    * count.
    *
    * `term` + `location` or `url` is required, and `location` is effectively
-   * mandatory - Yelp geolocates a location-less search off the proxy exit.
+   * mandatory - without it Yelp picks a location itself.
    * Paged with `page`; the page size is fixed at 10.
    *
    * Costs 2 credits.

@@ -2,8 +2,7 @@ import type { Scavio } from "../client.js";
 
 // Target is 1 credit flat on all four endpoints.
 //
-// LATENCY, not price, is what to plan for: Target's own API refuses proxy
-// pools and is reached through a headless browser. Typical wall time is
+// LATENCY, not price, is what to plan for. Typical wall time is
 // ~4s for product, ~9s for search, ~37s for category and ~40s for reviews,
 // and a retried 502 has been seen at 105s. Raise the client `timeout` before
 // calling category() or reviews().
@@ -93,7 +92,7 @@ export class TargetNamespace {
    * Paged with `page` + `count` (1-28, default 24). `seller_id` and
    * `seller_name` are null on first-party rows, which means "sold by Target".
    *
-   * Costs 1 credit. Typically ~9s - it runs through a headless browser.
+   * Costs 1 credit. Typically ~9s.
    */
   async search(
     options: TargetSearchOptions,

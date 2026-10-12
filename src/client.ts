@@ -89,7 +89,7 @@ export interface ExtractOptions {
    *
    * - "normal": the standard fetch - 1 credit.
    * - "advanced": renders JavaScript, for JS-built pages - 1 credit.
-   * - "ultra": the hardest pages and bot walls - 2 credits.
+   * - "ultra": the hardest pages - 2 credits.
    */
   mode?: "normal" | "advanced" | "ultra";
   [key: string]: unknown;

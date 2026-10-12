@@ -1,7 +1,7 @@
 import type { Scavio } from "../client.js";
 
-// Home Depot is 2 credits flat on all three endpoints - it sits on the
-// premium per-domain proxy table, so it is the priciest of the retail
+// Home Depot is 2 credits flat on all three endpoints - it is a
+// premium-priced platform, so it is the priciest of the retail
 // namespaces.
 //
 // Search page size is FIXED at 12 with no way to change it. Paging is the

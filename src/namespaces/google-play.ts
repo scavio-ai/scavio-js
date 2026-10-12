@@ -1,7 +1,7 @@
 import type { Scavio } from "../client.js";
 
-// Google Play is 2 credits flat on all three endpoints. It sits on the premium
-// per-domain proxy table and is NOT priced like the `google` namespace, which
+// Google Play is 2 credits flat on all three endpoints. It is a premium-priced
+// platform and is NOT priced like the `google` namespace, which
 // is part of why it is a separate namespace.
 //
 // SEARCH HAS NO PAGINATION - Play serves one shelf of ~30 apps and there is no

@@ -1,9 +1,9 @@
 import type { Scavio } from "../client.js";
 
 /**
- * Google endpoints (scrape.do engine, /api/v2/google). A faithful passthrough
- * that returns Google's full response. Every endpoint costs 1 credit. Any
- * additional scrape.do parameter can be added to the options object.
+ * Google endpoints (/api/v2/google). A faithful passthrough that returns
+ * Google's full response. Every endpoint costs 1 credit. Any additional
+ * API parameter can be added to the options object.
  * See https://scavio.dev/docs/search-api.
  */
 

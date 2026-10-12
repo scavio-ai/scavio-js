@@ -7,8 +7,8 @@ import type { Scavio } from "../client.js";
 // companies() is the only way to get one from a company name.
 //
 // THEN CHAIN ON `url`. company() returns reviews_url and salaries_url; passing
-// those back as `url` halves the upstream work, because addressing reviews or
-// salaries by employer_id costs two upstream fetches (the /Reviews/ and
+// those back as `url` is faster, because addressing reviews or
+// salaries by employer_id costs two lookups (the /Reviews/ and
 // /Salary/ slugs are case-sensitive and have to be read off the profile
 // first). The customer price is 1 credit either way.
 //
@@ -54,7 +54,7 @@ export interface GlassdoorCompanyOptions {
 export interface GlassdoorReviewsOptions {
   /**
    * Glassdoor employer id as a STRING (1699, E1699 or IE1699). Either this or
-   * `url` is required. Addressing by employer_id costs two upstream fetches -
+   * `url` is required. Addressing by employer_id costs two lookups -
    * pass reviews_url from company() as `url` instead.
    */
   employer_id?: string;
@@ -88,7 +88,7 @@ export interface GlassdoorReviewsOptions {
 export interface GlassdoorSalariesOptions {
   /**
    * Glassdoor employer id as a STRING (1699, E1699 or IE1699). Either this or
-   * `url` is required. Addressing by employer_id costs two upstream fetches -
+   * `url` is required. Addressing by employer_id costs two lookups -
    * pass salaries_url from company() as `url` instead.
    */
   employer_id?: string;
@@ -134,7 +134,7 @@ export class GlassdoorNamespace {
    * server-rendered reviews, AND reviews_url / salaries_url.
    *
    * THE CHAINING ENDPOINT: pass reviews_url / salaries_url back as `url` on
-   * reviews() and salaries() to halve the upstream fetches. `employer_id` or
+   * reviews() and salaries() to halve the lookups. `employer_id` or
    * `url` is required - `company` is cosmetic and does not satisfy it.
    *
    * Costs 1 credit. Single response, no pagination. Typically ~3-47s.

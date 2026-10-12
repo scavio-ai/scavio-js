@@ -15,7 +15,7 @@ import type { Scavio } from "../client.js";
 // a metro.
 //
 // Search is 10 postings per page; company reviews are 20 per page. An unknown
-// job key or company slug is a real 404 that scrape.do BILLS.
+// job key or company slug is a real 404 and IS BILLED.
 
 export interface IndeedSearchOptions {
   /**
@@ -108,8 +108,7 @@ export class IndeedNamespace {
    * employment types, benefits, geocoded address, employer rating, applicant
    * count and the original ATS link.
    *
-   * Single response, no pagination. An unknown job key is a real 404 that
-   * scrape.do BILLS - take `job_id` from a search row.
+   * Single response, no pagination. An unknown job key is a real 404 and IS BILLED - take `job_id` from a search row.
    *
    * Costs 2 credits.
    */
@@ -124,8 +123,7 @@ export class IndeedNamespace {
    * approval, overall and per-category ratings, reported salaries, open roles
    * and locations.
    *
-   * Single response, no pagination. An unknown company slug is a real 404
-   * that scrape.do BILLS.
+   * Single response, no pagination. An unknown company slug is a real 404 and IS BILLED.
    *
    * Costs 2 credits.
    */

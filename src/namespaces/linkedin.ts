@@ -8,7 +8,7 @@ import type { Scavio } from "../client.js";
 // provider's 2026-07-31 release: list endpoints take an opaque `cursor` and
 // return `next_cursor`, and personPosts gained a `type` feed selector.
 //
-// Five endpoints have no upstream left and always return HTTP 410 unbilled:
+// Five endpoints are retired and always return HTTP 410 unbilled:
 // personContact, companyPeople, companyJobs, searchPeople, searchPosts. They are
 // kept so existing code fails loudly rather than with a TypeError.
 
@@ -43,7 +43,7 @@ export interface LinkedInCompanyPostsRequest extends LinkedInCompanyOptions {
 }
 
 // The person/company option shapes were reworked when the urn and count params
-// lost their upstream. These aliases keep the old type names importable so
+// were retired. These aliases keep the old type names importable so
 // existing TypeScript code still compiles.
 /** @deprecated Use {@link LinkedInPersonOptions}. */
 export type LinkedInPersonRefOptions = LinkedInPersonOptions;
@@ -83,20 +83,20 @@ export interface LinkedInPostCommentsOptions extends LinkedInPostOptions {
   page?: number;
 }
 
-/** @deprecated Retired upstream; always returns HTTP 410. */
+/** @deprecated Retired; always returns HTTP 410. */
 export interface LinkedInPersonContactOptions {
   username?: string;
   [key: string]: unknown;
 }
 
-/** @deprecated Retired upstream; always returns HTTP 410. */
+/** @deprecated Retired; always returns HTTP 410. */
 export interface LinkedInCompanyRefOptions {
   company_id?: string;
   company?: string;
   [key: string]: unknown;
 }
 
-/** @deprecated Retired upstream; always returns HTTP 410. */
+/** @deprecated Retired; always returns HTTP 410. */
 export interface LinkedInSearchPeopleOptions {
   search?: string;
   title?: string;
@@ -106,7 +106,7 @@ export interface LinkedInSearchPeopleOptions {
   [key: string]: unknown;
 }
 
-/** @deprecated Retired upstream; always returns HTTP 410. */
+/** @deprecated Retired; always returns HTTP 410. */
 export interface LinkedInSearchPostsOptions {
   search?: string;
   [key: string]: unknown;
@@ -185,7 +185,7 @@ export class LinkedInNamespace {
   }
 
   /**
-   * @deprecated Retired by the upstream provider. Always returns HTTP 410 and is
+   * @deprecated Retired. Always returns HTTP 410 and is
    * never billed.
    */
   async personContact(
@@ -195,7 +195,7 @@ export class LinkedInNamespace {
   }
 
   /**
-   * @deprecated Retired by the upstream provider. Always returns HTTP 410 and is
+   * @deprecated Retired. Always returns HTTP 410 and is
    * never billed. `company()` returns `featured_employees`, a small sample of
    * staff profiles.
    */
@@ -206,7 +206,7 @@ export class LinkedInNamespace {
   }
 
   /**
-   * @deprecated Retired by the upstream provider. Always returns HTTP 410 and is
+   * @deprecated Retired. Always returns HTTP 410 and is
    * never billed. Use `searchJobs()` with the company name as the search term.
    */
   async companyJobs(
@@ -216,7 +216,7 @@ export class LinkedInNamespace {
   }
 
   /**
-   * @deprecated Retired by the upstream provider. Always returns HTTP 410 and is
+   * @deprecated Retired. Always returns HTTP 410 and is
    * never billed.
    */
   async searchPeople(
@@ -226,7 +226,7 @@ export class LinkedInNamespace {
   }
 
   /**
-   * @deprecated Retired by the upstream provider. Always returns HTTP 410 and is
+   * @deprecated Retired. Always returns HTTP 410 and is
    * never billed.
    */
   async searchPosts(
