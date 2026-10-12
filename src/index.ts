@@ -194,6 +194,11 @@ export type {
   InstagramCommentRepliesOptions,
   InstagramSearchOptions,
   InstagramFollowOptions,
+  InstagramUserRefOptions,
+  InstagramHighlightStoriesOptions,
+  InstagramKeywordOptions,
+  InstagramMusicPostsOptions,
+  InstagramPostLikersOptions,
 } from "./namespaces/instagram.js";
 export type {
   XSearchOptions,

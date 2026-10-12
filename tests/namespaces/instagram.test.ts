@@ -175,6 +175,86 @@ describe("InstagramNamespace", () => {
     );
   });
 
+  it("userHighlights posts to /instagram/user/highlights", async () => {
+    await client.instagram.userHighlights({ username: "natgeo" });
+
+    expect(bodyOf()).toEqual({ username: "natgeo" });
+    expect(fetch).toHaveBeenCalledWith(
+      "https://api.scavio.dev/api/v1/instagram/user/highlights",
+      expect.objectContaining({ method: "POST" }),
+    );
+  });
+
+  it("highlightStories posts to /instagram/highlight/stories", async () => {
+    await client.instagram.highlightStories({ highlight_id: "highlight:18149897764550869" });
+
+    expect(bodyOf()).toEqual({ highlight_id: "highlight:18149897764550869" });
+    expect(fetch).toHaveBeenCalledWith(
+      "https://api.scavio.dev/api/v1/instagram/highlight/stories",
+      expect.objectContaining({ method: "POST" }),
+    );
+  });
+
+  it("searchReels posts to /instagram/search/reels", async () => {
+    await client.instagram.searchReels({ keyword: "latte art", cursor: "CUR" });
+
+    expect(bodyOf()).toEqual({ keyword: "latte art", cursor: "CUR" });
+    expect(fetch).toHaveBeenCalledWith(
+      "https://api.scavio.dev/api/v1/instagram/search/reels",
+      expect.objectContaining({ method: "POST" }),
+    );
+  });
+
+  it("searchMusic posts to /instagram/search/music", async () => {
+    await client.instagram.searchMusic({ keyword: "espresso" });
+
+    expect(bodyOf()).toEqual({ keyword: "espresso" });
+    expect(fetch).toHaveBeenCalledWith(
+      "https://api.scavio.dev/api/v1/instagram/search/music",
+      expect.objectContaining({ method: "POST" }),
+    );
+  });
+
+  it("musicPosts posts to /instagram/music/posts", async () => {
+    await client.instagram.musicPosts({ music_id: "1747512212697470", cursor: "MAX" });
+
+    expect(bodyOf()).toEqual({ music_id: "1747512212697470", cursor: "MAX" });
+    expect(fetch).toHaveBeenCalledWith(
+      "https://api.scavio.dev/api/v1/instagram/music/posts",
+      expect.objectContaining({ method: "POST" }),
+    );
+  });
+
+  it("searchLocations posts to /instagram/search/locations", async () => {
+    await client.instagram.searchLocations({ keyword: "central park" });
+
+    expect(bodyOf()).toEqual({ keyword: "central park" });
+    expect(fetch).toHaveBeenCalledWith(
+      "https://api.scavio.dev/api/v1/instagram/search/locations",
+      expect.objectContaining({ method: "POST" }),
+    );
+  });
+
+  it("userSimilar posts to /instagram/user/similar", async () => {
+    await client.instagram.userSimilar({ user_id: "2278169415" });
+
+    expect(bodyOf()).toEqual({ user_id: "2278169415" });
+    expect(fetch).toHaveBeenCalledWith(
+      "https://api.scavio.dev/api/v1/instagram/user/similar",
+      expect.objectContaining({ method: "POST" }),
+    );
+  });
+
+  it("postLikers posts to /instagram/post/likers", async () => {
+    await client.instagram.postLikers({ shortcode: "DeJ28eTxo4s" });
+
+    expect(bodyOf()).toEqual({ shortcode: "DeJ28eTxo4s" });
+    expect(fetch).toHaveBeenCalledWith(
+      "https://api.scavio.dev/api/v1/instagram/post/likers",
+      expect.objectContaining({ method: "POST" }),
+    );
+  });
+
   it("sends the API key as a bearer token", async () => {
     await client.instagram.profile({ username: "instagram" });
 

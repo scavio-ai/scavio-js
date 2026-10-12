@@ -785,13 +785,16 @@ await client.tiktokShop.resolve({ url: "https://vt.tiktok.com/ZT2AHoGsE/" });
 
 ### Instagram
 
-Credit cost varies by endpoint, in three tiers:
+20 endpoints. Typical credit cost per call:
 
 | Credits | Methods |
 |---|---|
-| 2 | `userPosts` |
-| 8 | `post`, `commentReplies` |
-| 10 | `profile`, `userReels`, `userTagged`, `userStories`, `postComments`, `searchUsers`, `searchHashtags`, `userFollowers`, `userFollowings` |
+| 1 | `profile`, `musicPosts` (per page), `userReels`, `userTagged` (2 the first time a username is looked up) |
+| 2 | `userPosts`, `userStories`, `post`, `postComments`, `commentReplies`, `searchUsers`, `searchHashtags`, `userFollowers`, `userFollowings`, `userHighlights`, `highlightStories`, `searchReels`, `searchMusic`, `searchLocations`, `userSimilar`, `postLikers` |
+| 8 | `searchUsers` / `searchHashtags` when a `cursor` is sent |
+
+A request can cost up to 10 when it needs extra work; `credits_used` in the
+response is the exact charge.
 
 ```typescript
 // User profile
@@ -802,23 +805,33 @@ await client.instagram.userPosts({ username: "instagram", count: 12 });
 await client.instagram.userReels({ username: "instagram" });
 await client.instagram.userTagged({ username: "instagram" });
 
-// User stories
+// User stories, highlights and the stories saved in one highlight
 await client.instagram.userStories({ username: "instagram" });
+await client.instagram.userHighlights({ username: "natgeo" });
+await client.instagram.highlightStories({ highlight_id: "highlight:18149897764550869" });
 
-// Post detail (by url, media_id, or shortcode)
+// Post detail (by url, media_id, or shortcode) and who liked it
 await client.instagram.post({ shortcode: "DUajw4YkorV" });
+await client.instagram.postLikers({ shortcode: "DUajw4YkorV" });
 
 // Post comments and replies
 await client.instagram.postComments({ shortcode: "DUajw4YkorV", sort_order: "newest" });
 await client.instagram.commentReplies({ media_id: "123", comment_id: "456" });
 
-// Search
+// Search users, hashtags, Reels and places
 await client.instagram.searchUsers({ keyword: "justin" });
 await client.instagram.searchHashtags({ keyword: "fashion" });
+await client.instagram.searchReels({ keyword: "latte art" });
+await client.instagram.searchLocations({ keyword: "central park" });
 
-// Followers / followings
+// Audio: find a track, then the Reels that use it
+await client.instagram.searchMusic({ keyword: "espresso" });
+await client.instagram.musicPosts({ music_id: "1747512212697470" });
+
+// Followers / followings / similar accounts
 await client.instagram.userFollowers({ username: "instagram", count: 50 });
 await client.instagram.userFollowings({ username: "instagram" });
+await client.instagram.userSimilar({ username: "mrbeast" });
 ```
 
 ### Threads
