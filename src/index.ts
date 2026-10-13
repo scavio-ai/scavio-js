@@ -80,6 +80,10 @@ export { MercadoLibreNamespace } from "./namespaces/mercadolibre.js";
 
 export type {
   GoogleSearchOptions,
+  GoogleCustomSearchOptions,
+  GoogleCustomSearchItem,
+  GoogleCustomSearchQuery,
+  GoogleCustomSearchResponse,
   GoogleAiModeOptions,
   GoogleMapsSearchOptions,
   GoogleMapsPlaceOptions,

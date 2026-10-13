@@ -124,4 +124,60 @@ describe("GoogleNamespace (v2)", () => {
       currency: "USD",
     });
   });
+
+  it("customSearch posts CSE wire names to /api/v1/google/customsearch", async () => {
+    await client.google.customSearch({
+      q: "cold brew",
+      num: 5,
+      start: 11,
+      site_search: "example.com",
+      site_search_filter: "e",
+      date_restrict: "m6",
+      exact_terms: "ratio",
+      exclude_terms: "starbucks",
+      or_terms: "pdf guide",
+      file_type: "pdf",
+      cx: "abc",
+    });
+    expect(fetch).toHaveBeenLastCalledWith(
+      "https://api.scavio.dev/api/v1/google/customsearch",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          q: "cold brew",
+          num: 5,
+          start: 11,
+          siteSearch: "example.com",
+          siteSearchFilter: "e",
+          dateRestrict: "m6",
+          exactTerms: "ratio",
+          excludeTerms: "starbucks",
+          orTerms: "pdf guide",
+          fileType: "pdf",
+          cx: "abc",
+        }),
+      }),
+    );
+  });
+
+  it("customSearch surfaces the Google error envelope message", async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: false,
+      status: 400,
+      headers: new Headers(),
+      json: () =>
+        Promise.resolve({
+          error: {
+            code: 400,
+            message: "Image search is not supported.",
+            errors: [{ message: "Image search is not supported.", domain: "global", reason: "invalid" }],
+            status: "INVALID_ARGUMENT",
+            details: { param: "searchType" },
+          },
+        }),
+    } as Response);
+    await expect(client.google.customSearch({ q: "cats", searchType: "image" })).rejects.toThrow(
+      /Image search is not supported/,
+    );
+  });
 });

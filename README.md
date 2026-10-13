@@ -261,6 +261,33 @@ await client.google.news({ query: "openai" });
 await client.google.trends({ query: "bitcoin" });
 ```
 
+#### Migrating from the Google Custom Search JSON API (new in 0.25.0)
+
+`google.customSearch` takes the Custom Search JSON API (`cse.list`) parameters and
+returns the same `customsearch#search` response: `items[]` with `title`, `link`,
+`snippet` and `displayLink`, `searchInformation.totalResults` and
+`queries.nextPage`, so code that parsed Custom Search results keeps working.
+Options are snake_case like the rest of this SDK and are sent as the CSE wire
+names (`site_search` -> `siteSearch`, `date_restrict` -> `dateRestrict`). 1 credit.
+
+```typescript
+const res = await client.google.customSearch({
+  q: "abortcontroller fetch timeout",
+  num: 5,
+  site_search: "stackoverflow.com", // enforced on the returned results
+  date_restrict: "y1",
+});
+for (const item of res.items ?? []) console.log(item.displayLink, item.title, item.link);
+const next = res.queries.nextPage?.[0]?.startIndex;
+```
+
+Not using this SDK? Keep your existing Custom Search code and change the host:
+`https://api.scavio.dev/customsearch/v1?key=YOUR_SCAVIO_KEY&q=...`. `cx` is
+accepted and ignored. Parameters that cannot be honoured (image search, `sort`,
+`rights`) throw `BadRequestError` instead of being silently dropped. For the full
+SERP (knowledge graph, AI overview, People Also Ask) use `google.search`.
+[Docs](https://scavio.dev/docs/google-custom-search-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
 ### Amazon
 
 Responses are normalized to a stable shape (see the breaking-change note

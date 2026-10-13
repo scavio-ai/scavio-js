@@ -347,12 +347,143 @@ export interface GoogleTrendingOptions {
   [key: string]: unknown;
 }
 
+export interface GoogleCustomSearchOptions {
+  /** Search query. */
+  q: string;
+  /** Accepted and echoed back; results come from the whole web. */
+  cx?: string;
+  /** Results to return, 1-10 (default 10). */
+  num?: number;
+  /** 1-based index of the first result (default 1); start + num <= 100. */
+  start?: number;
+  /** Country of the search (ISO 3166-1 alpha-2, e.g. 'us'). */
+  gl?: string;
+  /** UI language (e.g. 'en', 'zh-TW'). */
+  hl?: string;
+  /** Language restrict (e.g. 'lang_en'). */
+  lr?: string;
+  /** Country restrict, a single value (e.g. 'countryUS'). */
+  cr?: string;
+  /** SafeSearch (default 'off'). */
+  safe?: "active" | "off";
+  /** '0' turns off duplicate-content filtering. */
+  filter?: "0" | "1";
+  /** d[N], w[N], m[N] or y[N] (e.g. 'm6'). Sent as dateRestrict. */
+  date_restrict?: string;
+  /** Site to include or exclude (e.g. 'example.com'); enforced on results. Sent as siteSearch. */
+  site_search?: string;
+  /** 'i' include site_search (default), 'e' exclude it. Sent as siteSearchFilter. */
+  site_search_filter?: "i" | "e";
+  /** Phrase every result must contain. Sent as exactTerms. */
+  exact_terms?: string;
+  /** Word or phrase no result may contain. Sent as excludeTerms. */
+  exclude_terms?: string;
+  /** Space-separated terms; each result contains at least one. Sent as orTerms. */
+  or_terms?: string;
+  /** Extra terms ANDed onto the query. */
+  hq?: string;
+  /** File extension to restrict to (e.g. 'pdf'). Sent as fileType. */
+  file_type?: string;
+  /** Google domain to search (e.g. 'google.co.uk'). */
+  googlehost?: string;
+  /** Canonical location name (Scavio extension). */
+  location?: string;
+  /** Device to emulate (Scavio extension). */
+  device?: "desktop" | "mobile";
+  /** Disable spelling autocorrection when true (Scavio extension). */
+  nfpr?: boolean;
+  /** Skip the 24h result cache when true (Scavio extension). */
+  no_cache?: boolean;
+  [key: string]: unknown;
+}
+
+/** One result in the Custom Search JSON API format. */
+export interface GoogleCustomSearchItem {
+  kind: "customsearch#result";
+  title: string;
+  htmlTitle: string;
+  link: string;
+  displayLink: string;
+  snippet: string;
+  htmlSnippet: string;
+  formattedUrl: string;
+  htmlFormattedUrl: string;
+  pagemap?: { cse_thumbnail?: { src: string }[]; [key: string]: unknown };
+}
+
+/** queries.request / nextPage / previousPage entry. */
+export interface GoogleCustomSearchQuery {
+  title: string;
+  totalResults: string;
+  searchTerms: string;
+  count: number;
+  startIndex: number;
+  inputEncoding: string;
+  outputEncoding: string;
+  safe: string;
+  cx?: string;
+  [key: string]: unknown;
+}
+
+/** customsearch#search response, plus Scavio's billing object. */
+export interface GoogleCustomSearchResponse {
+  kind: "customsearch#search";
+  url: { type: string; template: string };
+  queries: {
+    request: GoogleCustomSearchQuery[];
+    nextPage?: GoogleCustomSearchQuery[];
+    previousPage?: GoogleCustomSearchQuery[];
+  };
+  searchInformation: {
+    searchTime: number;
+    formattedSearchTime: string;
+    totalResults: string;
+    formattedTotalResults: string;
+  };
+  /** Omitted when there are no results, as in the Custom Search JSON API. */
+  items?: GoogleCustomSearchItem[];
+  scavio: {
+    credits_used: number;
+    credits_remaining: number;
+    cached: boolean;
+    response_time: number;
+  };
+  [key: string]: unknown;
+}
+
+// snake_case SDK option -> Custom Search wire name.
+const CUSTOM_SEARCH_WIRE: Record<string, string> = {
+  date_restrict: "dateRestrict",
+  site_search: "siteSearch",
+  site_search_filter: "siteSearchFilter",
+  exact_terms: "exactTerms",
+  exclude_terms: "excludeTerms",
+  or_terms: "orTerms",
+  file_type: "fileType",
+};
+
 export class GoogleNamespace {
   constructor(private client: Scavio) {}
 
   /** Google SERP search (includes the AI Overview when Google returns one). */
   async search(options: GoogleSearchOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v2/google", options);
+  }
+
+  /**
+   * Google search in the Custom Search JSON API format: a drop-in for cse.list.
+   * Returns customsearch#search (items[], searchInformation, queries.nextPage)
+   * plus a scavio billing object, so CSE parsing code keeps working. For the
+   * full SERP (knowledge graph, AI overview, People Also Ask) use search().
+   * Unsupported CSE params (image search, sort, rights) throw BadRequestError.
+   * 1 credit.
+   */
+  async customSearch(options: GoogleCustomSearchOptions): Promise<GoogleCustomSearchResponse> {
+    const body: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(options)) {
+      body[CUSTOM_SEARCH_WIRE[key] ?? key] = value;
+    }
+    return (await this.client._post("/api/v1/google/customsearch", body)) as unknown as GoogleCustomSearchResponse;
   }
 
   /** Google AI Mode answer. */
