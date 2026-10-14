@@ -294,7 +294,7 @@ SERP (knowledge graph, AI overview, People Also Ask) use `google.search`.
 Send the prompt a buyer would ask and get the answer the assistant gives: the
 full Markdown answer, the pages it cites, the web searches it ran (ChatGPT) and
 the products it recommended. Both return the same shape under `data`, so one
-parser tracks which brands each assistant recommends. ChatGPT costs 1 credit and
+parser tracks which brands each assistant recommends. ChatGPT costs 2 credits and
 Gemini 5 credits per answered prompt; a failed prompt is not charged. Answers take 10-40 seconds, so both
 methods raise the request timeout to 120s when the client's is shorter.
 
