@@ -1,6 +1,6 @@
 import type { Scavio } from "../client.js";
 
-// ChatGPT: 1 endpoint, POST /api/v1/chatgpt/prompt, 5 credits per answered
+// ChatGPT: 1 endpoint, POST /api/v1/chatgpt/prompt, 1 credit per answered
 // prompt (a failed prompt is not charged). Answers take 10-40s, so the call
 // raises the request timeout to AI_PROMPT_TIMEOUT when the client's is shorter.
 
@@ -27,7 +27,7 @@ export class ChatgptNamespace {
    * answer, every page it cites (title, publisher, date), the web searches it
    * ran and the products it recommended. Built for AI visibility monitoring.
    *
-   * Costs 5 credits per answered prompt; failed prompts are not charged.
+   * Costs 1 credit per answered prompt; failed prompts are not charged.
    */
   async prompt(options: ChatgptPromptOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/chatgpt/prompt", options, undefined, AI_PROMPT_TIMEOUT);
