@@ -35,6 +35,8 @@ import { GoogleAdsNamespace } from "./namespaces/google-ads.js";
 import { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 import { CostcoNamespace } from "./namespaces/costco.js";
 import { TrustpilotNamespace } from "./namespaces/trustpilot.js";
+import { ChatgptNamespace } from "./namespaces/chatgpt.js";
+import { GeminiNamespace } from "./namespaces/gemini.js";
 import { RealtorNamespace } from "./namespaces/realtor.js";
 import { RightmoveNamespace } from "./namespaces/rightmove.js";
 import { MercadoLibreNamespace } from "./namespaces/mercadolibre.js";
@@ -180,6 +182,8 @@ export class Scavio extends ScavioCore {
   readonly metaAds: MetaAdsNamespace;
   readonly costco: CostcoNamespace;
   readonly trustpilot: TrustpilotNamespace;
+  readonly chatgpt: ChatgptNamespace;
+  readonly gemini: GeminiNamespace;
   readonly realtor: RealtorNamespace;
   readonly rightmove: RightmoveNamespace;
   readonly mercadolibre: MercadoLibreNamespace;
@@ -242,6 +246,8 @@ export class Scavio extends ScavioCore {
     this.metaAds = new MetaAdsNamespace(this);
     this.costco = new CostcoNamespace(this);
     this.trustpilot = new TrustpilotNamespace(this);
+    this.chatgpt = new ChatgptNamespace(this);
+    this.gemini = new GeminiNamespace(this);
     this.realtor = new RealtorNamespace(this);
     this.rightmove = new RightmoveNamespace(this);
     this.mercadolibre = new MercadoLibreNamespace(this);
@@ -263,13 +269,15 @@ export class Scavio extends ScavioCore {
     path: string,
     body: object,
     headers?: Record<string, string>,
+    /** Raise the timeout to at least this many ms for a slow endpoint; never lowers it. */
+    minTimeout?: number,
   ): Promise<Record<string, unknown>> {
     return request({
       method: "POST",
       path,
       apiKey: this.apiKey,
       baseUrl: this.baseUrl,
-      timeout: this.timeout,
+      timeout: Math.max(this.timeout, minTimeout ?? 0),
       maxRetries: this.maxRetries,
       rateLimiter: this.rateLimiter,
       body: body as Record<string, unknown>,

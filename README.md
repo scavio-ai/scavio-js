@@ -1,13 +1,14 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 36 platforms on one API key, plus `extract()` to read
+data across 38 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
 Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
+- **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
 - **E-commerce** — Amazon, Walmart, Costco, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
@@ -287,6 +288,36 @@ accepted and ignored. Parameters that cannot be honoured (image search, `sort`,
 `rights`) throw `BadRequestError` instead of being silently dropped. For the full
 SERP (knowledge graph, AI overview, People Also Ask) use `google.search`.
 [Docs](https://scavio.dev/docs/google-custom-search-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+### ChatGPT and Gemini (new in 0.26.0)
+
+Send the prompt a buyer would ask and get the answer the assistant gives: the
+full Markdown answer, the pages it cites, the web searches it ran (ChatGPT) and
+the products it recommended. Both return the same shape under `data`, so one
+parser tracks which brands each assistant recommends. 5 credits per answered
+prompt; a failed prompt is not charged. Answers take 10-40 seconds, so both
+methods raise the request timeout to 120s when the client's is shorter.
+
+```typescript
+const prompt = "What are the best CRM tools for small agencies?";
+
+const chatgpt = await client.chatgpt.prompt({ prompt, country: "us" });
+const gemini = await client.gemini.prompt({ prompt });
+
+for (const { data } of [chatgpt, gemini] as any[]) {
+  console.log(data.platform, "mentions HubSpot:", data.answer.markdown.includes("HubSpot"));
+  console.log("  cited:", data.sources.slice(0, 5).map((s: any) => s.url));
+  console.log("  products:", data.shopping.map((p: any) => p.title));
+}
+
+// ChatGPT also returns each source's title and publisher and the searches it ran.
+console.log((chatgpt as any).data.search_queries);
+```
+
+Options: `chatgpt.prompt({ prompt, model?, country?, include_html? })` (prompt up
+to 1024 characters) and `gemini.prompt({ prompt })` (up to 4000).
+[ChatGPT docs](https://scavio.dev/docs/chatgpt-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) |
+[Gemini docs](https://scavio.dev/docs/gemini-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
 ### Amazon
 

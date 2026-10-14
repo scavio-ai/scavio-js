@@ -74,6 +74,8 @@ export { GoogleAdsNamespace } from "./namespaces/google-ads.js";
 export { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 export { CostcoNamespace } from "./namespaces/costco.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
+export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
+export { GeminiNamespace } from "./namespaces/gemini.js";
 export { RealtorNamespace } from "./namespaces/realtor.js";
 export { RightmoveNamespace } from "./namespaces/rightmove.js";
 export { MercadoLibreNamespace } from "./namespaces/mercadolibre.js";
@@ -437,3 +439,5 @@ export type {
   MercadoLibreQuestionsOptions,
   MercadoLibreBestSellersOptions,
 } from "./namespaces/mercadolibre.js";
+export type { ChatgptPromptOptions } from "./namespaces/chatgpt.js";
+export type { GeminiPromptOptions } from "./namespaces/gemini.js";
