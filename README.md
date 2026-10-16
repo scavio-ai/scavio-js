@@ -534,7 +534,9 @@ await client.mercadolibre.bestSellers({ country: "mx", category_id: "MLM1055" })
 A query reaches about 2,000 results (42 pages of 48), so slice by price range,
 condition or seller to go further. Units sold are lower bounds
 (`sold_quantity_min`, e.g. "+1000 vendidos"), not exact counts, and sort is
-relevance or price only. Mercado Libre may narrow a query to a category, brand
+relevance or price only. Search rows carry `brand`, `rating` and `review_count`
+for organic listings; most sponsored rows return `review_count: null`.
+Mercado Libre may narrow a query to a category, brand
 or line on its own, and Brazil and Argentina may auto-apply a "new" condition;
 `auto_applied_filters` lists what it applied. `product` returns only the
 buy-box seller. Reviews translated into the site's language keep
