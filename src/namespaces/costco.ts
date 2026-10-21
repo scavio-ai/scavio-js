@@ -11,7 +11,8 @@ import type { Scavio } from "../client.js";
 // warehouse_id on search, category or deals adds that warehouse's in-store
 // price, stock status and price code to every result.
 //
-// Most endpoints cost 1 credit. The multi-warehouse ones scale with the body:
+// Most endpoints cost 1 credit; US search, category, deals and clearance cost 2.
+// The multi-warehouse ones scale with the body:
 // prices (2 credits at 10 warehouses), availability (1 per 5 warehouses),
 // warehouses (2 with country "ca") and gas (2 by location on ca; by
 // warehouse_ids, 1 per 5 on us and 2 per warehouse on ca).
@@ -208,7 +209,7 @@ export class CostcoNamespace {
    * `warehouse_id` to add that warehouse's in-store price and stock to every
    * result.
    *
-   * Costs 1 credit.
+   * Costs 2 credits for the US, 1 elsewhere.
    */
   async search(options: CostcoSearchOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/costco/search", options);
@@ -218,7 +219,7 @@ export class CostcoNamespace {
    * Products in a Costco category, with the same sort, filters and
    * per-warehouse pricing as search().
    *
-   * Costs 1 credit.
+   * Costs 2 credits for the US, 1 for Canada.
    */
   async category(options: CostcoCategoryOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/costco/category", options);
@@ -314,7 +315,7 @@ export class CostcoNamespace {
    * favorites, online-only and everything on sale, with the same filters and
    * optional per-warehouse pricing as search().
    *
-   * Costs 1 credit.
+   * Costs 2 credits for the US, 1 for Canada.
    */
   async deals(options: CostcoDealsOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/costco/deals", options);
@@ -327,7 +328,7 @@ export class CostcoNamespace {
    * buys on request. The codes are the member-community decode; Costco does
    * not publish them. Only items Costco lists online are covered.
    *
-   * Costs 1 credit.
+   * Costs 2 credits for the US (any `pages` value), 1 for Canada.
    */
   async clearance(options: CostcoClearanceOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/costco/clearance", options);
