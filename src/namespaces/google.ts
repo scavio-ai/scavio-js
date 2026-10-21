@@ -22,7 +22,11 @@ export interface GoogleSearchOptions {
   gl?: string;
   /** Regional Google domain (e.g. 'google.co.uk'). */
   google_domain?: string;
-  /** Canonical location name; auto-encoded to a UULE string. */
+  /**
+   * Canonical location name; auto-encoded to a UULE string. On the standard
+   * results page it currently localizes the local pack only; set web_only for
+   * organic results localized to this location.
+   */
   location?: string;
   /** Pre-encoded UULE location string (takes priority over location). */
   uule?: string;
@@ -45,6 +49,11 @@ export interface GoogleSearchOptions {
     | "last_year";
   /** Resolve a deferred AI Overview (server default true). */
   resolve_ai_overview?: boolean;
+  /**
+   * Return Google's Web results only: organic results localized to location,
+   * with no local pack, ads, related questions, knowledge graph or AI Overview.
+   */
+  web_only?: boolean;
   [key: string]: unknown;
 }
 

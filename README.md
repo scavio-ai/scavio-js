@@ -252,6 +252,15 @@ await client.google.search({
   device: "desktop",       // optional
 });
 
+// Organic rankings as seen from a city: web_only returns Google's Web results
+// (organic only, localized to location). For now the standard page localizes
+// only the local pack.
+await client.google.search({
+  query: "emergency plumber",
+  location: "Austin,Texas,United States",
+  web_only: true,
+});
+
 // Other Google surfaces
 await client.google.aiMode({ query: "how does rag work" });
 await client.google.mapsSearch({ query: "coffee near me" });
