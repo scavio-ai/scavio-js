@@ -1,6 +1,6 @@
 import type { Scavio } from "../client.js";
 
-// Target is 1 credit flat on all four endpoints.
+// Target is 1 credit flat on all five endpoints.
 //
 // LATENCY, not price, is what to plan for. Typical wall time is
 // ~4s for product, ~9s for search, ~37s for category and ~40s for reviews,
@@ -14,8 +14,8 @@ import type { Scavio } from "../client.js";
 // Target. Null there means "sold by Target", not missing data; only Target
 // Plus marketplace rows name a vendor.
 //
-// Unlike Walmart, `store_id` is a real request param here - prices and
-// availability are the caller's choice.
+// Unlike Walmart, `store_id` is a real request param here - prices are the
+// caller's choice. In-store stock comes from availability().
 
 export interface TargetSearchOptions {
   /** Search keywords (1-500 characters). */
@@ -33,7 +33,7 @@ export interface TargetSearchOptions {
     | "rating_high"
     | "best_seller"
     | "newest";
-  /** Numeric Target store id used for pricing and availability (default "3991"). */
+  /** Numeric Target store id used for pricing (default "3991"). */
   store_id?: string;
   [key: string]: unknown;
 }
@@ -54,7 +54,7 @@ export interface TargetCategoryOptions {
     | "rating_high"
     | "best_seller"
     | "newest";
-  /** Numeric Target store id used for pricing and availability (default "3991"). */
+  /** Numeric Target store id used for pricing (default "3991"). */
   store_id?: string;
   [key: string]: unknown;
 }
@@ -65,7 +65,7 @@ export interface TargetProductOptions {
    * child itself present in `variants`.
    */
   tcin: string;
-  /** Numeric Target store id used for pricing and availability (default "3991"). */
+  /** Numeric Target store id used for pricing (default "3991"). */
   store_id?: string;
   [key: string]: unknown;
 }
@@ -78,7 +78,19 @@ export interface TargetReviewsOptions {
    * and offers no paging, so this cannot reach a 9th review.
    */
   limit?: number;
-  /** Numeric Target store id used for pricing and availability (default "3991"). */
+  /** Numeric Target store id used for pricing (default "3991"). */
+  store_id?: string;
+  [key: string]: unknown;
+}
+
+export interface TargetAvailabilityOptions {
+  /** Target TCIN. */
+  tcin: string;
+  /** 5-digit US ZIP code to search around. */
+  zip: string;
+  /** Search radius in miles, 1-100 (default 25). */
+  radius?: number;
+  /** Return only this Target store id; it must be within radius of zip. */
   store_id?: string;
   [key: string]: unknown;
 }
@@ -119,8 +131,8 @@ export class TargetNamespace {
    * Target product details by TCIN: price, rating, images, specifications,
    * variants, return policy and fulfillment.
    *
-   * `store_id` is a real request param here - the price and availability you
-   * get back are the store you asked for.
+   * `store_id` is a real request param here - the price you get back is the
+   * store you asked for. For in-store stock use availability().
    *
    * Costs 1 credit. Typically ~4s. Single response, no pagination.
    */
@@ -144,5 +156,18 @@ export class TargetNamespace {
     options: TargetReviewsOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/target/reviews", options);
+  }
+
+  /**
+   * In-store stock for one product at every Target store near a ZIP: units,
+   * in-store, pickup, curbside and ship-to-store status, distance, address and
+   * hours. Up to 20 stores; `store_id` narrows to one.
+   *
+   * Costs 1 credit. Typically ~3s.
+   */
+  async availability(
+    options: TargetAvailabilityOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/target/availability", options);
   }
 }

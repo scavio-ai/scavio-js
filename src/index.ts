@@ -269,6 +269,7 @@ export type {
   TargetCategoryOptions,
   TargetProductOptions,
   TargetReviewsOptions,
+  TargetAvailabilityOptions,
 } from "./namespaces/target.js";
 export type {
   HomeDepotSearchOptions,

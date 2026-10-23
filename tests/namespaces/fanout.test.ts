@@ -46,6 +46,7 @@ const ENDPOINTS: Row[] = [
   ["target", "category", { category_id: "x1" }, "/api/v1/target/category"],
   ["target", "product", { tcin: "x1" }, "/api/v1/target/product"],
   ["target", "reviews", { tcin: "x1" }, "/api/v1/target/reviews"],
+  ["target", "availability", { tcin: "x1", zip: "79407" }, "/api/v1/target/availability"],
   ["homeDepot", "search", { query: "x1" }, "/api/v1/homedepot/search"],
   ["homeDepot", "product", { item_id: "x1" }, "/api/v1/homedepot/product"],
   ["homeDepot", "reviews", { item_id: "x1" }, "/api/v1/homedepot/reviews"],
@@ -123,7 +124,7 @@ describe("fanout namespaces", () => {
   });
 
   it("covers every fanout endpoint", () => {
-    expect(ENDPOINTS).toHaveLength(92);
+    expect(ENDPOINTS).toHaveLength(93);
   });
 
   for (const [ns, method, args, path] of ENDPOINTS) {

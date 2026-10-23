@@ -967,7 +967,14 @@ await client.target.search({ keyword: "office chair", store_id: "1234" });
 await client.target.category({ category_id: "5xtg6" });
 await client.target.product({ tcin: "82291396" });
 await client.target.reviews({ tcin: "82291396" });
+// In-store stock at every Target near a ZIP (new in 0.27.0)
+await client.target.availability({ tcin: "85978609", zip: "79407" });
 ```
+
+`store_id` on search, category, product and reviews sets the store for prices.
+`availability` is the in-store stock call: per store it returns units,
+in-store, pickup, curbside and ship-to-store status, distance, address and hours
+(up to 20 stores; pass `store_id` to keep one). About 3s.
 
 1 credit per call, but these are the slowest endpoints in the SDK: product about
 4s, search about 9s, category about 37s, reviews about 40s. Raise `timeout`
