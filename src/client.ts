@@ -34,6 +34,8 @@ import { CompaniesHouseNamespace } from "./namespaces/companies-house.js";
 import { GoogleAdsNamespace } from "./namespaces/google-ads.js";
 import { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 import { CostcoNamespace } from "./namespaces/costco.js";
+import { HebNamespace } from "./namespaces/heb.js";
+import { KrogerNamespace } from "./namespaces/kroger.js";
 import { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 import { ChatgptNamespace } from "./namespaces/chatgpt.js";
 import { GeminiNamespace } from "./namespaces/gemini.js";
@@ -181,6 +183,8 @@ export class Scavio extends ScavioCore {
   readonly googleAds: GoogleAdsNamespace;
   readonly metaAds: MetaAdsNamespace;
   readonly costco: CostcoNamespace;
+  readonly heb: HebNamespace;
+  readonly kroger: KrogerNamespace;
   readonly trustpilot: TrustpilotNamespace;
   readonly chatgpt: ChatgptNamespace;
   readonly gemini: GeminiNamespace;
@@ -245,6 +249,8 @@ export class Scavio extends ScavioCore {
     this.googleAds = new GoogleAdsNamespace(this);
     this.metaAds = new MetaAdsNamespace(this);
     this.costco = new CostcoNamespace(this);
+    this.heb = new HebNamespace(this);
+    this.kroger = new KrogerNamespace(this);
     this.trustpilot = new TrustpilotNamespace(this);
     this.chatgpt = new ChatgptNamespace(this);
     this.gemini = new GeminiNamespace(this);

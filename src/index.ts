@@ -73,6 +73,8 @@ export { CompaniesHouseNamespace } from "./namespaces/companies-house.js";
 export { GoogleAdsNamespace } from "./namespaces/google-ads.js";
 export { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 export { CostcoNamespace } from "./namespaces/costco.js";
+export { HebNamespace } from "./namespaces/heb.js";
+export { KrogerNamespace } from "./namespaces/kroger.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -384,6 +386,15 @@ export type {
   CostcoClearanceOptions,
   CostcoAutocompleteOptions,
 } from "./namespaces/costco.js";
+export type {
+  HebSearchOptions,
+  HebProductOptions,
+  HebStoresOptions,
+} from "./namespaces/heb.js";
+export type {
+  KrogerSearchOptions,
+  KrogerProductOptions,
+} from "./namespaces/kroger.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,
