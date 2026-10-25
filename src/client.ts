@@ -36,6 +36,7 @@ import { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 import { CostcoNamespace } from "./namespaces/costco.js";
 import { HebNamespace } from "./namespaces/heb.js";
 import { KrogerNamespace } from "./namespaces/kroger.js";
+import { DecathlonNamespace } from "./namespaces/decathlon.js";
 import { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 import { ChatgptNamespace } from "./namespaces/chatgpt.js";
 import { GeminiNamespace } from "./namespaces/gemini.js";
@@ -185,6 +186,7 @@ export class Scavio extends ScavioCore {
   readonly costco: CostcoNamespace;
   readonly heb: HebNamespace;
   readonly kroger: KrogerNamespace;
+  readonly decathlon: DecathlonNamespace;
   readonly trustpilot: TrustpilotNamespace;
   readonly chatgpt: ChatgptNamespace;
   readonly gemini: GeminiNamespace;
@@ -251,6 +253,7 @@ export class Scavio extends ScavioCore {
     this.costco = new CostcoNamespace(this);
     this.heb = new HebNamespace(this);
     this.kroger = new KrogerNamespace(this);
+    this.decathlon = new DecathlonNamespace(this);
     this.trustpilot = new TrustpilotNamespace(this);
     this.chatgpt = new ChatgptNamespace(this);
     this.gemini = new GeminiNamespace(this);
