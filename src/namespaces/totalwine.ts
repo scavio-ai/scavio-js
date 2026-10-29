@@ -1,6 +1,6 @@
 import type { Scavio } from "../client.js";
 
-// Total Wine & More: 3 endpoints, 2 credits each. Prices and stock are per
+// Total Wine & More: 3 endpoints, 10 credits each. Prices and stock are per
 // store, so store_id (store_id from stores()) is required on search() and
 // product(). A response is only returned when Total Wine answered for that
 // store.
@@ -42,7 +42,7 @@ export class TotalWineNamespace {
    * availability. When the store carries none of the matches, products is
    * empty and searched_all_stores is true.
    *
-   * Costs 2 credits.
+   * Costs 10 credits.
    */
   async search(options: TotalWineSearchOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/totalwine/search", options);
@@ -53,7 +53,7 @@ export class TotalWineNamespace {
    * bay, shelf, last restock date, ABV, taste profile, characteristics and
    * breadcrumbs. Pass product_id or product_url.
    *
-   * Costs 2 credits.
+   * Costs 10 credits.
    */
   async product(options: TotalWineProductOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/totalwine/product", options);
@@ -63,7 +63,7 @@ export class TotalWineNamespace {
    * Total Wine stores near a ZIP code or city, nearest first: store_id,
    * address, phone, coordinates, distance in miles and delivery availability.
    *
-   * Costs 2 credits.
+   * Costs 10 credits.
    */
   async stores(options: TotalWineStoresOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/totalwine/stores", options);

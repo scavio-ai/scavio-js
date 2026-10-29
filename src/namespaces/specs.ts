@@ -1,6 +1,6 @@
 import type { Scavio } from "../client.js";
 
-// Spec's Wines, Spirits & Finer Foods (Texas): 3 endpoints, 1 credit each.
+// Spec's Wines, Spirits & Finer Foods (Texas): 3 endpoints, 5 credits each.
 //
 // search() returns the online price. product() returns every store's price
 // and stock in store_prices (about 200 stores); store_id puts one store on top.
@@ -45,7 +45,7 @@ export class SpecsNamespace {
    * Search Spec's: online price (cents), case price and quantity, promo and
    * Keyclub flags, stock, size, SKU, UPC and slug.
    *
-   * Costs 1 credit.
+   * Costs 5 credits.
    */
   async search(options: SpecsSearchOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/specs/search", options);
@@ -56,7 +56,7 @@ export class SpecsNamespace {
    * the online price, and ABV, origin, region, vintage and tasting notes.
    * Pass slug or product_url.
    *
-   * Costs 1 credit.
+   * Costs 5 credits.
    */
   async product(options: SpecsProductOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/specs/product", options);
@@ -66,7 +66,7 @@ export class SpecsNamespace {
    * Spec's stores in a Texas region: store_id, name, status, address, phone,
    * coordinates and opening hours.
    *
-   * Costs 1 credit.
+   * Costs 5 credits.
    */
   async stores(options: SpecsStoresOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/specs/stores", options);
