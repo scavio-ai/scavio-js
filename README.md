@@ -1215,7 +1215,7 @@ await client.glassdoor.reviews({ url: company.reviews_url as string });
 await client.glassdoor.salaries({ url: company.salaries_url as string });
 ```
 
-1 credit per call. Glassdoor's login wall caps `reviews` at **three reviews per
+2 credits per call. Glassdoor's login wall caps `reviews` at **three reviews per
 response** — there is deliberately no `page` param; move the window with
 `category` and `employment_status` and read `filtered_review_count` to see how
 many match. Addressing `reviews` or `salaries` by `employer_id` needs an

@@ -1,6 +1,6 @@
 import type { Scavio } from "../client.js";
 
-// Glassdoor is 1 credit flat on all four endpoints.
+// Glassdoor is 2 credits flat on all four endpoints.
 //
 // START WITH companies(). company(), reviews() and salaries() all address an
 // employer_id that exists only inside Glassdoor's /Overview/ URLs, and
@@ -10,7 +10,7 @@ import type { Scavio } from "../client.js";
 // those back as `url` is faster, because addressing reviews or
 // salaries by employer_id costs two lookups (the /Reviews/ and
 // /Salary/ slugs are case-sensitive and have to be read off the profile
-// first). The customer price is 1 credit either way.
+// first). The customer price is 2 credits either way.
 //
 // reviews() IS CAPPED AT THREE REVIEWS per response by Glassdoor's login wall.
 // There is deliberately no `page` param - move the window with `category` and
@@ -19,10 +19,9 @@ import type { Scavio } from "../client.js";
 // `category` and `employment_status` are CLOSED enums because Glassdoor
 // ignores an unknown filter value and serves the unfiltered set under a 200.
 //
-// SLOW AND FLAKY: this domain needs a rendered fetch and the pool is degraded.
-// Per-call success is ~87%. Typical wall time is ~3-47s for company, ~75s for
-// reviews and ~41s for salaries, and a call that fails outright can take ~172s
-// before its 502. Raise the client `timeout` before using this namespace.
+// Typical wall time is a few seconds. A call that fails outright can take up to
+// two minutes before its 502, and reviews/salaries addressed by employer_id make
+// an extra lookup first, so keep a generous client `timeout` and retry 502/503.
 
 export interface GlassdoorCompaniesOptions {
   /** Company name to resolve (1-120 characters). */
@@ -119,7 +118,7 @@ export class GlassdoorNamespace {
    * only inside Glassdoor's /Overview/ URLs, so this lookup is the entry
    * point.
    *
-   * Costs 1 credit. Single response, no pagination.
+   * Costs 2 credits. Single response, no pagination.
    */
   async companies(
     options: GlassdoorCompaniesOptions,
@@ -137,7 +136,7 @@ export class GlassdoorNamespace {
    * reviews() and salaries() to halve the lookups. `employer_id` or
    * `url` is required - `company` is cosmetic and does not satisfy it.
    *
-   * Costs 1 credit. Single response, no pagination. Typically ~3-47s.
+   * Costs 2 credits. Single response, no pagination. Typically a few seconds.
    */
   async company(
     options: GlassdoorCompanyOptions,
@@ -157,7 +156,7 @@ export class GlassdoorNamespace {
    * filtered_review_count to see how many match; the aggregate statistics are
    * the full-population signal here, not the bodies.
    *
-   * `employer_id` or `url` is required. Costs 1 credit. Typically ~75s.
+   * `employer_id` or `url` is required. Costs 2 credits. Typically a few seconds.
    */
   async reviews(
     options: GlassdoorReviewsOptions,
@@ -174,7 +173,7 @@ export class GlassdoorNamespace {
    * salaries. Paged with `page` at 10 job titles per page; `page_count` on the
    * response is how many pages exist.
    *
-   * `employer_id` or `url` is required. Costs 1 credit. Typically ~41s.
+   * `employer_id` or `url` is required. Costs 2 credits. Typically a few seconds.
    */
   async salaries(
     options: GlassdoorSalariesOptions,
