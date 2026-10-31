@@ -75,6 +75,10 @@ export { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 export { CostcoNamespace } from "./namespaces/costco.js";
 export { HebNamespace } from "./namespaces/heb.js";
 export { KrogerNamespace } from "./namespaces/kroger.js";
+export { LowesNamespace } from "./namespaces/lowes.js";
+export { SamsClubNamespace } from "./namespaces/sams-club.js";
+export { CanadianTireNamespace } from "./namespaces/canadian-tire.js";
+export { DollarGeneralNamespace } from "./namespaces/dollar-general.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -395,6 +399,42 @@ export type {
   KrogerSearchOptions,
   KrogerProductOptions,
 } from "./namespaces/kroger.js";
+export type {
+  LowesReviewSort,
+  LowesSearchOptions,
+  LowesProductOptions,
+  LowesStoresOptions,
+  LowesReviewsOptions,
+} from "./namespaces/lowes.js";
+export type {
+  SamsClubSort,
+  SamsClubReviewSort,
+  SamsClubSearchOptions,
+  SamsClubProductOptions,
+  SamsClubClubsOptions,
+  SamsClubSavingsOptions,
+  SamsClubCategoryOptions,
+  SamsClubReviewsOptions,
+} from "./namespaces/sams-club.js";
+export type {
+  CanadianTireSort,
+  CanadianTireDealType,
+  CanadianTireSearchOptions,
+  CanadianTireProductOptions,
+  CanadianTireStoresOptions,
+  CanadianTireAvailabilityOptions,
+  CanadianTireClearanceOptions,
+  CanadianTireDealsOptions,
+} from "./namespaces/canadian-tire.js";
+export type {
+  DollarGeneralSort,
+  DollarGeneralDealType,
+  DollarGeneralSearchOptions,
+  DollarGeneralProductOptions,
+  DollarGeneralStoresOptions,
+  DollarGeneralDealsOptions,
+  DollarGeneralCouponsOptions,
+} from "./namespaces/dollar-general.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,

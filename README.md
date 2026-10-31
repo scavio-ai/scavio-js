@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 38 platforms on one API key, plus `extract()` to read
+data across 42 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
@@ -503,6 +503,55 @@ warehouses, `availability` 1 per 5 warehouses, `warehouses` 2 with
 warehouses on us and 2 per warehouse on ca). The clearance price codes are the
 member-community decode of Costco shelf prices; Costco does not publish them,
 and only items Costco lists online are covered.
+
+### Lowe's, Sam's Club, Canadian Tire and Dollar General
+
+Four store-level retailers, new in 0.31.0. Each call answers for ONE store you
+choose: get its number from the locator (`lowes.stores`, `samsClub.clubs`,
+`canadianTire.stores`, `dollarGeneral.stores`) and pass it on every call.
+
+```typescript
+// Lowe's: store_id AND that store's own ZIP are required on search/product.
+const lowesStores = await client.lowes.stores({ zip: "28117", limit: 1 });
+const store = (lowesStores.data as any).stores[0];
+const sid = store.store_id;                  // "0595"
+const zip = store.address.postal_code;       // "28117"
+await client.lowes.search({ query: "cordless drill", store_id: sid, zip });
+await client.lowes.search({ query: "cordless drill", store_id: sid, zip, on_sale: true }); // that store's deals
+await client.lowes.product({ item_id: "5016412045", store_id: sid, zip }); // stock, aisle_locations, nearby stores
+await client.lowes.reviews({ item_id: "5016412045", sort: "most_helpful" });
+
+// Sam's Club: search, savings and category answer for a club picked by
+// location (echoed in data.club). product({ club_id }) targets one club.
+await client.samsClub.clubs({ zip: "75201", limit: 5 });
+await client.samsClub.search({ query: "paper towels", sort: "price_low" });
+await client.samsClub.product({ item_id: "15325822107", club_id: "6372" }); // club_price, in_stock_at_club
+await client.samsClub.savings({ sort: "top_selling" });   // Instant Savings
+await client.samsClub.category({ category_id: "1150109" }); // clearance
+await client.samsClub.reviews({ item_id: "15325822107", sort: "lowest" });
+
+// Canadian Tire: prices in CAD, per store and province.
+await client.canadianTire.stores({ postal_code: "M5V 2T6", sku: "0438858" }); // + quantity and aisle per store
+await client.canadianTire.search({ query: "dewalt drill", store_id: "600" });
+await client.canadianTire.product({ product_code: "0547273P", store_id: "600" });
+await client.canadianTire.availability({ store_id: "600", skus: ["0438858", "0547273"] }); // up to 50
+await client.canadianTire.clearance({ store_id: "600" }); // in-stock only by default
+await client.canadianTire.deals({ store_id: "600", type: "sale" }); // or instant_rebate, special_buy, loyalty
+
+// Dollar General: one stores() call with a upc gives that product's unit
+// count at up to 25 nearby stores.
+await client.dollarGeneral.stores({ zip: "75203", upc: "030772156629" });
+await client.dollarGeneral.search({ query: "paper towels", store_id: "12629", in_stock_only: true });
+await client.dollarGeneral.product({ upc: "030772156629", store_id: "12629" });
+await client.dollarGeneral.deals({ store_id: "12629", type: "clearance" }); // or on_sale
+await client.dollarGeneral.coupons();
+```
+
+Lowe's `search`, `product` and `stores` cost 2 credits and `reviews` 1; every
+Sam's Club, Canadian Tire and Dollar General call costs 1. Sam's Club caps
+`available_quantity` at 8 (8 means 8 or more). Dollar General clearance items
+carry the current price only, with no was-price. Canadian Tire and Dollar
+General return a rating and review count but no review text.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
