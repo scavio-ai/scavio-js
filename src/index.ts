@@ -79,6 +79,12 @@ export { LowesNamespace } from "./namespaces/lowes.js";
 export { SamsClubNamespace } from "./namespaces/sams-club.js";
 export { CanadianTireNamespace } from "./namespaces/canadian-tire.js";
 export { DollarGeneralNamespace } from "./namespaces/dollar-general.js";
+export { SephoraNamespace } from "./namespaces/sephora.js";
+export { UltaNamespace } from "./namespaces/ulta.js";
+export { AldiNamespace } from "./namespaces/aldi.js";
+export { MicroCenterNamespace } from "./namespaces/micro-center.js";
+export { WalgreensNamespace } from "./namespaces/walgreens.js";
+export { CvsNamespace, CVS_PRODUCT_TIMEOUT } from "./namespaces/cvs.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -435,6 +441,43 @@ export type {
   DollarGeneralDealsOptions,
   DollarGeneralCouponsOptions,
 } from "./namespaces/dollar-general.js";
+export type {
+  SephoraSort,
+  SephoraSearchOptions,
+  SephoraCategoryOptions,
+  SephoraProductOptions,
+} from "./namespaces/sephora.js";
+export type {
+  UltaSearchOptions,
+  UltaCategoryOptions,
+  UltaProductOptions,
+  UltaStoresOptions,
+} from "./namespaces/ulta.js";
+export type {
+  AldiServiceType,
+  AldiSort,
+  AldiSearchOptions,
+  AldiProductOptions,
+  AldiStoresOptions,
+} from "./namespaces/aldi.js";
+export type {
+  MicroCenterSort,
+  MicroCenterSearchOptions,
+  MicroCenterProductOptions,
+  MicroCenterStoresOptions,
+} from "./namespaces/micro-center.js";
+export type {
+  WalgreensSort,
+  WalgreensSearchOptions,
+  WalgreensProductOptions,
+  WalgreensStoresOptions,
+  WalgreensStockOptions,
+} from "./namespaces/walgreens.js";
+export type {
+  CvsSearchOptions,
+  CvsProductOptions,
+  CvsStockOptions,
+} from "./namespaces/cvs.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,

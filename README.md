@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 42 platforms on one API key, plus `extract()` to read
+data across 52 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
@@ -552,6 +552,59 @@ Sam's Club, Canadian Tire and Dollar General call costs 1. Sam's Club caps
 `available_quantity` at 8 (8 means 8 or more). Dollar General clearance items
 carry the current price only, with no was-price. Canadian Tire and Dollar
 General return a rating and review count but no review text.
+
+### Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens and CVS
+
+Six US retailers, new in 0.32.0. Where prices or stock are per store, pass the
+store number on the call (`aldi.stores`, `microCenter.stores`,
+`walgreens.stores`; CVS has no locator).
+
+```typescript
+// Sephora: 60 products per page. product() takes a result's url (faster)
+// or its product_id, and returns a review summary with pro and con
+// sentiment counts - no review text.
+await client.sephora.search({ query: "lipstick", sort: "best_selling", zip: "10001" }); // + same_day_eligible
+await client.sephora.category({ category: "lipstick" });
+await client.sephora.product({ product_id: "P510799" });
+
+// Ulta Beauty: stores() is in stock / out of stock for one shade or size at
+// the 10 stores nearest a ZIP (no unit counts).
+await client.ulta.search({ query: "lipstick" });
+await client.ulta.category({ category: "/shop/makeup/lips/lipstick" });
+await client.ulta.product({ url: "https://www.ulta.com/p/serum-lipstick-pimprod2057119", sku: "2648428" });
+await client.ulta.stores({ product_id: "pimprod2057119", sku_id: "2648428", zip: "10001" });
+
+// ALDI: prices are per store AND per service_type - instore (default, the
+// shelf price), pickup or delivery (online prices, often higher).
+await client.aldi.stores({ zip: "33131" });
+await client.aldi.search({ query: "milk", store_id: "151248", service_type: "pickup" });
+await client.aldi.product({ product_id: "16902710", store_id: "151248" });
+
+// Micro Center: stock is per 3-digit store_id (web store 029 when omitted);
+// counts are capped at 25+ (quantity_capped).
+await client.microCenter.stores({ state: "TX" });
+await client.microCenter.search({ query: "rtx 5070", store_id: "131" });
+await client.microCenter.product({ product_id: "691231", store_id: "131" }); // open-box units, stores_in_stock
+
+// Walgreens: prices are national; stock() checks up to 20 stores per call.
+const wg = await client.walgreens.stores({ zip: "60614" });
+const storeNumber = (wg.data as any).stores[0].store_number; // "15350"
+await client.walgreens.search({ query: "shampoo", store_id: storeNumber });
+await client.walgreens.product({ product_id: "300452904" });
+await client.walgreens.stock({ product_id: "300452904", store_ids: [storeNumber] });
+
+// CVS: no store locator - the store number is on every cvs.com store page
+// ("Store ID: #7019"). search() defaults to store 7019 (New York).
+await client.cvs.search({ query: "toothpaste", store_id: "7019" });
+await client.cvs.product({ product_id: "832677" });
+await client.cvs.stock({ sku_ids: ["832677"], store_id: "7019" });
+```
+
+Sephora, Ulta Beauty, ALDI and CVS calls cost 1 credit each. Micro Center
+`search` and `product` cost 2 and `stores` 1. Walgreens `search`, `product` and
+`stores` cost 2 and `stock` 4. CVS `product` can take 10-30+ seconds, so it
+raises the request timeout to `CVS_PRODUCT_TIMEOUT` (120s) when the client's is
+shorter; it never lowers it.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
