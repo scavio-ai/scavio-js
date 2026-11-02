@@ -540,6 +540,7 @@ export type {
   ChewyProductOptions,
 } from "./namespaces/chewy.js";
 export type {
+  MenardsSearchOptions,
   MenardsProductOptions,
   MenardsStoresOptions,
 } from "./namespaces/menards.js";

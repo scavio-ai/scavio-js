@@ -668,15 +668,16 @@ await client.iherb.reviews({ product_id: "70316" });
 await client.chewy.search({ query: "kong classic dog toy" });
 await client.chewy.product({ product_id: "38485" });
 
-// Menards: no search - product() by item id or URL. Mail-in rebates and the
-// final price after rebates; store_id adds stock quantity and aisle.
+// Menards: search one store (store_id required), then product() by item id or
+// URL. Mail-in rebates and the final price after rebates; store_id adds stock.
 await client.menards.stores({ zip: "55401" });
+await client.menards.search({ query: "sledge hammer", store_id: "3181", sort: "price_asc" });
 await client.menards.product({ item_id: "60893666613", store_id: "3181" });
 ```
 
 Whole Foods, Harbor Freight, PetSmart and Petco calls cost 1 credit each.
-iHerb calls cost 2 and Chewy calls 10. Menards `stores` costs 1 and `product`
-1, or 2 with a `store_id`. Petco calls can take 10-30 seconds, so every Petco
+iHerb calls cost 2 and Chewy calls 10. Menards `search` costs 2, `stores` 1 and
+`product` 1, or 2 with a `store_id`. Petco calls can take 10-30 seconds, so every Petco
 call raises the request timeout to `PETCO_SLOW_TIMEOUT` (120s); iHerb `search`
 and `product` can take 10-25 seconds, so they raise it to `IHERB_SLOW_TIMEOUT`
 (120s); Menards `product` with a store can take 10-40 seconds, so it raises it

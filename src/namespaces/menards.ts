@@ -1,10 +1,11 @@
 import type { Scavio } from "../client.js";
 
-// Menards: 2 endpoints. stores costs 1 credit; product costs 1, or 2 with a
-// store_id.
+// Menards: 3 endpoints. search costs 2 credits (always at one store); stores
+// costs 1; product costs 1, or 2 with a store_id.
 //
-// There is no search: product() takes an item id (the number after p- in a
-// menards.com URL) or the URL. Prices carry the mail-in rebates (such as the
+// search() needs a store_id and returns 40 products a page with that store's
+// stock. product() takes an item id (the number after p- in a menards.com URL,
+// or a search result's item_id) or the URL. Prices carry the mail-in rebates (such as the
 // 11% rebate) and the final price after rebates. store_id adds that store's
 // stock quantity and aisle and can take 10-40 seconds, so product() raises
 // the request timeout to MENARDS_PRODUCT_TIMEOUT when the client's is
@@ -12,6 +13,24 @@ import type { Scavio } from "../client.js";
 
 /** Minimum request timeout (ms) for menards.product(). */
 export const MENARDS_PRODUCT_TIMEOUT = 120_000;
+
+export interface MenardsSearchOptions {
+  /** Search keywords, e.g. "sledge hammer". */
+  query: string;
+  /** Menards store number from stores(), e.g. "3181". Required: stock is that store's. An unknown store number is a 400. */
+  store_id: string;
+  /** Results page, 1-based, 40 products a page. Defaults to 1. */
+  page?: number;
+  /** Result order. Defaults to "relevance". Price sorts order by everyday_price, not the sale price. */
+  sort?: "relevance" | "price_asc" | "price_desc" | "brand_asc" | "brand_desc";
+  /** Only products in stock at the store today. */
+  in_stock_today?: boolean;
+  /** Lowest price in dollars. */
+  min_price?: number;
+  /** Highest price in dollars. */
+  max_price?: number;
+  [key: string]: unknown;
+}
 
 export interface MenardsProductOptions {
   /** Menards item id: the number after p- in a menards.com product URL, e.g. "60893666613". Not the SKU or model number. Pass this or url. */
@@ -35,6 +54,19 @@ export interface MenardsStoresOptions {
 
 export class MenardsNamespace {
   constructor(private client: Scavio) {}
+
+  /**
+   * Search menards.com at one store, 40 products a page: item_id, sku, name,
+   * url, image, price, everyday_price, sale_price, price_type (regular, sale,
+   * clearance, minimum_advertised), mail-in rebates, final_price after
+   * rebates, and that store's stock_quantity, stock_message, pickup and
+   * delivery flags. Also total_results, total_pages and facets.
+   *
+   * Costs 2 credits.
+   */
+  async search(options: MenardsSearchOptions): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/menards/search", options);
+  }
 
   /**
    * One Menards product by item id or URL: name, brand, model number, SKU,

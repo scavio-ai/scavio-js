@@ -35,6 +35,7 @@ const ENDPOINTS: Row[] = [
   ["iherb", "reviews", { product_id: 70316 }, "/api/v1/iherb/reviews"],
   ["chewy", "search", { query: "kong classic dog toy", sort: "rating", page: 2 }, "/api/v1/chewy/search"],
   ["chewy", "product", { product_id: "38485" }, "/api/v1/chewy/product"],
+  ["menards", "search", { query: "drill", store_id: "3273", sort: "price_asc", in_stock_today: true, min_price: 0, max_price: 60, page: 2 }, "/api/v1/menards/search"],
   ["menards", "product", { item_id: "60893666613", store_id: "3181" }, "/api/v1/menards/product"],
   ["menards", "stores", { city: "Madison", state: "WI" }, "/api/v1/menards/stores"],
 ];
