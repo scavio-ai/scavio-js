@@ -91,7 +91,7 @@ export { PetsmartNamespace } from "./namespaces/petsmart.js";
 export { PetcoNamespace, PETCO_SLOW_TIMEOUT } from "./namespaces/petco.js";
 export { IherbNamespace, IHERB_SLOW_TIMEOUT } from "./namespaces/iherb.js";
 export { ChewyNamespace } from "./namespaces/chewy.js";
-export { MenardsNamespace, MENARDS_PRODUCT_TIMEOUT } from "./namespaces/menards.js";
+export { MenardsNamespace, MENARDS_PRODUCT_TIMEOUT, MENARDS_SEARCH_TIMEOUT } from "./namespaces/menards.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";

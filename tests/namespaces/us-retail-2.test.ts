@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { Scavio, PETCO_SLOW_TIMEOUT, MENARDS_PRODUCT_TIMEOUT, IHERB_SLOW_TIMEOUT } from "../../src/index.js";
+import { Scavio, PETCO_SLOW_TIMEOUT, MENARDS_PRODUCT_TIMEOUT, MENARDS_SEARCH_TIMEOUT, IHERB_SLOW_TIMEOUT } from "../../src/index.js";
 
 type Row = [ns: string, method: string, args: Record<string, unknown>, path: string];
 
@@ -87,6 +87,7 @@ describe("US retail batch 2 namespaces", () => {
     ["iherb", "search", { query: "vitamin d" }, IHERB_SLOW_TIMEOUT],
     ["iherb", "product", { product_id: "62118" }, IHERB_SLOW_TIMEOUT],
     ["menards", "product", { item_id: "60893666613", store_id: "3181" }, MENARDS_PRODUCT_TIMEOUT],
+    ["menards", "search", { query: "drill", store_id: "3181" }, MENARDS_SEARCH_TIMEOUT],
   ] as const)("%s.%s raises the request timeout, never lowers it", async (ns, method, args, floor) => {
     const spy = vi.spyOn(globalThis, "setTimeout");
     const delays = () => spy.mock.calls.map((c) => c[1]);

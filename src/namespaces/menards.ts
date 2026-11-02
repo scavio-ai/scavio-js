@@ -14,6 +14,12 @@ import type { Scavio } from "../client.js";
 /** Minimum request timeout (ms) for menards.product(). */
 export const MENARDS_PRODUCT_TIMEOUT = 120_000;
 
+/**
+ * Minimum request timeout (ms) for menards.search(). It usually answers in a
+ * few seconds, but slow spells reach 30+ seconds and the API waits up to 40.
+ */
+export const MENARDS_SEARCH_TIMEOUT = 60_000;
+
 export interface MenardsSearchOptions {
   /** Search keywords, e.g. "sledge hammer". */
   query: string;
@@ -65,7 +71,7 @@ export class MenardsNamespace {
    * Costs 2 credits.
    */
   async search(options: MenardsSearchOptions): Promise<Record<string, unknown>> {
-    return this.client._post("/api/v1/menards/search", options);
+    return this.client._post("/api/v1/menards/search", options, undefined, MENARDS_SEARCH_TIMEOUT);
   }
 
   /**
