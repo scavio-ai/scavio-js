@@ -43,9 +43,10 @@ export class ChewyNamespace {
   /**
    * Search Chewy by keyword, or browse a category, 36 per page: one-time
    * price, offer and strike-through price, Autoship price and discount,
-   * first-Autoship price, discount and savings cap, MAP price, per-unit
-   * price, rating, rating count, in-stock flag, deal/new/exclusive/
-   * prescription flags, brand, image and URL. Sponsored listings are removed
+   * per-unit price, rating, rating count, in-stock flag, deal/new/exclusive/
+   * prescription flags, brand, image and URL. The first-Autoship price,
+   * discount and savings cap are filled only on Autoship-deal rows; product
+   * always has them and MAP. Sponsored listings are removed
    * (sponsored_removed counts them). `redirect` names the category when
    * Chewy sends the query to one.
    *
