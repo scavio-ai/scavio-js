@@ -24,8 +24,8 @@ export interface GoogleSearchOptions {
   google_domain?: string;
   /**
    * Canonical location name; auto-encoded to a UULE string. On the standard
-   * results page it currently localizes the local pack only; set web_only for
-   * organic results localized to this location.
+   * results page Google localizes the local pack only and ranks organic results
+   * nationally; set web_only for organic results ranked for this location.
    */
   location?: string;
   /** Pre-encoded UULE location string (takes priority over location). */
@@ -50,7 +50,7 @@ export interface GoogleSearchOptions {
   /** Resolve a deferred AI Overview (server default true). */
   resolve_ai_overview?: boolean;
   /**
-   * Return Google's Web results only: organic results localized to location,
+   * Return Google's Web results only: organic results ranked for location,
    * with no local pack, ads, related questions, knowledge graph or AI Overview.
    */
   web_only?: boolean;

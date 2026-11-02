@@ -252,9 +252,9 @@ await client.google.search({
   device: "desktop",       // optional
 });
 
-// Organic rankings as seen from a city: web_only returns Google's Web results
-// (organic only, localized to location). For now the standard page localizes
-// only the local pack.
+// Local rank tracking: web_only returns Google's Web results (organic only,
+// ranked for location). The standard page localizes only the local pack; call
+// again without web_only when you also need local_results.
 await client.google.search({
   query: "emergency plumber",
   location: "Austin,Texas,United States",
