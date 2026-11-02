@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 52 platforms on one API key, plus `extract()` to read
+data across 59 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
@@ -605,6 +605,82 @@ Sephora, Ulta Beauty, ALDI and CVS calls cost 1 credit each. Micro Center
 `stores` cost 2 and `stock` 4. CVS `product` can take 10-30+ seconds, so it
 raises the request timeout to `CVS_PRODUCT_TIMEOUT` (120s) when the client's is
 shorter; it never lowers it.
+
+### Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy and Menards
+
+Seven US retailers, new in 0.33.0. Store-level prices or stock take a store
+number from that retailer's locator (`wholeFoods.stores`,
+`harborFreight.stores`, `petsmart.stores`, `petco.stores`, `menards.stores`);
+iHerb and Chewy are online only.
+
+```typescript
+// Whole Foods: prices are per store (5-digit store_id, default 10145 Austin):
+// regular_price, sale_price and prime_price. No ratings, reviews, UPCs or
+// per-store unit stock. search() sorts by relevance, price_asc or price_desc.
+const wf = await client.wholeFoods.stores({ zip: "10019" });
+const wfStore = (wf.data as any).stores[0].store_id; // "10160"
+await client.wholeFoods.search({ query: "milk", store_id: wfStore, on_sale: true });
+await client.wholeFoods.category({ category: "cheese", store_id: wfStore, sort: "popular" });
+await client.wholeFoods.deals({ store_id: wfStore });
+await client.wholeFoods.product({ asin: "B078WVT2BC", store_id: wfStore }); // in_store and online prices, separately
+await client.wholeFoods.store({ store_id: wfStore });
+await client.wholeFoods.salesFlyer({ store_id: wfStore });
+
+// Harbor Freight: national prices with sale and end date, public coupon,
+// Inside Track member price and compare_at. availability() is a stock status
+// per store (in_stock, limited, out_of_stock, not_carried) plus aisle, from
+// a daily snapshot - no unit counts.
+await client.harborFreight.search({ query: "cordless drill", sort: "member_price_low" });
+await client.harborFreight.clearance({ query: "drill" });
+await client.harborFreight.product({ sku: "73216" });
+await client.harborFreight.prices({ skus: ["73216", "59716", "64508"] }); // up to 50
+await client.harborFreight.stores({ query: "60601" });
+await client.harborFreight.availability({ skus: ["73216"], zip: "90012" });
+await client.harborFreight.reviews({ sku: "73216", limit: 10 });
+
+// PetSmart: national price plus Autoship first-order and recurring price;
+// stock is a unit count per store.
+await client.petsmart.search({ query: "dog food", store_id: "1658" }); // in stock at that store only
+await client.petsmart.product({ web_style_id: "36648" });
+await client.petsmart.stores({ zip: "60601", sku: "5252900" }); // + quantity per store
+await client.petsmart.storeStock({ store_id: "1658", skus: ["5252900"] });
+await client.petsmart.availability({ pairs: [{ store_id: "1658", sku: "5252900" }] });
+await client.petsmart.deals({ pet: "dog" }); // on_sale marks real price cuts
+
+// Petco: national price plus Repeat Delivery (autoship) price. storeInventory()
+// takes cat_entry_id (from search or product), not the part number.
+await client.petco.search({ query: "dog food", sort: "price" });
+await client.petco.category({ path: "dog/dog-food/dry-dog-food" });
+await client.petco.product({ part_number: "3748364" });
+const pc = await client.petco.stores({ zip: "10001" });
+const pcStore = (pc.data as any).stores[0].store_id;
+await client.petco.storeInventory({ cat_entry_ids: ["6131012"], store_id: pcStore });
+
+// iHerb: online only, US store, USD. reviews() is the rating summary,
+// histogram and top positive and critical review - not a full list.
+await client.iherb.search({ query: "vitamin d", sort: "best_selling" });
+await client.iherb.product({ product_id: "70316" });
+await client.iherb.prices({ product_ids: ["62118", "70316", "77548"] }); // up to 50
+await client.iherb.reviews({ product_id: "70316" });
+
+// Chewy: one-time, Autoship and first-Autoship prices, MAP fields, ratings.
+// A broad query can land on a category; data.redirect then names it.
+await client.chewy.search({ query: "kong classic dog toy" });
+await client.chewy.product({ product_id: "38485" });
+
+// Menards: no search - product() by item id or URL. Mail-in rebates and the
+// final price after rebates; store_id adds stock quantity and aisle.
+await client.menards.stores({ zip: "55401" });
+await client.menards.product({ item_id: "60893666613", store_id: "3181" });
+```
+
+Whole Foods, Harbor Freight, PetSmart and Petco calls cost 1 credit each.
+iHerb calls cost 2 and Chewy calls 10. Menards `stores` costs 1 and `product`
+1, or 2 with a `store_id`. Petco calls can take 10-30 seconds, so every Petco
+call raises the request timeout to `PETCO_SLOW_TIMEOUT` (120s); iHerb `search`
+and `product` can take 10-25 seconds, so they raise it to `IHERB_SLOW_TIMEOUT`
+(120s); Menards `product` with a store can take 10-40 seconds, so it raises it
+to `MENARDS_PRODUCT_TIMEOUT` (120s). None ever lowers a longer client timeout.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

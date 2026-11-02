@@ -85,6 +85,13 @@ export { AldiNamespace } from "./namespaces/aldi.js";
 export { MicroCenterNamespace } from "./namespaces/micro-center.js";
 export { WalgreensNamespace } from "./namespaces/walgreens.js";
 export { CvsNamespace, CVS_PRODUCT_TIMEOUT } from "./namespaces/cvs.js";
+export { WholeFoodsNamespace } from "./namespaces/whole-foods.js";
+export { HarborFreightNamespace } from "./namespaces/harbor-freight.js";
+export { PetsmartNamespace } from "./namespaces/petsmart.js";
+export { PetcoNamespace, PETCO_SLOW_TIMEOUT } from "./namespaces/petco.js";
+export { IherbNamespace, IHERB_SLOW_TIMEOUT } from "./namespaces/iherb.js";
+export { ChewyNamespace } from "./namespaces/chewy.js";
+export { MenardsNamespace, MENARDS_PRODUCT_TIMEOUT } from "./namespaces/menards.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -478,6 +485,64 @@ export type {
   CvsProductOptions,
   CvsStockOptions,
 } from "./namespaces/cvs.js";
+export type {
+  WholeFoodsSearchSort,
+  WholeFoodsBrowseSort,
+  WholeFoodsDiet,
+  WholeFoodsSearchOptions,
+  WholeFoodsCategoryOptions,
+  WholeFoodsDealsOptions,
+  WholeFoodsProductOptions,
+  WholeFoodsStoresOptions,
+  WholeFoodsStoreOptions,
+  WholeFoodsSalesFlyerOptions,
+} from "./namespaces/whole-foods.js";
+export type {
+  HarborFreightSort,
+  HarborFreightSearchOptions,
+  HarborFreightClearanceOptions,
+  HarborFreightProductOptions,
+  HarborFreightPricesOptions,
+  HarborFreightStoresOptions,
+  HarborFreightAvailabilityOptions,
+  HarborFreightReviewsOptions,
+} from "./namespaces/harbor-freight.js";
+export type {
+  PetsmartSort,
+  PetsmartPet,
+  PetsmartSearchOptions,
+  PetsmartProductOptions,
+  PetsmartStoresOptions,
+  PetsmartStoreStockOptions,
+  PetsmartAvailabilityPair,
+  PetsmartAvailabilityOptions,
+  PetsmartDealsOptions,
+} from "./namespaces/petsmart.js";
+export type {
+  PetcoSort,
+  PetcoSortOrder,
+  PetcoSearchOptions,
+  PetcoCategoryOptions,
+  PetcoProductOptions,
+  PetcoStoresOptions,
+  PetcoStoreInventoryOptions,
+} from "./namespaces/petco.js";
+export type {
+  IherbSort,
+  IherbSearchOptions,
+  IherbProductOptions,
+  IherbPricesOptions,
+  IherbReviewsOptions,
+} from "./namespaces/iherb.js";
+export type {
+  ChewySort,
+  ChewySearchOptions,
+  ChewyProductOptions,
+} from "./namespaces/chewy.js";
+export type {
+  MenardsProductOptions,
+  MenardsStoresOptions,
+} from "./namespaces/menards.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,
