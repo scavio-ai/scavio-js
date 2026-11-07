@@ -1,21 +1,28 @@
 import type { Scavio } from "../client.js";
 
-// Nordstrom: 7 endpoints. nordstrom.com (US). availability() costs 10 credits
-// (the product page plus the store lookup); every other call costs 5.
+// Nordstrom: 8 endpoints. nordstrom.com (US). availability() costs 10 credits
+// (the product page plus the store lookup) and reviews() 10; every other call
+// costs 5.
 //
 // search(), category() and brand() return 24 products per page in the same
 // shape. product() takes a result's url or its style_id and lists every color
 // and size as a sku with UPC, price, price type, in_stock and the quantity
 // available to ship (a sku held only in a store reads in stock with quantity
 // 0). Its reviews are the ones shown on the product page (up to about 13) plus
-// the total review count and star histogram; there is no review paging.
+// the total review count and star histogram; reviews() pages the full review
+// history (up to 200 per call) with sort and filters.
 // availability() adds per-sku pickup and the stores that can do in-store
 // pickup; stores() finds Nordstrom stores near a ZIP or point.
 // The upstream page can take ~15 seconds and is retried once, so every call
 // raises the request timeout to NORDSTROM_TIMEOUT when the client's is shorter.
+// reviews() takes 20-60 s, up to about 100 s at max_reviews 200, so it uses
+// NORDSTROM_REVIEWS_TIMEOUT instead.
 
-/** Minimum request timeout (ms) for every nordstrom call. */
+/** Minimum request timeout (ms) for every nordstrom call except reviews(). */
 export const NORDSTROM_TIMEOUT = 120_000;
+
+/** Minimum request timeout (ms) for nordstrom.reviews(). */
+export const NORDSTROM_REVIEWS_TIMEOUT = 150_000;
 
 export type NordstromSort =
   | "relevance"
@@ -111,6 +118,36 @@ export interface NordstromSuggestionsOptions {
   [key: string]: unknown;
 }
 
+export type NordstromReviewSort = "most_helpful" | "most_recent" | "highest_rated" | "lowest_rated";
+
+export interface NordstromReviewsOptions {
+  /** nordstrom.com product URL (the `url` of a search, category or brand result). */
+  url?: string;
+  /** Nordstrom style id, used when url is not given. */
+  style_id?: string;
+  /**
+   * most_helpful (default), most_recent, highest_rated or lowest_rated. Cannot
+   * be combined with search: Nordstrom returns review search results in its
+   * own order.
+   */
+  sort?: NordstromReviewSort;
+  /** Only reviews with these star ratings, e.g. [1, 2] for the critical ones. */
+  stars?: Array<1 | 2 | 3 | 4 | 5>;
+  /** Only reviews from verified purchasers. */
+  verified_only?: boolean;
+  /** Only reviews that include customer photos. */
+  with_photos?: boolean;
+  /**
+   * Only reviews mentioning this text (the review search box), 1-100
+   * characters. Results come in Nordstrom's search order, so sort cannot be
+   * set with it.
+   */
+  search?: string;
+  /** Reviews to return, 1-200. Defaults to 60. Larger values take longer (45-100s for 200). */
+  max_reviews?: number;
+  [key: string]: unknown;
+}
+
 export class NordstromNamespace {
   constructor(private client: Scavio) {}
 
@@ -144,8 +181,9 @@ export class NordstromNamespace {
    * a store reads in stock with quantity 0 (availability() lists its pickup
    * stores). Includes the reviews shown on the product page (up to about 13),
    * with the total review count; each review has title, text, rating, size
-   * rating, author, date, helpful votes and verified-purchase flag. Pass url
-   * or style_id. An unknown style id is a 404.
+   * rating, author, date, helpful votes and verified-purchase flag
+   * (reviews() pages the full review history). Pass url or style_id. An
+   * unknown style id is a 404.
    *
    * Costs 5 credits.
    */
@@ -226,5 +264,32 @@ export class NordstromNamespace {
    */
   async suggestions(options: NordstromSuggestionsOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/nordstrom/suggestions", options, undefined, NORDSTROM_TIMEOUT);
+  }
+
+  /**
+   * Customer reviews of one nordstrom.com (US) product by URL or style id, up
+   * to 200 per call (default 60), sorted most helpful (default), most recent,
+   * highest rated or lowest rated, optionally filtered to star ratings,
+   * verified purchases, reviews with photos, or a text search. Returns the
+   * product's review summary (average rating, total reviews, star histogram,
+   * size rating 1 runs small to 5 runs big, width rating where the site has
+   * one, the most mentioned praised and criticized features with a quote each,
+   * and the count of rating-only reviews), the AI review summary when the site
+   * shows one, the number of reviews matching the filters (total_results),
+   * returned and has_more. Each review has id, title, text, star rating, size
+   * rating, author, date, helpful votes, verified-purchase flag, reviewer
+   * badges (verified_purchaser, top_250, top_1000), size and color purchased,
+   * the reviewer's height, weight, body type and usual sizes when given,
+   * secondary ratings (Size, with its scale), the site it was syndicated from
+   * (e.g. nordstromrack.com) and photos with thumbnails. Rating-only reviews
+   * are included with title and text null. Takes 20-60s, up to about 100s at
+   * max_reviews 200, so the request timeout is raised to
+   * NORDSTROM_REVIEWS_TIMEOUT. A product with no reviews returns an empty
+   * list; an unknown style id is a 404.
+   *
+   * Costs 10 credits.
+   */
+  async reviews(options: NordstromReviewsOptions): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/nordstrom/reviews", options, undefined, NORDSTROM_REVIEWS_TIMEOUT);
   }
 }

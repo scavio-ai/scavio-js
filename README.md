@@ -685,10 +685,10 @@ to `MENARDS_PRODUCT_TIMEOUT` (120s). None ever lowers a longer client timeout.
 
 ### [Nordstrom](https://scavio.dev/docs/nordstrom-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
-Seven endpoints, nordstrom.com (US site only). `search` and `product` are new in
+Eight endpoints, nordstrom.com (US site only). `search` and `product` are new in
 0.35.0; `category`, `brand`, `stores`, `availability` and `suggestions` are new
-in 0.36.0. `availability` costs 10 credits (the product page plus the store
-lookup); every other call costs 5.
+in 0.36.0; `reviews` is new in 0.37.0. `availability` costs 10 credits (the
+product page plus the store lookup) and `reviews` 10; every other call costs 5.
 
 - `search`, `category` and `brand` return 24 products a page with current and
   original price ranges, percent off, on-sale flag, rating, review count,
@@ -703,6 +703,15 @@ lookup); every other call costs 5.
   as a sku with UPC, price, price type, `in_stock` and the `quantity` available
   to ship. `in_stock` is true when the sku can be shipped or picked up in a
   store, so a sku can be in stock with `quantity` 0 (store-only).
+- `reviews` takes `url` or `style_id` and returns the product's full review
+  history, up to `max_reviews` per call (1-200, default 60). `sort` is
+  `most_helpful` (default), `most_recent`, `highest_rated` or `lowest_rated`;
+  filter with `stars` (e.g. `[1, 2]`), `verified_only`, `with_photos` or a text
+  `search` (`search` cannot be combined with `sort`). The response carries the
+  `summary` (average rating, total reviews, histogram, size and width rating,
+  praised and criticized features with a quote, rating-only count), the
+  `ai_summary`, `total_results`, `returned` and `has_more`. Rating-only reviews
+  are included with `title` and `text` null.
 - `availability` takes `url` or `style_id` (optionally `sku_id`) and returns per
   sku `ship_quantity`, `pickup_available`, `pick_quantity` and the stores that
   can do in-store pickup. Quantities are chain-wide; per store Nordstrom only
@@ -736,13 +745,25 @@ for (const sku of (stock as any).data.skus) {
 
 const ideas = await client.nordstrom.suggestions({ query: "nike air" });
 console.log((ideas as any).data.suggestions);
+
+const rev = (await client.nordstrom.reviews({ style_id: "7737947", sort: "most_recent", max_reviews: 100 })) as any;
+const { summary } = rev.data;
+console.log(summary.average_rating, summary.total_reviews, summary.ratings_histogram, summary.size_rating);
+console.log(rev.data.total_results, rev.data.returned, rev.data.has_more, rev.data.ai_summary);
+for (const r of rev.data.reviews.slice(0, 5)) {
+  console.log(r.date, r.rating, r.title, r.text, r.size_purchased, r.helpful_votes, r.badges, r.photos.length);
+}
+const critical = await client.nordstrom.reviews({ style_id: "7737947", stars: [1, 2], verified_only: true });
 ```
 
 `product` returns the reviews shown on the product page (up to about 13) plus
-the total review count and star histogram; the full review history is not
-available. An unknown style id, sku id, category or brand is a 404. Every call
-raises the request timeout to `NORDSTROM_TIMEOUT` (120s), never lowering a
-longer client timeout.
+the total review count and star histogram; `reviews` returns the rest. An
+unknown style id, sku id, category or brand is a 404. Every call raises the
+request timeout to `NORDSTROM_TIMEOUT` (120s), except `reviews`, which takes
+20-60s (up to about 100s at 200 reviews) and raises it to
+`NORDSTROM_REVIEWS_TIMEOUT` (150s). Neither ever lowers a longer client timeout.
+If the upstream page still fails after the API's own retries, the call is an
+unbilled 502.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

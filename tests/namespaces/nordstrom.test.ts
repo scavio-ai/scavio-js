@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { Scavio, NORDSTROM_TIMEOUT } from "../../src/index.js";
+import { Scavio, NORDSTROM_TIMEOUT, NORDSTROM_REVIEWS_TIMEOUT } from "../../src/index.js";
 
 type Row = [method: string, args: Record<string, unknown>, path: string];
 
@@ -29,6 +29,20 @@ const ENDPOINTS: Row[] = [
   ],
   ["suggestions", { query: "nike air" }, "/api/v1/nordstrom/suggestions"],
   ["suggestions", { query: "dre", limit: 20 }, "/api/v1/nordstrom/suggestions"],
+  ["reviews", { style_id: "7737947" }, "/api/v1/nordstrom/reviews"],
+  [
+    "reviews",
+    {
+      url: "https://www.nordstrom.com/s/maeve-midi-dress/7737947",
+      sort: "lowest_rated",
+      stars: [1, 2],
+      verified_only: true,
+      with_photos: false,
+      max_reviews: 200,
+    },
+    "/api/v1/nordstrom/reviews",
+  ],
+  ["reviews", { style_id: "7737947", search: "wedding" }, "/api/v1/nordstrom/reviews"],
 ];
 
 describe("nordstrom namespace", () => {
@@ -59,8 +73,9 @@ describe("nordstrom namespace", () => {
     expect(body()).toEqual(args);
   });
 
-  it("NORDSTROM_TIMEOUT is 120 s", () => {
+  it("NORDSTROM_TIMEOUT is 120 s, NORDSTROM_REVIEWS_TIMEOUT 150 s", () => {
     expect(NORDSTROM_TIMEOUT).toBe(120_000);
+    expect(NORDSTROM_REVIEWS_TIMEOUT).toBe(150_000);
   });
 
   it.each([
@@ -84,5 +99,21 @@ describe("nordstrom namespace", () => {
     await call(new Scavio({ apiKey: "sk_test", maxRequestsPerSecond: 50, timeout: 300_000 }));
     expect(delays()).toContain(300_000);
     expect(delays()).not.toContain(NORDSTROM_TIMEOUT);
+  });
+
+  it("nordstrom.reviews raises the request timeout to 150 s, never lowers it", async () => {
+    const spy = vi.spyOn(globalThis, "setTimeout");
+    const delays = () => spy.mock.calls.map((c) => c[1]);
+
+    await client.nordstrom.reviews({ style_id: "7737947" });
+    expect(delays()).toContain(NORDSTROM_REVIEWS_TIMEOUT);
+    expect(delays()).not.toContain(NORDSTROM_TIMEOUT);
+
+    spy.mockClear();
+    await new Scavio({ apiKey: "sk_test", maxRequestsPerSecond: 50, timeout: 300_000 }).nordstrom.reviews({
+      style_id: "7737947",
+    });
+    expect(delays()).toContain(300_000);
+    expect(delays()).not.toContain(NORDSTROM_REVIEWS_TIMEOUT);
   });
 });
