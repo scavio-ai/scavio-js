@@ -685,13 +685,35 @@ to `MENARDS_PRODUCT_TIMEOUT` (120s). None ever lowers a longer client timeout.
 
 ### [Nordstrom](https://scavio.dev/docs/nordstrom-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
-Two endpoints, new in 0.35.0, 5 credits each. nordstrom.com (US site only).
-`search` returns 24 products a page with current and original price ranges,
-percent off, on-sale flag, rating, review count, badges and colors; `sort` is
-`relevance` (default), `rating`, `price_high`, `price_low`, `newest` or
-`percent_off`. `product` takes a result's `url` or `style_id` and lists every
-color and size as a sku with UPC, price, price type, `in_stock` and the
-`quantity` available to ship online.
+Seven endpoints, nordstrom.com (US site only). `search` and `product` are new in
+0.35.0; `category`, `brand`, `stores`, `availability` and `suggestions` are new
+in 0.36.0. `availability` costs 10 credits (the product page plus the store
+lookup); every other call costs 5.
+
+- `search`, `category` and `brand` return 24 products a page with current and
+  original price ranges, percent off, on-sale flag, rating, review count,
+  badges and colors; `sort` is `relevance` (default), `rating`, `price_high`,
+  `price_low`, `newest` or `percent_off`. `category` takes a `/browse` path or
+  URL (departments, `sale/women`, `/browse/new`); `brand` takes a
+  `/brands/<slug>--<id>` path or URL (a product's `brand_url` works). Both also
+  return the category or brand (name, title, path, URL, breadcrumbs,
+  subcategories) and the filter sidebar with option counts (top 100 options per
+  group); filters inside a category URL are ignored.
+- `product` takes a result's `url` or `style_id` and lists every color and size
+  as a sku with UPC, price, price type, `in_stock` and the `quantity` available
+  to ship. `in_stock` is true when the sku can be shipped or picked up in a
+  store, so a sku can be in stock with `quantity` 0 (store-only).
+- `availability` takes `url` or `style_id` (optionally `sku_id`) and returns per
+  sku `ship_quantity`, `pickup_available`, `pick_quantity` and the stores that
+  can do in-store pickup. Quantities are chain-wide; per store Nordstrom only
+  says whether pickup is available, not how many.
+- `stores` takes exactly one of `zip`, `latitude` + `longitude`, or
+  `store_numbers` (array or comma-separated string), with `distance_miles`
+  1-100 (default 100). Each store has address, phone, hours, daily hours,
+  coordinates, pickup and curbside flags and amenities. A ZIP with no store in
+  range is an empty list (still billed).
+- `suggestions` returns the site's autocomplete strings for a partial `query`
+  (`limit` 1-20, default 8).
 
 ```ts
 const found = await client.nordstrom.search({ query: "dress", sort: "percent_off" });
@@ -702,12 +724,25 @@ const item = await client.nordstrom.product({ style_id: top.style_id });
 for (const color of (item as any).data.colors) {
   for (const sku of color.skus) console.log(color.name, sku.size, sku.upc, sku.price, sku.price_type, sku.quantity);
 }
+
+const dresses = await client.nordstrom.category({ category: "/browse/women/clothing/dresses", sort: "price_low" });
+const label = await client.nordstrom.brand({ brand: "/brands/astr-the-label--53360" });
+const near = await client.nordstrom.stores({ zip: "10001" });
+
+const stock = await client.nordstrom.availability({ style_id: "7737947" });
+for (const sku of (stock as any).data.skus) {
+  console.log(sku.sku_id, sku.size, sku.color, sku.ship_quantity, sku.pick_quantity, sku.pickup_store_count);
+}
+
+const ideas = await client.nordstrom.suggestions({ query: "nike air" });
+console.log((ideas as any).data.suggestions);
 ```
 
-Reviews are the 12-13 shown on the product page, with no deeper paging. There
-is no store locator, store-level stock or category endpoint. An unknown style
-id is a 404. Both calls raise the request timeout to `NORDSTROM_TIMEOUT`
-(120s), never lowering a longer client timeout.
+`product` returns the reviews shown on the product page (up to about 13) plus
+the total review count and star histogram; the full review history is not
+available. An unknown style id, sku id, category or brand is a 404. Every call
+raises the request timeout to `NORDSTROM_TIMEOUT` (120s), never lowering a
+longer client timeout.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

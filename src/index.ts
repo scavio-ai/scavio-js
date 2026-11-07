@@ -549,6 +549,11 @@ export type {
   NordstromSort,
   NordstromSearchOptions,
   NordstromProductOptions,
+  NordstromCategoryOptions,
+  NordstromBrandOptions,
+  NordstromStoresOptions,
+  NordstromAvailabilityOptions,
+  NordstromSuggestionsOptions,
 } from "./namespaces/nordstrom.js";
 export type {
   TrustpilotReviewsDateRange,

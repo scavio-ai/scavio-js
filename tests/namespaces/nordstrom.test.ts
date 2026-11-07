@@ -12,6 +12,23 @@ const ENDPOINTS: Row[] = [
     { url: "https://www.nordstrom.com/s/betsy-and-adam-strapless-mixed-media-gown/8098974" },
     "/api/v1/nordstrom/product",
   ],
+  ["category", { category: "/browse/women/clothing/dresses" }, "/api/v1/nordstrom/category"],
+  ["category", { category: "sale/women", page: 2, sort: "price_low" }, "/api/v1/nordstrom/category"],
+  ["brand", { brand: "/brands/astr-the-label--53360" }, "/api/v1/nordstrom/brand"],
+  ["brand", { brand: "/brands/astr-the-label--53360/women", page: 3, sort: "newest" }, "/api/v1/nordstrom/brand"],
+  ["stores", { zip: "10001" }, "/api/v1/nordstrom/stores"],
+  ["stores", { zip: "10001", distance_miles: 25 }, "/api/v1/nordstrom/stores"],
+  ["stores", { latitude: 41.8781, longitude: -87.6298 }, "/api/v1/nordstrom/stores"],
+  ["stores", { store_numbers: ["210", "220"] }, "/api/v1/nordstrom/stores"],
+  ["stores", { store_numbers: "210,220" }, "/api/v1/nordstrom/stores"],
+  ["availability", { style_id: "7737947" }, "/api/v1/nordstrom/availability"],
+  [
+    "availability",
+    { url: "https://www.nordstrom.com/s/maeve-midi-dress/7737947", sku_id: "A7578713" },
+    "/api/v1/nordstrom/availability",
+  ],
+  ["suggestions", { query: "nike air" }, "/api/v1/nordstrom/suggestions"],
+  ["suggestions", { query: "dre", limit: 20 }, "/api/v1/nordstrom/suggestions"],
 ];
 
 describe("nordstrom namespace", () => {
@@ -49,6 +66,11 @@ describe("nordstrom namespace", () => {
   it.each([
     ["search", { query: "dress" }],
     ["product", { style_id: "8098974" }],
+    ["category", { category: "/browse/women/clothing/dresses" }],
+    ["brand", { brand: "/brands/astr-the-label--53360" }],
+    ["stores", { zip: "10001" }],
+    ["availability", { style_id: "7737947" }],
+    ["suggestions", { query: "nike air" }],
   ] as const)("nordstrom.%s raises the request timeout, never lowers it", async (method, args) => {
     const spy = vi.spyOn(globalThis, "setTimeout");
     const delays = () => spy.mock.calls.map((c) => c[1]);
