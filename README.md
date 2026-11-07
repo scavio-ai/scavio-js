@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 59 platforms on one API key, plus `extract()` to read
+data across 60 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
@@ -682,6 +682,32 @@ call raises the request timeout to `PETCO_SLOW_TIMEOUT` (120s); iHerb `search`
 and `product` can take 10-25 seconds, so they raise it to `IHERB_SLOW_TIMEOUT`
 (120s); Menards `product` with a store can take 10-40 seconds, so it raises it
 to `MENARDS_PRODUCT_TIMEOUT` (120s). None ever lowers a longer client timeout.
+
+### [Nordstrom](https://scavio.dev/docs/nordstrom-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Two endpoints, new in 0.35.0, 5 credits each. nordstrom.com (US site only).
+`search` returns 24 products a page with current and original price ranges,
+percent off, on-sale flag, rating, review count, badges and colors; `sort` is
+`relevance` (default), `rating`, `price_high`, `price_low`, `newest` or
+`percent_off`. `product` takes a result's `url` or `style_id` and lists every
+color and size as a sku with UPC, price, price type, `in_stock` and the
+`quantity` available to ship online.
+
+```ts
+const found = await client.nordstrom.search({ query: "dress", sort: "percent_off" });
+const top = (found as any).data.products[0];
+console.log(top.style_id, top.brand, top.name, top.price, top.percent_off);
+
+const item = await client.nordstrom.product({ style_id: top.style_id });
+for (const color of (item as any).data.colors) {
+  for (const sku of color.skus) console.log(color.name, sku.size, sku.upc, sku.price, sku.price_type, sku.quantity);
+}
+```
+
+Reviews are the 12-13 shown on the product page, with no deeper paging. There
+is no store locator, store-level stock or category endpoint. An unknown style
+id is a 404. Both calls raise the request timeout to `NORDSTROM_TIMEOUT`
+(120s), never lowering a longer client timeout.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

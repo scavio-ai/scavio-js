@@ -92,6 +92,7 @@ export { PetcoNamespace, PETCO_SLOW_TIMEOUT } from "./namespaces/petco.js";
 export { IherbNamespace, IHERB_SLOW_TIMEOUT } from "./namespaces/iherb.js";
 export { ChewyNamespace } from "./namespaces/chewy.js";
 export { MenardsNamespace, MENARDS_PRODUCT_TIMEOUT, MENARDS_SEARCH_TIMEOUT } from "./namespaces/menards.js";
+export { NordstromNamespace, NORDSTROM_TIMEOUT } from "./namespaces/nordstrom.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -544,6 +545,11 @@ export type {
   MenardsProductOptions,
   MenardsStoresOptions,
 } from "./namespaces/menards.js";
+export type {
+  NordstromSort,
+  NordstromSearchOptions,
+  NordstromProductOptions,
+} from "./namespaces/nordstrom.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,
