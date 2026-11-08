@@ -24,6 +24,40 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 npm install scavio
 ```
 
+## Sign in without copying a key
+
+```bash
+npx -y scavio@latest login
+```
+
+Prints a link and a code and opens your browser. Sign in at dashboard.scavio.dev
+(or create a free account, 50 credits, no card), check that the page shows the
+same code, and click Approve. The CLI saves an API key named after your machine
+(`CLI - <hostname>`) and never prints it:
+
+- `~/.config/scavio/credentials.json` (owner-only), and
+- `SCAVIO_API_KEY` in your shell startup file (`~/.zshrc`, `~/.bashrc` and on
+  macOS `~/.bash_profile`, fish `conf.d/scavio.fish`, or the Windows user
+  environment). Skip this with `--no-profile`.
+
+Logging in again on the same machine reuses that machine's key. Open a new
+terminal afterwards; `new Scavio()` reads `SCAVIO_API_KEY`.
+
+AI coding agents (Claude Code, Codex, Pi, Cursor and others) can run it for you.
+When its output is not a terminal, `login` prints the link and exits at once so
+the agent can show it to you; the agent then runs `login --wait`, which waits up
+to 60 seconds per run.
+
+| Command | What it does |
+|---|---|
+| `scavio login` | Start a login (in a terminal it also waits for approval) |
+| `scavio login --wait` | Finish a login an agent started. Exit 0 logged in, 2 still pending (run again), 3 denied, 1 expired or error |
+| `scavio status` | Check the saved or exported key works, without printing it |
+| `scavio logout` | Remove the saved key and the shell line (revoke it at dashboard.scavio.dev/api-keys) |
+
+Options: `--force` (log in even if `SCAVIO_API_KEY` already works),
+`--no-profile`, `--no-browser`, `--timeout <seconds>` for `--wait`.
+
 ## Quick Start
 
 ```typescript
