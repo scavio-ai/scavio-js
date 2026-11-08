@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 61 platforms on one API key, plus `extract()` to read
+data across 62 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
@@ -845,6 +845,53 @@ Every call raises the request timeout to `NORDSTROM_RACK_TIMEOUT` (120s),
 except `reviews`, which takes 15-60s (up to about 100s at 200 reviews) and
 raises it to `NORDSTROM_RACK_REVIEWS_TIMEOUT` (150s). Neither ever lowers a
 longer client timeout.
+
+### [Best Buy](https://scavio.dev/docs/bestbuy-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Nine endpoints, new in 0.40.0, bestbuy.com (US site only), on
+`client.bestBuy`: `search`, `product`, `reviews`, `category`, `deals`,
+`stores`, `availability`, `suggestions`, `prices`. Credits: `search`,
+`product`, `reviews` and `prices` 2 each (`prices` is per call, up to 15
+SKUs); `category` 2 for an `abcat` id and 3 for a `pcmcat` page; `deals` 3;
+`stores` and `suggestions` 1; `availability` 2 flat for up to 8 stores.
+
+- `search` and `category` return 18 organic products per page; sponsored
+  tiles only with `include_sponsored: true`. `filters` takes `brand`,
+  `on_sale`, `clearance`, `open_box`, and `min_price` with `max_price` (both
+  bounds).
+- `product` returns every open-box offer by condition (fair, good,
+  excellent) with `savings_vs_new` and `savings_vs_regular`, plus UPC, model,
+  the full spec table and the AI review summary.
+- `availability` is store pickup status at up to 8 stores (nearest a `zip`,
+  or the `store_ids` you pass; exactly one of the two): `in_stock`,
+  `limited`, `ship_to_store`, `out_of_stock`, `not_available_for_pickup` or
+  `unknown`. `quantity` is set only for `limited` (Best Buy's "only N left")
+  and is null for `in_stock`.
+- `prices` takes up to 15 SKUs; an unknown one comes back `found: false`.
+
+```ts
+const found = (await client.bestBuy.search({ query: "tv", filters: { brand: "Samsung", on_sale: true } })) as any;
+for (const p of found.data.products.slice(0, 5)) {
+  console.log(p.sku, p.model, p.price, p.regular_price, p.savings_percent, p.badge);
+}
+
+const item = (await client.bestBuy.product({ sku: "6607832" })) as any;
+for (const ob of item.data.open_box) console.log(ob.condition, ob.price, ob.savings_vs_new, ob.savings_vs_regular);
+
+const stock = (await client.bestBuy.availability({ sku: "6607832", zip: "94103", max_stores: 5 })) as any;
+for (const s of stock.data.stores) console.log(s.store_id, s.name, s.status, s.quantity, s.pickup_date);
+
+const prices = await client.bestBuy.prices({ skus: ["6607832", "6673112", "6679316"] });
+const deals = await client.bestBuy.deals();
+const rev = await client.bestBuy.reviews({ sku: "6607832", sort: "newest" });
+const tvs = await client.bestBuy.category({ category_id: "abcat0101001", sort: "price_low" });
+const near = await client.bestBuy.stores({ zip: "94103" });
+const terms = await client.bestBuy.suggestions({ query: "ps5 con" });
+```
+
+Every call raises the request timeout to `BEST_BUY_TIMEOUT` (120s) and never
+lowers a longer client timeout; `availability` typically takes 5-20s. An
+unknown SKU or category is a 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

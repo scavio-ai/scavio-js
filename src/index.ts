@@ -98,6 +98,7 @@ export {
   NORDSTROM_RACK_TIMEOUT,
   NORDSTROM_RACK_REVIEWS_TIMEOUT,
 } from "./namespaces/nordstrom-rack.js";
+export { BestBuyNamespace, BEST_BUY_TIMEOUT } from "./namespaces/best-buy.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -574,6 +575,20 @@ export type {
   NordstromRackReviewSort,
   NordstromRackReviewsOptions,
 } from "./namespaces/nordstrom-rack.js";
+export type {
+  BestBuySearchSort,
+  BestBuyCategorySort,
+  BestBuyReviewSort,
+  BestBuyFilters,
+  BestBuySearchOptions,
+  BestBuyProductOptions,
+  BestBuyReviewsOptions,
+  BestBuyCategoryOptions,
+  BestBuyStoresOptions,
+  BestBuyAvailabilityOptions,
+  BestBuySuggestionsOptions,
+  BestBuyPricesOptions,
+} from "./namespaces/best-buy.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,
