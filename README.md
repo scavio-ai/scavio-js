@@ -40,8 +40,11 @@ same code, and click Approve. The CLI saves an API key named after your machine
   macOS `~/.bash_profile`, fish `conf.d/scavio.fish`, or the Windows user
   environment). Skip this with `--no-profile`.
 
-Logging in again on the same machine reuses that machine's key. Open a new
-terminal afterwards; `new Scavio()` reads `SCAVIO_API_KEY`.
+Logging in again on the same machine reuses that machine's key. A program
+cannot set variables in the shell that started it, so run `source ~/.zshrc`
+(or your shell's file) or open a new terminal to use the key right away, and
+restart any AI agent that was already running. `new Scavio()` reads
+`SCAVIO_API_KEY`.
 
 AI coding agents (Claude Code, Codex, Pi, Cursor and others) can run it for you.
 When its output is not a terminal, `login` prints the link and exits at once so

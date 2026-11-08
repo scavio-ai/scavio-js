@@ -14,11 +14,12 @@
 // Exit codes: 0 ok, 1 error or expired, 2 still pending, 3 denied.
 
 import { spawn } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { BASE_URL, SDK_VERSION } from "../http.js";
 import { clearCredentials, clearPending, configDir, readCredentials, readPending, saveCredentials, savePending } from "./files.js";
 import { checkKey, machineName, startLogin, waitForApproval, type WaitResult } from "./login.js";
-import { profileTargets, removeFromProfiles, setWindowsUserEnv, writeProfiles } from "./profile.js";
+import { MARKER, profileTargets, removeFromProfiles, setWindowsUserEnv, writeProfiles } from "./profile.js";
 
 const KEYS_URL = "https://dashboard.scavio.dev/api-keys";
 const UA = `scavio-cli/${SDK_VERSION}`;
@@ -133,7 +134,14 @@ async function finish(result: WaitResult, dir: string, args: string[], baseUrl: 
     out.log(`  Key works${check.plan ? `: ${check.plan} plan` : ""}${typeof check.credits === "number" ? `, ${check.credits} credits` : ""}.`);
   }
   if (places.length) {
-    out.log("Open a new terminal, or restart your AI agent, so it picks up SCAVIO_API_KEY.");
+    // A child process cannot set variables in the shell that started it, so
+    // the current shell needs to re-read the file (or be replaced).
+    if (process.platform === "win32") {
+      out.log("Open a new terminal to use it (setx does not change the one you are in).");
+    } else {
+      out.log(`To use it in this terminal now, run: source ${places[0]}`);
+    }
+    out.log("Restart your AI agent so it picks up SCAVIO_API_KEY.");
   } else {
     out.log("SCAVIO_API_KEY was not exported; read the key from the saved file or set it yourself.");
   }
@@ -232,7 +240,14 @@ async function status(out: Out): Promise<number> {
     return EXIT.error;
   }
   out.log(`Logged in via ${source}${check.plan ? `: ${check.plan} plan` : ""}${typeof check.credits === "number" ? `, ${check.credits} credits` : ""}.`);
-  if (!fromEnv) out.log("SCAVIO_API_KEY is not set in this shell yet: open a new terminal or restart your agent.");
+  if (!fromEnv) {
+    const t = process.platform === "win32" ? [] : profileTargets().filter((x) => existsSync(x.path) && readFileSync(x.path, "utf8").includes(MARKER));
+    out.log(
+      t.length
+        ? `SCAVIO_API_KEY is not set in this shell yet: run source ${t[0].display}, or restart your agent.`
+        : "SCAVIO_API_KEY is not set in this shell yet: open a new terminal or restart your agent."
+    );
+  }
   return EXIT.ok;
 }
 
