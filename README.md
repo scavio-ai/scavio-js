@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 60 platforms on one API key, plus `extract()` to read
+data across 61 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
@@ -763,7 +763,51 @@ request timeout to `NORDSTROM_TIMEOUT` (120s), except `reviews`, which takes
 20-60s (up to about 100s at 200 reviews) and raises it to
 `NORDSTROM_REVIEWS_TIMEOUT` (150s). Neither ever lowers a longer client timeout.
 If the upstream page still fails after the API's own retries, the call is an
-unbilled 502.
+unbilled 502. For nordstromrack.com use `client.nordstromRack` (next section).
+
+### [Nordstrom Rack](https://scavio.dev/docs/nordstromrack-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Eight endpoints, new in 0.38.0, nordstromrack.com (US site only), on
+`client.nordstromRack`: a separate platform from `client.nordstrom` with the
+same methods, options and credit costs (`availability` and `reviews` 10, the
+rest 5).
+
+- `category` takes Rack's `/shop` and `/clearance` paths: departments, deals,
+  new arrivals, Clear the Rack (`/clearance`, `/clearance/women/clothing`) and
+  flash events (`/shop/flash` lists the live events as subcategories,
+  `/shop/flash/event-7` opens one). There is no `/browse` on Rack.
+- `brand` takes `/brands/<slug>` (`/brands/adidas`); Rack brand pages carry no
+  id, so the nordstrom.com `--<id>` form is a 404.
+- Every product row carries `clearance_price_range`, and during Clear the Rack
+  a clearance item can carry an extra percent off on top:
+  `promotion_price_range` is the price after it and `promotion_percent_off`
+  the extra percent. All three are null when not set; no response carries
+  event start or end dates.
+- `stores` and `availability` cover Rack stores only; pickup quantities are
+  chain-wide.
+- `reviews` returns Rack's own review pool, separate from nordstrom.com's, so
+  the same style can show a different rating and review count on each.
+
+```ts
+const clr = (await client.nordstromRack.category({ category: "/clearance/women", sort: "percent_off" })) as any;
+for (const p of clr.data.products.slice(0, 5)) {
+  console.log(p.style_id, p.name, p.price, p.clearance_price_range, p.promotion_price_range, p.promotion_percent_off);
+}
+
+const events = (await client.nordstromRack.category({ category: "/shop/flash" })) as any;
+console.log(events.data.category.subcategories.map((e: any) => e.path));
+
+const item = await client.nordstromRack.product({ style_id: "8816500" });
+const brand = await client.nordstromRack.brand({ brand: "/brands/adidas" });
+const stock = await client.nordstromRack.availability({ style_id: "7737947" });
+const near = await client.nordstromRack.stores({ zip: "10001" });
+const rev = await client.nordstromRack.reviews({ style_id: "7737947", max_reviews: 50 });
+```
+
+Every call raises the request timeout to `NORDSTROM_RACK_TIMEOUT` (120s),
+except `reviews`, which takes 15-60s (up to about 100s at 200 reviews) and
+raises it to `NORDSTROM_RACK_REVIEWS_TIMEOUT` (150s). Neither ever lowers a
+longer client timeout.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

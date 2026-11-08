@@ -93,6 +93,11 @@ export { IherbNamespace, IHERB_SLOW_TIMEOUT } from "./namespaces/iherb.js";
 export { ChewyNamespace } from "./namespaces/chewy.js";
 export { MenardsNamespace, MENARDS_PRODUCT_TIMEOUT, MENARDS_SEARCH_TIMEOUT } from "./namespaces/menards.js";
 export { NordstromNamespace, NORDSTROM_TIMEOUT, NORDSTROM_REVIEWS_TIMEOUT } from "./namespaces/nordstrom.js";
+export {
+  NordstromRackNamespace,
+  NORDSTROM_RACK_TIMEOUT,
+  NORDSTROM_RACK_REVIEWS_TIMEOUT,
+} from "./namespaces/nordstrom-rack.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -557,6 +562,18 @@ export type {
   NordstromReviewSort,
   NordstromReviewsOptions,
 } from "./namespaces/nordstrom.js";
+export type {
+  NordstromRackSort,
+  NordstromRackSearchOptions,
+  NordstromRackProductOptions,
+  NordstromRackCategoryOptions,
+  NordstromRackBrandOptions,
+  NordstromRackStoresOptions,
+  NordstromRackAvailabilityOptions,
+  NordstromRackSuggestionsOptions,
+  NordstromRackReviewSort,
+  NordstromRackReviewsOptions,
+} from "./namespaces/nordstrom-rack.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,

@@ -56,6 +56,7 @@ import { IherbNamespace } from "./namespaces/iherb.js";
 import { ChewyNamespace } from "./namespaces/chewy.js";
 import { MenardsNamespace } from "./namespaces/menards.js";
 import { NordstromNamespace } from "./namespaces/nordstrom.js";
+import { NordstromRackNamespace } from "./namespaces/nordstrom-rack.js";
 import { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 import { ChatgptNamespace } from "./namespaces/chatgpt.js";
 import { GeminiNamespace } from "./namespaces/gemini.js";
@@ -225,6 +226,7 @@ export class Scavio extends ScavioCore {
   readonly chewy: ChewyNamespace;
   readonly menards: MenardsNamespace;
   readonly nordstrom: NordstromNamespace;
+  readonly nordstromRack: NordstromRackNamespace;
   readonly trustpilot: TrustpilotNamespace;
   readonly chatgpt: ChatgptNamespace;
   readonly gemini: GeminiNamespace;
@@ -311,6 +313,7 @@ export class Scavio extends ScavioCore {
     this.chewy = new ChewyNamespace(this);
     this.menards = new MenardsNamespace(this);
     this.nordstrom = new NordstromNamespace(this);
+    this.nordstromRack = new NordstromRackNamespace(this);
     this.trustpilot = new TrustpilotNamespace(this);
     this.chatgpt = new ChatgptNamespace(this);
     this.gemini = new GeminiNamespace(this);
