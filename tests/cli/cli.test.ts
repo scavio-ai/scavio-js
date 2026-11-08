@@ -34,6 +34,11 @@ describe("profileTargets", () => {
       display: "~/.config/fish/conf.d/scavio.fish",
     });
     expect(profileTargets({}, "linux", "/h").map((t) => t.display)).toEqual(["~/.profile"]);
+    expect(profileTargets({ SHELL: "/bin/zsh", ZDOTDIR: "/h/.config/zsh" }, "linux", "/h")[0]).toMatchObject({
+      path: "/h/.config/zsh/.zshrc",
+      display: "~/.config/zsh/.zshrc",
+    });
+    expect(profileTargets({ SHELL: "/bin/zsh", ZDOTDIR: "/h" }, "darwin", "/h").map((t) => t.display)).toEqual(["~/.zshrc"]);
     expect(profileTargets({ SHELL: "/bin/zsh" }, "win32", "/h")).toEqual([]);
   });
 });

@@ -36,7 +36,7 @@ same code, and click Approve. The CLI saves an API key named after your machine
 (`CLI - <hostname>`) and never prints it:
 
 - `~/.config/scavio/credentials.json` (owner-only), and
-- `SCAVIO_API_KEY` in your shell startup file (`~/.zshrc`, `~/.bashrc` and on
+- `SCAVIO_API_KEY` in your shell startup file (`~/.zshrc` or `$ZDOTDIR/.zshrc`, `~/.bashrc` and on
   macOS `~/.bash_profile`, fish `conf.d/scavio.fish`, or the Windows user
   environment). Skip this with `--no-profile`.
 

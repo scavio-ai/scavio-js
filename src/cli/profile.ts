@@ -22,7 +22,14 @@ export function profileTargets(env: Env = process.env, platform: string = proces
   const shell = basename(env.SHELL || "");
   const t = (kind: ProfileTarget["kind"], rel: string): ProfileTarget => ({ kind, path: join(home, rel), display: `~/${rel}` });
   if (shell === "fish") return [t("fish", ".config/fish/conf.d/scavio.fish")];
-  if (shell === "zsh") return [t("posix", ".zshrc")];
+  if (shell === "zsh") {
+    // zsh reads $ZDOTDIR/.zshrc when ZDOTDIR is set, not ~/.zshrc.
+    const zdot = env.ZDOTDIR;
+    if (zdot && zdot !== home) {
+      return [{ kind: "posix", path: join(zdot, ".zshrc"), display: join(zdot, ".zshrc").replace(home, "~") }];
+    }
+    return [t("posix", ".zshrc")];
+  }
   if (shell === "bash") {
     // macOS terminals start login shells, which read ~/.bash_profile, not ~/.bashrc.
     return platform === "darwin" ? [t("posix", ".bashrc"), t("posix", ".bash_profile")] : [t("posix", ".bashrc")];
