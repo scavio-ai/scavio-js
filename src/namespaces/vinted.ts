@@ -3,10 +3,11 @@ import type { Scavio } from "../client.js";
 // Vinted: 9 endpoints across 27 Vinted country sites, 1 credit each.
 //
 // Every method takes an optional country (fr when omitted, on the server).
-// Category, condition and filter names come back in the site's language. The
-// EU sites share one cross-border listing pool, priced in the site's currency;
-// uk, us and au are separate catalogs. product() takes item_id or url (the
-// server enforces one), and a product is priced in the SELLER's currency.
+// Category, condition and filter names come back in the site's language. Every
+// site can show listings from sellers in other countries, priced in the site's
+// currency after conversion; the EU sites share one cross-border pool.
+// product() takes item_id or url (the server enforces one), and returns the
+// SELLER's own price and currency.
 // search() needs a query unless category_id or brand_ids is given. Every call
 // raises the request timeout to VINTED_TIMEOUT when the client's is shorter.
 

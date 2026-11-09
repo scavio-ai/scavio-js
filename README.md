@@ -957,9 +957,11 @@ Nine endpoints, new in 0.42.0, 1 credit each, on `client.vinted`: `search`,
 `uk`, `pt`, `us`, `cz`, `sk`, `pl`, `se`, `ro`, `hu`, `dk`, `fi`, `hr`, `gr`,
 `ie`, `ee`, `lv`, `si`, `au`.
 
-- The EU sites share one cross-border listing pool, priced in the site's
-  currency (EUR, or CZK, PLN, SEK, RON, HUF, DKK); `uk` (GBP), `us` (USD) and
-  `au` (AUD) are separate catalogs. Category, condition and filter names come
+- Every site, `uk` (GBP), `us` (USD) and `au` (AUD) included, can show
+  listings from sellers in other countries, with the price converted to the
+  site's currency (EUR, or CZK, PLN, SEK, RON, HUF, DKK on the other sites);
+  the EU sites share one cross-border pool. `product` returns the seller's own
+  price and currency. Category, condition and filter names come
   back in the site's language.
 - `search` returns 96 items per page, pages 1-10 (`total_is_capped` is true
   past 960 matches). `service_fee` is the Vinted fee the buyer pays on top of
