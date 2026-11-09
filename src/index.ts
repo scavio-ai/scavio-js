@@ -99,6 +99,7 @@ export {
   NORDSTROM_RACK_REVIEWS_TIMEOUT,
 } from "./namespaces/nordstrom-rack.js";
 export { BestBuyNamespace, BEST_BUY_TIMEOUT } from "./namespaces/best-buy.js";
+export { TcgplayerNamespace, TCGPLAYER_TIMEOUT } from "./namespaces/tcgplayer.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -589,6 +590,26 @@ export type {
   BestBuySuggestionsOptions,
   BestBuyPricesOptions,
 } from "./namespaces/best-buy.js";
+export type {
+  TcgplayerSearchSort,
+  TcgplayerListingSort,
+  TcgplayerHistoryRange,
+  TcgplayerProductType,
+  TcgplayerTrendingGame,
+  TcgplayerProductRef,
+  TcgplayerSearchOptions,
+  TcgplayerProductOptions,
+  TcgplayerListingsOptions,
+  TcgplayerPriceHistoryOptions,
+  TcgplayerSalesOptions,
+  TcgplayerSetsOptions,
+  TcgplayerPriceGuideOptions,
+  TcgplayerSuggestionsOptions,
+  TcgplayerTrendingOptions,
+  TcgplayerSellerOptions,
+  TcgplayerSellerFeedbackOptions,
+  TcgplayerSellerProductsOptions,
+} from "./namespaces/tcgplayer.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,

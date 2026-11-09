@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 62 platforms on one API key, plus `extract()` to read
+data across 63 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -10,6 +10,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
 - **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
@@ -892,6 +893,59 @@ const terms = await client.bestBuy.suggestions({ query: "ps5 con" });
 Every call raises the request timeout to `BEST_BUY_TIMEOUT` (120s) and never
 lowers a longer client timeout; `availability` typically takes 5-20s. An
 unknown SKU or category is a 404.
+
+### [TCGplayer](https://scavio.dev/docs/tcgplayer-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Thirteen endpoints, new in 0.41.0, tcgplayer.com (US marketplace, USD), 1
+credit each, on `client.tcgplayer`: `search`, `product`, `listings`,
+`priceHistory`, `sales`, `games`, `sets`, `priceGuide`, `suggestions`,
+`trending`, `seller`, `sellerFeedback`, `sellerProducts`. Every game
+TCGplayer lists (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana
+and 60+ more).
+
+- `product`, `listings`, `priceHistory` and `sales` take `product_id` or a
+  tcgplayer.com `/product/<id>/` `url`. `search` needs a `query` unless
+  `game` or `set` is given.
+- `product` returns the market price per SKU (condition x printing x
+  language, e.g. Near Mint / Normal / English) with `lowest_sale_price`,
+  `highest_sale_price` and `sale_count`: recent SALE statistics, not live
+  listings. Use `listings` for live offers (up to 50 per page).
+- `priceHistory` covers up to a year per SKU (`month`, `quarter` default,
+  `semi_annual`, `annual`); `low_sale_price` and `high_sale_price` are null in
+  a bucket with no sales. `sales` returns only the 5 most recent sales.
+- `priceGuide` is a whole set's price table, cards or sealed, up to 500 rows
+  per page; take the `set_id` from `sets`.
+- Seller methods take the 8-character `seller.key` from a listing.
+
+```ts
+const found = (await client.tcgplayer.search({ query: "charizard", game: "pokemon", sort: "price_desc" })) as any;
+for (const p of found.data.products.slice(0, 5)) console.log(p.product_id, p.name, p.set_name, p.market_price);
+
+const card = (await client.tcgplayer.product({ product_id: 219058 })) as any;
+for (const s of card.data.skus) {
+  console.log(s.condition, s.printing, s.language, s.market_price, s.lowest_sale_price, s.highest_sale_price, s.sale_count);
+}
+
+const offers = (await client.tcgplayer.listings({ product_id: 219058, condition: ["Near Mint"] })) as any;
+for (const l of offers.data.listings) console.log(l.price, l.shipping_price, l.seller.name, l.seller.rating_percent);
+
+const hist = (await client.tcgplayer.priceHistory({ product_id: 219058, range: "month" })) as any;
+console.log(hist.data.totals.quantity_sold, hist.data.skus[0].buckets[0]);
+
+const sales = await client.tcgplayer.sales({ product_id: 219058 });
+const games = await client.tcgplayer.games();
+const sets = await client.tcgplayer.sets({ game: "pokemon" });
+const guide = await client.tcgplayer.priceGuide({ set_id: 604, limit: 500 });
+const terms = await client.tcgplayer.suggestions({ query: "charizard" });
+const hot = await client.tcgplayer.trending({ game: "pokemon" });
+const seller = await client.tcgplayer.seller({ seller_key: "58f7acae" });
+const feedback = await client.tcgplayer.sellerFeedback({ seller_key: "58f7acae", rating: 1 });
+const stock = await client.tcgplayer.sellerProducts({ seller_key: "58f7acae", game: "pokemon" });
+```
+
+Every call raises the request timeout to `TCGPLAYER_TIMEOUT` (120s) and never
+lowers a longer client timeout. An unknown product id, game, set or seller key
+is a 404. No store locator, product reviews or buylist prices.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
