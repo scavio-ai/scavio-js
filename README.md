@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 63 platforms on one API key, plus `extract()` to read
+data across 64 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -11,6 +11,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
 - **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
+- **Second-hand marketplaces** — Vinted (27 country sites, local currency and language)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
@@ -946,6 +947,62 @@ const stock = await client.tcgplayer.sellerProducts({ seller_key: "58f7acae", ga
 Every call raises the request timeout to `TCGPLAYER_TIMEOUT` (120s) and never
 lowers a longer client timeout. An unknown product id, game, set or seller key
 is a 404. No store locator, product reviews or buylist prices.
+
+### [Vinted](https://scavio.dev/docs/vinted-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Nine endpoints, new in 0.42.0, 1 credit each, on `client.vinted`: `search`,
+`product`, `seller`, `sellerProducts`, `sellerFeedback`, `brands`,
+`suggestions`, `filters`, `categories`. Every method takes an optional
+`country`: `fr` (default), `be`, `lu`, `es`, `nl`, `lt`, `de`, `at`, `it`,
+`uk`, `pt`, `us`, `cz`, `sk`, `pl`, `se`, `ro`, `hu`, `dk`, `fi`, `hr`, `gr`,
+`ie`, `ee`, `lv`, `si`, `au`.
+
+- The EU sites share one cross-border listing pool, priced in the site's
+  currency (EUR, or CZK, PLN, SEK, RON, HUF, DKK); `uk` (GBP), `us` (USD) and
+  `au` (AUD) are separate catalogs. Category, condition and filter names come
+  back in the site's language.
+- `search` returns 96 items per page, pages 1-10 (`total_is_capped` is true
+  past 960 matches). `service_fee` is the Vinted fee the buyer pays on top of
+  `price`; `total_price` includes it. Price sorts surface loosely matching
+  cheap listings, so pair them with a category or price range.
+- `product` takes `item_id` or a Vinted item `url` (the URL's own site wins)
+  and is priced in the SELLER's currency.
+- The id filters (`brand_ids`, `status_ids`, `size_ids`, `color_ids`,
+  `material_ids`) take an array or a comma-separated string; resolve them with
+  `brands`, `filters` and `categories`.
+- Live listings only: no sold-item search, shipping prices, pickup points or
+  similar items. Seller data is limited to public, buyer-relevant fields and
+  feedback carries no reviewer identity.
+
+```ts
+const found = (await client.vinted.search({ query: "barbour jacket", country: "uk" })) as any;
+console.log(found.data.listed_results, found.data.total_pages, found.data.total_is_capped);
+for (const i of found.data.items.slice(0, 5)) {
+  console.log(i.id, i.title, i.price, i.currency, i.service_fee, i.total_price, i.condition, i.seller.id);
+}
+
+const brands = (await client.vinted.brands({ query: "barbour", country: "uk" })) as any;
+console.log(brands.data.brands[0].id, brands.data.brands[0].item_count);
+const conditions = (await client.vinted.filters({ filter: "status", country: "uk" })) as any;
+for (const o of conditions.data.options) console.log(o.id, o.title, o.item_count);
+const women = await client.vinted.categories({ country: "uk", parent_id: 1904 });
+const typed = await client.vinted.suggestions({ query: "barb", country: "uk" });
+
+const item = (await client.vinted.product({
+  url: "https://www.vinted.co.uk/items/10671938315-nike-air-max-size-uk-75",
+})) as any;
+console.log(item.data.title, item.data.price, item.data.currency, item.data.is_sold, item.data.seller.login);
+
+const seller = (await client.vinted.seller({ user_id: 65958245, country: "uk" })) as any;
+console.log(seller.data.login, seller.data.feedback_count, seller.data.feedback_reputation);
+const wardrobe = await client.vinted.sellerProducts({ user_id: 65958245, country: "uk", limit: 10 });
+const reviews = (await client.vinted.sellerFeedback({ user_id: 65958245, country: "uk" })) as any;
+for (const f of reviews.data.feedback.slice(0, 3)) console.log(f.rating, f.created_at, f.text);
+```
+
+Every call raises the request timeout to `VINTED_TIMEOUT` (120s) and never
+lowers a longer client timeout. An unknown item or member id on `product` or
+`seller` is a 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

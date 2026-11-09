@@ -100,6 +100,7 @@ export {
 } from "./namespaces/nordstrom-rack.js";
 export { BestBuyNamespace, BEST_BUY_TIMEOUT } from "./namespaces/best-buy.js";
 export { TcgplayerNamespace, TCGPLAYER_TIMEOUT } from "./namespaces/tcgplayer.js";
+export { VintedNamespace, VINTED_TIMEOUT } from "./namespaces/vinted.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -610,6 +611,22 @@ export type {
   TcgplayerSellerFeedbackOptions,
   TcgplayerSellerProductsOptions,
 } from "./namespaces/tcgplayer.js";
+export type {
+  VintedCountry,
+  VintedSearchSort,
+  VintedSellerProductsSort,
+  VintedFilterCode,
+  VintedIdList,
+  VintedSearchOptions,
+  VintedProductOptions,
+  VintedSellerOptions,
+  VintedSellerProductsOptions,
+  VintedSellerFeedbackOptions,
+  VintedBrandsOptions,
+  VintedSuggestionsOptions,
+  VintedFiltersOptions,
+  VintedCategoriesOptions,
+} from "./namespaces/vinted.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,
