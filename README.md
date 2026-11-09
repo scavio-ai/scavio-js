@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 64 platforms on one API key, plus `extract()` to read
+data across 65 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces** — Vinted (27 country sites, local currency and language)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1005,6 +1005,69 @@ for (const f of reviews.data.feedback.slice(0, 3)) console.log(f.rating, f.creat
 Every call raises the request timeout to `VINTED_TIMEOUT` (120s) and never
 lowers a longer client timeout. An unknown item or member id on `product` or
 `seller` is a 404.
+
+### [Macy's](https://scavio.dev/docs/macys-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Nine endpoints, new in 0.43.0, 1 credit each, on `client.macys`: `search`,
+`product`, `reviews`, `category`, `brand`, `deals`, `stores`,
+`storeAvailability`, `suggestions`. macys.com (US), prices in USD; no
+`country`.
+
+- `search`, `category`, `brand` and `deals` share one grid: 60 organic items
+  per page with `total` and `total_pages`; totals can differ between sorts, as
+  on the site. Filter by `brand`, `color`, `special_offer`, `min_price` /
+  `max_price`, `pickup_store_id`, or any facet value via `filters`.
+- Ad-only sponsored tiles are dropped (`sponsored_dropped` counts them) unless
+  `include_sponsored`; organic items that also hold a paid slot stay, flagged
+  `is_sponsored`. A keyword Macy's maps to a category returns
+  `redirected_to_category`.
+- `deals` `type`: `sale` (default), `clearance`, `today_only`, `last_act`,
+  `limited_time_special`, `black_friday`.
+- `product` takes `product_id`, `url`, or up to 10 `product_ids` (Macy's
+  summary view: no rating histogram, and a collection without its members'
+  variants). A collection member's id answers with the collection product
+  (`requested_id` echoes the id asked for).
+- `review_count` includes ratings without text; `reviews` returns written
+  reviews only (`text_review_count`), up to 100 per page.
+- `storeAvailability` takes a `store_id` (per-variant `pickup_available` and
+  `in_store_available`) or a location (`zip`, `lat` + `lng`, or `city` +
+  `state`), not both. Macy's publishes no unit quantities, so there are no
+  stock counts. No coupon codes, Q&A text or price history: to track prices,
+  poll and store your own.
+
+```ts
+const found = (await client.macys.search({
+  query: "jeans",
+  brand: "Levi's",
+  special_offer: "clearance",
+  sort: "price_low_to_high",
+})) as any;
+console.log(found.data.total, found.data.total_pages, found.data.sponsored_dropped);
+for (const i of found.data.items.slice(0, 5)) {
+  console.log(i.id, i.title, i.price, i.regular_price, i.percent_off, i.sale_ends, i.deal_label, i.is_sponsored);
+}
+
+const clearance = (await client.macys.deals({ type: "clearance", filters: { GENDER: "Women" } })) as any;
+console.log(clearance.data.label, clearance.data.total);
+
+const p = (await client.macys.product({ product_id: 25822310 })) as any;
+console.log(p.data.title, p.data.price, p.data.regular_price, p.data.sale_ends);
+console.log(p.data.review_count, p.data.text_review_count, p.data.rating_distribution);
+for (const v of p.data.variants.slice(0, 3)) console.log(v.upc, v.color, v.size, v.available);
+
+const reviews = (await client.macys.reviews({ product_id: 25822310, sort: "lowest_rated" })) as any;
+for (const r of reviews.data.reviews.slice(0, 3)) console.log(r.rating, r.date, r.nickname, r.title);
+
+const stores = (await client.macys.stores({ zip: "10001" })) as any;
+const storeId = stores.data.stores[0].store_id;
+const atStore = (await client.macys.storeAvailability({ product_id: 25822310, store_id: storeId })) as any;
+console.log(atStore.data.pickup_available_count, atStore.data.in_store_available_count);
+const typed = await client.macys.suggestions({ query: "jea" });
+```
+
+Every call raises the request timeout to `MACYS_TIMEOUT` (120s) and never
+lowers a longer client timeout. An unknown product, category or store id is a
+404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

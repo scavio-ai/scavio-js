@@ -101,6 +101,7 @@ export {
 export { BestBuyNamespace, BEST_BUY_TIMEOUT } from "./namespaces/best-buy.js";
 export { TcgplayerNamespace, TCGPLAYER_TIMEOUT } from "./namespaces/tcgplayer.js";
 export { VintedNamespace, VINTED_TIMEOUT } from "./namespaces/vinted.js";
+export { MacysNamespace, MACYS_TIMEOUT } from "./namespaces/macys.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -627,6 +628,23 @@ export type {
   VintedFiltersOptions,
   VintedCategoriesOptions,
 } from "./namespaces/vinted.js";
+export type {
+  MacysSort,
+  MacysReviewSort,
+  MacysSpecialOffer,
+  MacysDealType,
+  MacysGridOptions,
+  MacysLocationOptions,
+  MacysSearchOptions,
+  MacysProductOptions,
+  MacysReviewsOptions,
+  MacysCategoryOptions,
+  MacysBrandOptions,
+  MacysDealsOptions,
+  MacysStoresOptions,
+  MacysStoreAvailabilityOptions,
+  MacysSuggestionsOptions,
+} from "./namespaces/macys.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,
