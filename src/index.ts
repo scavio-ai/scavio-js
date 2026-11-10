@@ -102,6 +102,7 @@ export { BestBuyNamespace, BEST_BUY_TIMEOUT } from "./namespaces/best-buy.js";
 export { TcgplayerNamespace, TCGPLAYER_TIMEOUT } from "./namespaces/tcgplayer.js";
 export { VintedNamespace, VINTED_TIMEOUT } from "./namespaces/vinted.js";
 export { MacysNamespace, MACYS_TIMEOUT } from "./namespaces/macys.js";
+export { SaksNamespace, SAKS_TIMEOUT } from "./namespaces/saks.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -645,6 +646,22 @@ export type {
   MacysStoreAvailabilityOptions,
   MacysSuggestionsOptions,
 } from "./namespaces/macys.js";
+export type {
+  SaksSort,
+  SaksDealType,
+  SaksRadius,
+  SaksGridOptions,
+  SaksLocationOptions,
+  SaksSearchOptions,
+  SaksProductOptions,
+  SaksCategoryOptions,
+  SaksBrandOptions,
+  SaksDealsOptions,
+  SaksStoresOptions,
+  SaksStoreAvailabilityOptions,
+  SaksSuggestionsOptions,
+  SaksDesignersOptions,
+} from "./namespaces/saks.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,

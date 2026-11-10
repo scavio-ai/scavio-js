@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 65 platforms on one API key, plus `extract()` to read
+data across 66 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces** — Vinted (27 country sites, local currency and language)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1068,6 +1068,65 @@ const typed = await client.macys.suggestions({ query: "jea" });
 Every call raises the request timeout to `MACYS_TIMEOUT` (120s) and never
 lowers a longer client timeout. An unknown product, category or store id is a
 404.
+
+### [Saks Fifth Avenue](https://scavio.dev/docs/saks-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Nine endpoints, new in 0.44.0, 2 credits each, on `client.saks`: `search`,
+`product`, `category`, `brand`, `deals`, `stores`, `storeAvailability`,
+`suggestions`, `designers`. saksfifthavenue.com (US), prices in USD; no
+`country`.
+
+- `search`, `category`, `brand` and `deals` share one grid: 24 positions per
+  page with `total`, `total_pages`, `start` and `next_start`. An editorial
+  tile can take a grid position, so a page may carry 22-23 items: pass the
+  previous `next_start` as `start` to miss nothing (`page` also works).
+- Filter by `brand`, `color`, `size`, `min_price` / `max_price`, `on_sale`,
+  `new_arrivals`, or any facet value via `filters`. `size` takes the facet
+  label ("Medium", not "M"). A keyword the site maps to a designer or
+  category page returns `redirected_to`.
+- `deals` `type`: `sale` (default), `womens_sale`, `mens_sale`,
+  `womens_new_arrivals`, `mens_new_arrivals`. Saks has no clearance or
+  final-sale list (items carry `is_clearance` / `is_final_sale` flags).
+- `product` takes `product_id` (master or variant) or `url`, plus optional
+  `color` + `size` to resolve one variant; `variants[]` carry each SKU's
+  online `warehouse_units`. Rating and review count only: review text is not
+  available.
+- `storeAvailability` needs a variant `sku` (a product's `variants[].sku`)
+  and a `zip` or `lat` + `lng`; `units_at_store` is present only when the
+  site shows a count, otherwise null.
+- `designers` is the A-Z index (about 1,200 names); its slugs feed `brand`.
+  No coupon codes, international prices or price history: to track designer
+  sale prices, poll and store your own.
+
+```ts
+const sale = (await client.saks.deals({
+  type: "womens_sale",
+  brand: "Prada",
+  sort: "price_low_to_high",
+})) as any;
+console.log(sale.data.label, sale.data.total, sale.data.total_pages, sale.data.next_start);
+for (const i of sale.data.items.slice(0, 5)) {
+  console.log(i.id, i.brand, i.title, i.price, i.regular_price, i.percent_off, i.badge);
+}
+
+const more = (await client.saks.deals({ type: "womens_sale", brand: "Prada", start: sale.data.next_start })) as any;
+console.log(more.data.start, more.data.count);
+
+const p = (await client.saks.product({ product_id: "0400019127312" })) as any;
+console.log(p.data.title, p.data.price, p.data.is_final_sale, p.data.rating, p.data.review_count);
+for (const v of p.data.variants.slice(0, 3)) console.log(v.sku, v.warehouse_units);
+
+const near = (await client.saks.storeAvailability({ sku: p.data.variants[0].sku, zip: "10022" })) as any;
+for (const st of near.data.stores) console.log(st.name, st.availability_message, st.in_stock, st.units_at_store);
+
+const designers = (await client.saks.designers({ letter: "G" })) as any;
+for (const d of designers.data.designers.slice(0, 5)) console.log(d.name, d.slug);
+const gucci = await client.saks.brand({ brand: "gucci", new_arrivals: true });
+```
+
+Every call raises the request timeout to `SAKS_TIMEOUT` (120s) and never
+lowers a longer client timeout. An unknown product id, category path or
+designer slug is a 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

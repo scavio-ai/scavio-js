@@ -61,6 +61,7 @@ import { BestBuyNamespace } from "./namespaces/best-buy.js";
 import { TcgplayerNamespace } from "./namespaces/tcgplayer.js";
 import { VintedNamespace } from "./namespaces/vinted.js";
 import { MacysNamespace } from "./namespaces/macys.js";
+import { SaksNamespace } from "./namespaces/saks.js";
 import { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 import { ChatgptNamespace } from "./namespaces/chatgpt.js";
 import { GeminiNamespace } from "./namespaces/gemini.js";
@@ -235,6 +236,7 @@ export class Scavio extends ScavioCore {
   readonly tcgplayer: TcgplayerNamespace;
   readonly vinted: VintedNamespace;
   readonly macys: MacysNamespace;
+  readonly saks: SaksNamespace;
   readonly trustpilot: TrustpilotNamespace;
   readonly chatgpt: ChatgptNamespace;
   readonly gemini: GeminiNamespace;
@@ -326,6 +328,7 @@ export class Scavio extends ScavioCore {
     this.tcgplayer = new TcgplayerNamespace(this);
     this.vinted = new VintedNamespace(this);
     this.macys = new MacysNamespace(this);
+    this.saks = new SaksNamespace(this);
     this.trustpilot = new TrustpilotNamespace(this);
     this.chatgpt = new ChatgptNamespace(this);
     this.gemini = new GeminiNamespace(this);
