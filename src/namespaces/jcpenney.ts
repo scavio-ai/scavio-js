@@ -1,19 +1,31 @@
 import type { Scavio } from "../client.js";
 
-// JCPenney: 9 endpoints, jcpenney.com (US incl. Puerto Rico stores, USD),
+// JCPenney: 11 endpoints, jcpenney.com (US incl. Puerto Rico stores, USD),
 // 1 credit each.
 //
 // product() takes product_id, url or up to 20 product_ids; category() takes
 // path or url (a /g/ path that carries its id=cat...); brand() takes brand or
 // url; stores() takes one location (zip, city + state, or lat + lng);
 // storeAvailability() takes a sku (a product's variants[].sku) plus zip or
-// lat + lng. The server enforces these. Prices are product-level ranges (no
-// price per size or color). Rating and review count only: review text is not
-// available. Every call raises the request timeout to JCPENNEY_TIMEOUT when
-// the client's is shorter.
+// lat + lng; reviews() and questions() take product_id or url. The server
+// enforces these. Prices are product-level ranges (no price per size or
+// color). Every call raises the request timeout to JCPENNEY_TIMEOUT when the
+// client's is shorter, except reviews() and questions(): they usually take
+// 15-90 s, up to about 3 minutes, so they use JCPENNEY_REVIEWS_TIMEOUT.
 
-/** Minimum request timeout (ms) for every jcpenney call. */
+/** Minimum request timeout (ms) for every jcpenney call except reviews() and questions(). */
 export const JCPENNEY_TIMEOUT = 120_000;
+
+/** Minimum request timeout (ms) for jcpenney.reviews() and jcpenney.questions(). */
+export const JCPENNEY_REVIEWS_TIMEOUT = 240_000;
+
+/** reviews() sorts: the review list's own sort menu. most_recent is the default. */
+export type JcpenneyReviewSort =
+  | "most_recent"
+  | "most_helpful"
+  | "highest_rating"
+  | "lowest_rating"
+  | "relevance";
 
 /** Listing sorts. relevance is the site's default order. */
 export type JcpenneySort =
@@ -170,11 +182,45 @@ export interface JcpenneyCouponsOptions {
   [key: string]: unknown;
 }
 
+/** Pass product_id or url. */
+export interface JcpenneyReviewsOptions {
+  /** A JCPenney product id (ppr / ppm / pp + digits), e.g. "ppr5008604049". */
+  product_id?: string;
+  /** A jcpenney.com product URL (its product id is used). Alternative to product_id. */
+  url?: string;
+  /** most_recent (default), most_helpful, highest_rating, lowest_rating or relevance. */
+  sort?: JcpenneyReviewSort;
+  /** Only reviews with this star rating (1-5). A rating nobody gave returns an empty list. */
+  rating?: number;
+  /**
+   * Reviews to return, 8-98. Defaults to 38. JCPenney loads 8, then 30 more
+   * per page, so 8, 38, 68 and 98 are the natural sizes; larger values take
+   * longer.
+   */
+  max_reviews?: number;
+  [key: string]: unknown;
+}
+
+/** Pass product_id or url. */
+export interface JcpenneyQuestionsOptions {
+  /** A JCPenney product id (ppr / ppm / pp + digits), e.g. "ppr5008212471". */
+  product_id?: string;
+  /** A jcpenney.com product URL (its product id is used). Alternative to product_id. */
+  url?: string;
+  /** Questions to return, 10-50 (10 per page). Defaults to 10. */
+  max_questions?: number;
+  [key: string]: unknown;
+}
+
 export class JcpenneyNamespace {
   constructor(private client: Scavio) {}
 
-  private post(path: string, options: object = {}): Promise<Record<string, unknown>> {
-    return this.client._post(`/api/v1/jcpenney/${path}`, options, undefined, JCPENNEY_TIMEOUT);
+  private post(
+    path: string,
+    options: object = {},
+    timeout: number = JCPENNEY_TIMEOUT,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post(`/api/v1/jcpenney/${path}`, options, undefined, timeout);
   }
 
   /**
@@ -200,8 +246,8 @@ export class JcpenneyNamespace {
   /**
    * One jcpenney.com product by id or URL, or up to 20 by product_ids: title,
    * brand, description, features, category and breadcrumbs, images, average
-   * rating, review_count, question and answer counts (review text is not
-   * available), the price block (regular, sale and clearance min / max ranges,
+   * rating, review_count, question and answer counts (review text and Q&A:
+   * reviews() and questions()), the price block (regular, sale and clearance min / max ranges,
    * percent off, price type, deal label, the after-coupon price with its code,
    * the price window), channel, in-store pickup, marketplace flag, and every
    * variant (sku, UPC, color, size, options, status, max per order, online
@@ -299,5 +345,49 @@ export class JcpenneyNamespace {
    */
   async coupons(options: JcpenneyCouponsOptions = {}): Promise<Record<string, unknown>> {
     return this.post("coupons", options);
+  }
+
+  /**
+   * Real customer review text of one jcpenney.com (US) product by id or URL,
+   * up to 98 per call (default 38), sorted most recent (default), most
+   * helpful, highest or lowest rating, or relevance, optionally only one star
+   * rating. Returns total_reviews (every language), displayed_reviews (the
+   * English reviews JCPenney lists, often fewer), average_rating,
+   * rating_distribution (1-5), recommended_percent,
+   * secondary_ratings_averages (Quality, Value...), photo_count and
+   * matching_reviews for the sort and filter. Each review has id, rating,
+   * title, text, author nickname, location, submitted_at and updated_at,
+   * recommended, helpful and unhelpful votes, verified_purchaser and
+   * incentivized badges, syndicated with syndication_source (the brand site it
+   * came from), photos, videos, secondary ratings, the brand's public response
+   * and the original product name. Reviewer age, gender and IP are never
+   * returned. Usually takes 15-90 s, up to about 3 minutes (request timeout
+   * raised to JCPENNEY_REVIEWS_TIMEOUT); failed calls are not charged. A
+   * product with no reviews returns an empty list; an unknown product is a
+   * 404.
+   *
+   * Costs 1 credit.
+   */
+  async reviews(options: JcpenneyReviewsOptions): Promise<Record<string, unknown>> {
+    return this.post("reviews", options, JCPENNEY_REVIEWS_TIMEOUT);
+  }
+
+  /**
+   * Customer questions and every answer for one jcpenney.com (US) product by
+   * id or URL, up to 50 questions per call (default 10), newest answers first
+   * (no sort option). Returns total_questions and total_answers. Each
+   * question has id, question, details, author, submitted_at, answer_count
+   * and helpful_votes; each answer has id, text, author, author_type (brand
+   * for the manufacturer's product experts, retailer for JCPenney staff, ai
+   * for AI-generated answers, customer), ai_label (AI-Generated / AI-Assisted
+   * when JCPenney labels it), is_best_answer, submitted_at and helpful /
+   * unhelpful votes. Answerer IPs are never returned. Usually takes 15-90 s,
+   * up to about 3 minutes (request timeout raised to
+   * JCPENNEY_REVIEWS_TIMEOUT); failed calls are not charged.
+   *
+   * Costs 1 credit.
+   */
+  async questions(options: JcpenneyQuestionsOptions): Promise<Record<string, unknown>> {
+    return this.post("questions", options, JCPENNEY_REVIEWS_TIMEOUT);
   }
 }

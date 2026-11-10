@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { Scavio, JCPENNEY_TIMEOUT } from "../../src/index.js";
+import { Scavio, JCPENNEY_TIMEOUT, JCPENNEY_REVIEWS_TIMEOUT } from "../../src/index.js";
 
 type Row = [method: string, args: Record<string, unknown>, path: string];
 
@@ -49,6 +49,14 @@ const ENDPOINTS: Row[] = [
   ],
   ["suggestions", { query: "jea" }, "/api/v1/jcpenney/suggestions"],
   ["coupons", {}, "/api/v1/jcpenney/coupons"],
+  ["reviews", { product_id: "ppr5008604049" }, "/api/v1/jcpenney/reviews"],
+  [
+    "reviews",
+    { url: "https://www.jcpenney.com/p/x/ppr5008604049", sort: "most_helpful", rating: 1, max_reviews: 68 },
+    "/api/v1/jcpenney/reviews",
+  ],
+  ["questions", { product_id: "ppr5008212471" }, "/api/v1/jcpenney/questions"],
+  ["questions", { url: "https://www.jcpenney.com/p/x/ppr5008212471", max_questions: 20 }, "/api/v1/jcpenney/questions"],
 ];
 
 type Ns = Record<string, (opts?: Record<string, unknown>) => Promise<unknown>>;
@@ -87,7 +95,7 @@ describe("jcpenney namespace", () => {
     expect(body()).toEqual({});
   });
 
-  it("has all 9 endpoints", () => {
+  it("has all 11 endpoints", () => {
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(client.jcpenney)).filter(
       (m) => m !== "constructor" && m !== "post",
     );
@@ -102,12 +110,15 @@ describe("jcpenney namespace", () => {
         "storeAvailability",
         "suggestions",
         "coupons",
+        "reviews",
+        "questions",
       ].sort(),
     );
   });
 
-  it("JCPENNEY_TIMEOUT is 120 s", () => {
+  it("JCPENNEY_TIMEOUT is 120 s, JCPENNEY_REVIEWS_TIMEOUT 240 s", () => {
     expect(JCPENNEY_TIMEOUT).toBe(120_000);
+    expect(JCPENNEY_REVIEWS_TIMEOUT).toBe(240_000);
   });
 
   it.each([
@@ -132,5 +143,23 @@ describe("jcpenney namespace", () => {
     await call(new Scavio({ apiKey: "sk_test", maxRequestsPerSecond: 50, timeout: 300_000 }));
     expect(delays()).toContain(300_000);
     expect(delays()).not.toContain(JCPENNEY_TIMEOUT);
+  });
+
+  it.each([
+    ["reviews", { product_id: "ppr5008604049" }],
+    ["questions", { product_id: "ppr5008212471" }],
+  ] as const)("jcpenney.%s raises the request timeout to 240 s, never lowers it", async (method, args) => {
+    const spy = vi.spyOn(globalThis, "setTimeout");
+    const delays = () => spy.mock.calls.map((c) => c[1]);
+    const call = (c: Scavio) => (c.jcpenney as unknown as Ns)[method]!(args);
+
+    await call(client);
+    expect(delays()).toContain(JCPENNEY_REVIEWS_TIMEOUT);
+    expect(delays()).not.toContain(JCPENNEY_TIMEOUT);
+
+    spy.mockClear();
+    await call(new Scavio({ apiKey: "sk_test", maxRequestsPerSecond: 50, timeout: 300_000 }));
+    expect(delays()).toContain(300_000);
+    expect(delays()).not.toContain(JCPENNEY_REVIEWS_TIMEOUT);
   });
 });

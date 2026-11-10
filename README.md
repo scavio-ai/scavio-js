@@ -1194,9 +1194,10 @@ lowers a longer client timeout. An unknown product id or brand is a 404.
 
 ### [JCPenney](https://scavio.dev/docs/jcpenney-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
-Nine endpoints, new in 0.46.0, on `client.jcpenney`: `search`, `product`,
-`category`, `brand`, `deals`, `stores`, `storeAvailability`, `suggestions`,
-`coupons`. 1 credit each. jcpenney.com (US, Puerto Rico stores included),
+Eleven endpoints on `client.jcpenney` (new in 0.46.0; `reviews` and
+`questions` in 0.47.0): `search`, `product`, `category`, `brand`, `deals`,
+`stores`, `storeAvailability`, `suggestions`, `coupons`, `reviews`,
+`questions`. 1 credit each. jcpenney.com (US, Puerto Rico stores included),
 prices in USD; no `country`.
 
 - `search`, `category`, `brand` and `deals` share one grid: 48 products per
@@ -1218,10 +1219,23 @@ prices in USD; no `country`.
   JCPenney does not expose a price per size or color.
 - `product` takes `product_id`, `url` or up to 20 `product_ids`. Variants
   carry sku, UPC, color, size and an online stock level (high / low / out),
-  not a count. Rating and review count only: review text is not available.
+  not a count. Review text and Q&A come from `reviews` and `questions`.
 - `storeAvailability` takes a variant `sku` (a product's `variants[].sku`)
   and a `zip` (or `lat` + `lng`); it returns real unit counts at the 5
   nearest stores.
+- `reviews` takes `product_id` or `url` and returns up to 98 review texts
+  (default 38), `sort` `most_recent` (default), `most_helpful`,
+  `highest_rating`, `lowest_rating` or `relevance`, optionally one star
+  `rating`. `total_reviews` counts every language, `displayed_reviews` the
+  English reviews JCPenney lists, `matching_reviews` those under the sort and
+  filter. Reviews carry `verified_purchaser`, `incentivized`, `syndicated`
+  with `syndication_source`, photos, videos, secondary ratings (Quality,
+  Value...) and the brand's response. Reviewer age, gender and IP addresses
+  are never returned.
+- `questions` takes `product_id` or `url` and returns up to 50 questions
+  (default 10, no sort option) with every answer's `author_type` (`brand`,
+  `retailer` for JCPenney staff, `ai`, `customer`) and `ai_label`
+  (AI-Generated / AI-Assisted).
 - `coupons` lists today's public JCPenney coupon codes. No price history,
   international sites, account offers or JCPenney Rewards balances, or
   checkout: to track clearance prices, poll and store your own.
@@ -1252,10 +1266,26 @@ for (const st of near.data.stores) console.log(st.name, st.quantity, st.status, 
 
 const coupons = (await client.jcpenney.coupons()) as any;
 for (const c of coupons.data.coupons) console.log(c.code, c.channel, c.headline, c.ends_at);
+
+// Slow: usually 15-90s, up to about 3 minutes.
+const rv = (await client.jcpenney.reviews({ product_id: "ppr5008604049", sort: "most_helpful" })) as any;
+console.log(rv.data.total_reviews, rv.data.displayed_reviews, rv.data.matching_reviews, rv.data.average_rating);
+for (const r of rv.data.reviews.slice(0, 3)) {
+  console.log(r.rating, r.title, r.author, r.submitted_at, r.helpful_votes, r.verified_purchaser, r.incentivized);
+}
+
+const qa = (await client.jcpenney.questions({ product_id: "ppr5008212471" })) as any;
+console.log(qa.data.total_questions, qa.data.total_answers);
+for (const q of qa.data.questions.slice(0, 3)) {
+  console.log(q.question, q.answer_count);
+  for (const a of q.answers) console.log("  ", a.author_type, a.ai_label, a.text);
+}
 ```
 
 Every call raises the request timeout to `JCPENNEY_TIMEOUT` (120s) and never
-lowers a longer client timeout. An unknown product id or brand is a 404.
+lowers a longer client timeout; `reviews` and `questions` raise it to
+`JCPENNEY_REVIEWS_TIMEOUT` (240s), and failed calls are not charged. An
+unknown product id or brand is a 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

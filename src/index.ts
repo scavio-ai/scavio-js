@@ -104,7 +104,7 @@ export { VintedNamespace, VINTED_TIMEOUT } from "./namespaces/vinted.js";
 export { MacysNamespace, MACYS_TIMEOUT } from "./namespaces/macys.js";
 export { SaksNamespace, SAKS_TIMEOUT } from "./namespaces/saks.js";
 export { KohlsNamespace, KOHLS_TIMEOUT } from "./namespaces/kohls.js";
-export { JcpenneyNamespace, JCPENNEY_TIMEOUT } from "./namespaces/jcpenney.js";
+export { JcpenneyNamespace, JCPENNEY_TIMEOUT, JCPENNEY_REVIEWS_TIMEOUT } from "./namespaces/jcpenney.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -692,6 +692,9 @@ export type {
   JcpenneyStoreAvailabilityOptions,
   JcpenneySuggestionsOptions,
   JcpenneyCouponsOptions,
+  JcpenneyReviewSort,
+  JcpenneyReviewsOptions,
+  JcpenneyQuestionsOptions,
 } from "./namespaces/jcpenney.js";
 export type {
   TrustpilotReviewsDateRange,
