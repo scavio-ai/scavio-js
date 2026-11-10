@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 66 platforms on one API key, plus `extract()` to read
+data across 67 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces** — Vinted (27 country sites, local currency and language)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1127,6 +1127,70 @@ const gucci = await client.saks.brand({ brand: "gucci", new_arrivals: true });
 Every call raises the request timeout to `SAKS_TIMEOUT` (120s) and never
 lowers a longer client timeout. An unknown product id, category path or
 designer slug is a 404.
+
+### [Kohl's](https://scavio.dev/docs/kohls-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Nine endpoints, new in 0.45.0, on `client.kohls`: `search`, `product`,
+`category`, `brand`, `deals`, `stores`, `storeAvailability`, `suggestions`,
+`coupons`. 2 credits each, except `stores` (1 credit). kohls.com (US), prices
+in USD; no `country`.
+
+- `search`, `category`, `brand` and `deals` share one grid: 120 products per
+  page with `total` and `total_pages`. Up to about 8 sponsored items stay in
+  the list, flagged `is_sponsored` and counted in `sponsored_count`.
+- Filter by `brand`, `color`, `size`, `on_sale`, `clearance`, or any facet
+  value id via `filters` (one id or an array, combined with AND). Price is a
+  facet bucket ("Price:$25 to $50"), not a free min / max. Sorts include
+  `percent_off` and `highest_rated`. Search returns `corrected_query` when
+  the site autocorrects a keyword.
+- `category` takes a kohls.com catalog `path` or `url` that carries its
+  `CN=` filter (a product's `breadcrumbs[].url` works).
+- `deals` `type`: `clearance` (default), `sale`, `kohls_cash` (items that
+  earn Kohl's Cash now), `sephora` (Sephora at Kohl's).
+- Prices carry `price_label` (sale, clearance, clearance+regular),
+  `percent_off`, `with_code_price` (the price after a public offer code,
+  with the code) and `price_suppressed` + `price_note` for cart-only prices.
+- `product` takes `product_id` or `url`, plus an optional `store_id` (from
+  `stores`) for that store's availability and price per variant. It returns
+  `kohls_cash` earn and redeem windows and the public offer codes when the
+  product has them, and `dept`. Rating and review count only: review text is
+  not available.
+- `storeAvailability` takes a variant `sku` (a product's `variants[].sku`),
+  a `zip` and optionally `dept`; it returns real `pickup_units` and a
+  `stock_level` at every store within about 50 miles.
+- `coupons` lists today's public Kohl's coupon codes. No price history,
+  international sites, account offers or checkout: to track clearance
+  prices, poll and store your own.
+
+```ts
+const clr = (await client.kohls.deals({ type: "clearance", sort: "percent_off" })) as any;
+console.log(clr.data.label, clr.data.total, clr.data.total_pages, clr.data.sponsored_count);
+for (const i of clr.data.items.slice(0, 5)) {
+  console.log(i.id, i.title, i.price, i.regular_price, i.price_label, i.percent_off, i.with_code_price, i.is_sponsored);
+}
+
+const jeans = (await client.kohls.search({
+  query: "jeans",
+  brand: "Levi's",
+  filters: ["Gender:Womens", "Price:$25 to $50"],
+})) as any;
+console.log(jeans.data.total, jeans.data.corrected_query);
+
+const p = (await client.kohls.product({ product_id: "6251213" })) as any;
+console.log(p.data.title, p.data.price, p.data.rating, p.data.review_count, p.data.dept, p.data.kohls_cash);
+const v = p.data.variants[0];
+console.log(v.sku, v.upc, v.color, v.online_units);
+
+const near = (await client.kohls.storeAvailability({ sku: v.sku, zip: "10001", dept: p.data.dept })) as any;
+console.log(near.data.in_stock_count, near.data.total_pickup_units);
+for (const st of near.data.stores.slice(0, 5)) console.log(st.name, st.pickup_units, st.stock_level, st.distance_miles);
+
+const coupons = (await client.kohls.coupons()) as any;
+for (const c of coupons.data.offers) console.log(c.code, c.description, c.ends, c.requires_kohls_card);
+```
+
+Every call raises the request timeout to `KOHLS_TIMEOUT` (120s) and never
+lowers a longer client timeout. An unknown product id or brand is a 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

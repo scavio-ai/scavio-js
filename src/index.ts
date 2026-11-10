@@ -103,6 +103,7 @@ export { TcgplayerNamespace, TCGPLAYER_TIMEOUT } from "./namespaces/tcgplayer.js
 export { VintedNamespace, VINTED_TIMEOUT } from "./namespaces/vinted.js";
 export { MacysNamespace, MACYS_TIMEOUT } from "./namespaces/macys.js";
 export { SaksNamespace, SAKS_TIMEOUT } from "./namespaces/saks.js";
+export { KohlsNamespace, KOHLS_TIMEOUT } from "./namespaces/kohls.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -662,6 +663,21 @@ export type {
   SaksSuggestionsOptions,
   SaksDesignersOptions,
 } from "./namespaces/saks.js";
+export type {
+  KohlsSort,
+  KohlsDealType,
+  KohlsSuggestionType,
+  KohlsGridOptions,
+  KohlsSearchOptions,
+  KohlsProductOptions,
+  KohlsCategoryOptions,
+  KohlsBrandOptions,
+  KohlsDealsOptions,
+  KohlsStoresOptions,
+  KohlsStoreAvailabilityOptions,
+  KohlsSuggestionsOptions,
+  KohlsCouponsOptions,
+} from "./namespaces/kohls.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,
