@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 67 platforms on one API key, plus `extract()` to read
+data across 68 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces** — Vinted (27 country sites, local currency and language)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1190,6 +1190,71 @@ for (const c of coupons.data.offers) console.log(c.code, c.description, c.ends, 
 ```
 
 Every call raises the request timeout to `KOHLS_TIMEOUT` (120s) and never
+lowers a longer client timeout. An unknown product id or brand is a 404.
+
+### [JCPenney](https://scavio.dev/docs/jcpenney-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Nine endpoints, new in 0.46.0, on `client.jcpenney`: `search`, `product`,
+`category`, `brand`, `deals`, `stores`, `storeAvailability`, `suggestions`,
+`coupons`. 1 credit each. jcpenney.com (US, Puerto Rico stores included),
+prices in USD; no `country`.
+
+- `search`, `category`, `brand` and `deals` share one grid: 48 products per
+  page, at most 25 pages (1,200 items deep), with `total` and `total_pages`.
+- Filter by `brand`, `color`, `size`, `price_range` and `deal` (a Deals &
+  Promotions label), each one value or an array, or by any facet via
+  `filters` as `{ facets[].id: value }` (facets combined with AND). Search
+  returns `corrected_query` when the site autocorrects a keyword and
+  `redirected_to` when it sends a keyword (doorbusters) to a deal or
+  category listing; `exact: true` skips the automatic category narrowing.
+- `category` takes a jcpenney.com `/g/` `path` or `url` that carries its
+  `id=cat...`. A department page (dept...) lists no products without a deal
+  or another filter.
+- `deals` `type`: `clearance` (default), `sale`, `black_friday`, `big_buy`,
+  `limited_time_special`, `best_value`, `gotta_have_it`, `closeout`, `bogo`;
+  or any `label` verbatim, optionally in one `department`.
+- Prices are product-level ranges (regular, sale and clearance min / max,
+  `percent_off`, `price_type`) plus the after-coupon price and its code:
+  JCPenney does not expose a price per size or color.
+- `product` takes `product_id`, `url` or up to 20 `product_ids`. Variants
+  carry sku, UPC, color, size and an online stock level (high / low / out),
+  not a count. Rating and review count only: review text is not available.
+- `storeAvailability` takes a variant `sku` (a product's `variants[].sku`)
+  and a `zip` (or `lat` + `lng`); it returns real unit counts at the 5
+  nearest stores.
+- `coupons` lists today's public JCPenney coupon codes. No price history,
+  international sites, account offers or JCPenney Rewards balances, or
+  checkout: to track clearance prices, poll and store your own.
+
+```ts
+const clr = (await client.jcpenney.deals({ type: "clearance" })) as any;
+console.log(clr.data.type, clr.data.total, clr.data.total_pages);
+for (const i of clr.data.items.slice(0, 5)) {
+  console.log(i.id, i.title, i.price, i.price_max, i.regular_price, i.price_type, i.percent_off, i.coupon_price, i.coupon_code);
+}
+
+const jeans = (await client.jcpenney.search({
+  query: "jeans",
+  brand: "levi's",
+  filters: { gender: "women" },
+})) as any;
+console.log(jeans.data.total, jeans.data.corrected_query, jeans.data.redirected_to);
+
+const p = (await client.jcpenney.product({ product_id: "ppr5008604049" })) as any;
+const price = p.data.price;
+console.log(p.data.title, price.current_min, price.current_max, price.regular_min, price.coupon, p.data.rating, p.data.review_count);
+const v = p.data.variants[0];
+console.log(v.sku, v.upc, v.color, v.size, v.online_stock);
+
+const near = (await client.jcpenney.storeAvailability({ sku: v.sku, zip: "90012" })) as any;
+console.log(near.data.stores_with_stock, near.data.total_quantity);
+for (const st of near.data.stores) console.log(st.name, st.quantity, st.status, st.distance_miles);
+
+const coupons = (await client.jcpenney.coupons()) as any;
+for (const c of coupons.data.coupons) console.log(c.code, c.channel, c.headline, c.ends_at);
+```
+
+Every call raises the request timeout to `JCPENNEY_TIMEOUT` (120s) and never
 lowers a longer client timeout. An unknown product id or brand is a 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
