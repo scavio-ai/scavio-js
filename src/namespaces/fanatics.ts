@@ -27,10 +27,10 @@ export const FANATICS_REVIEWS_TIMEOUT = 300_000;
  */
 export type FanaticsCountry = "us" | "gb" | "de" | "fr" | "es" | "it" | "jp" | "ca";
 
-/** US league stores (country us): fanatics (default), nflshop, mlbshop, nhlshop, mlsstore. Same product ids on every store. */
+/** US league stores (country us): fanatics (default), nflshop, mlbshop, nhlshop, mlsstore. Same product ids on every store; department and filter ids are per store (Jerseys: 8011 on fanatics, 14012 on nflshop), so take them from the facets of the store you query. */
 export type FanaticsSite = "fanatics" | "nflshop" | "mlbshop" | "nhlshop" | "mlsstore";
 
-/** Listing sorts; top_sellers is the default. Price sorts follow the site's lowest price (the with-code price when a promo code applies). */
+/** Listing sorts; top_sellers is the default. Price sorts order by the current price (price, before any promo code), not the with-code price. */
 export type FanaticsSort = "top_sellers" | "price_low_to_high" | "price_high_to_low" | "newest";
 
 export type FanaticsGender = "men" | "women" | "kids" | "baby";
@@ -82,7 +82,7 @@ export interface FanaticsSearchOptions extends FanaticsGridOptions {
   gender?: FanaticsGender;
   /** Narrow to one league (an id from facets: NFL 25, MLB 19, NBA 23, NHL 26, College 5). */
   league_id?: FanaticsId;
-  /** Narrow to one department (an id from facets: Jerseys 8011, Hats 8008, T-Shirts 8022). */
+  /** Narrow to one department (an id from the facets of the same storefront / store: on fanatics.com Jerseys 8011, Hats 8008, T-Shirts 8022; nflshop Jerseys 14012). */
   department_id?: FanaticsId;
   filters?: FanaticsFilters;
   [key: string]: unknown;
@@ -105,9 +105,9 @@ export interface FanaticsBrowseOptions extends FanaticsGridOptions {
   league_id?: FanaticsId;
   /** Team id (from facets: Los Angeles Lakers 3372, Kansas City Chiefs 3433). */
   team_id?: FanaticsId;
-  /** Player id (from facets.players: Patrick Mahomes 12072, Aaron Judge 31). */
+  /** Player id, from the players facet when the page lists one (e.g. Lakers) or a product's player field: Patrick Mahomes 12072, Aaron Judge 31. */
   player_id?: FanaticsId;
-  /** Department id (Hats 8008, Jerseys 8011), or parent-child for a sub-department ("8008-8084"). */
+  /** Department id from the same store's facets (fanatics.com: Hats 8008, Jerseys 8011; nflshop Jerseys 14012), or parent-child for a sub-department ("8008-8084"). */
   department_id?: FanaticsId;
   /** Brand id (from facets.brands: '47 479, Nike 76, New Era 127). */
   brand_id?: FanaticsId;
@@ -130,7 +130,7 @@ export interface FanaticsDealsOptions extends FanaticsGridOptions {
   league_id?: FanaticsId;
   /** Only one team. */
   team_id?: FanaticsId;
-  /** Only one department. */
+  /** Only one department (an id from the same store's facets). */
   department_id?: FanaticsId;
   /** Only one brand. */
   brand_id?: FanaticsId;
@@ -171,7 +171,9 @@ export class FanaticsNamespace {
    * through filters, sorted by top sellers, price or newest. Items carry id,
    * title, brand, url, image, price, regular_price, sale_price,
    * clearance_price, with_code_price and code_percent_off (the price with the
-   * site's current promo code, when it applies), price_label, percent_off,
+   * site's current promo code, when it applies), price_label (coupon means
+   * coupon-eligible; a null with_code_price means the code does not apply),
+   * percent_off,
    * top_seller, customizable, ready_to_ship, ship_by, est_delivery, urgency
    * and is_sponsored. Also total (the US site counts at most 9000:
    * total_capped), page, page_size, total_pages, the sort, every facet
@@ -189,8 +191,8 @@ export class FanaticsNamespace {
    * One Fanatics product by id or URL: title, brand, league, team, player,
    * gender, categories, breadcrumb, description, details, images, the price
    * block (price, regular_price, sale_price, clearance_price,
-   * with_code_price, code_percent_off, percent_off, price_label), the site's
-   * current promo code, in_stock, every size (item_id, available,
+   * with_code_price, code_percent_off, percent_off, price_label), on_sale
+   * (true for sale and clearance markdowns), the site's current promo code, in_stock, every size (item_id, available,
    * stock_level low / out, price, with_code_price, ship_by, estimated
    * delivery window), every colorway, personalization (name / number fields
    * with the team roster; the price already includes personalization), flags
@@ -209,8 +211,8 @@ export class FanaticsNamespace {
    * Browse a Fanatics listing by URL or ids: a team, a player, a league
    * section, a department, a brand or a collection, with price_band,
    * on_sale, gender and any facet as filters. The facets list the listing's
-   * teams, players, departments, brands, collections and sizes with their
-   * ids; browse names what the page shows. Same item fields, totals, facets
+   * teams, departments, brands, collections and sizes with their ids, plus
+   * players when the page lists them (e.g. Lakers); browse names what the page shows. Same item fields, totals, facets
    * and data_as_of as search().
    *
    * Costs 1 credit.

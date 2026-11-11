@@ -1448,21 +1448,26 @@ default), `gb` (GBP), `de`, `fr`, `es`, `it` (EUR), `jp` (JPY) or `ca`
 (CAD, `language` en or fr); titles come in the storefront's language.
 `site` reads a US league store (with country us): `fanatics` (default),
 `nflshop`, `mlbshop`, `nhlshop` or `mlsstore`; the same product ids work on
-every store.
+every store, but department and filter ids are per store (Jerseys is 8011 on
+fanatics.com, 14012 on NFL Shop): take them from the facets of the store you
+query.
 
 - `search`, `product`, `browse` and `deals` take `country`, `language` and
   `site`; `reviews` is US only (fanatics.com).
 - `search`, `browse` and `deals` share one grid: 24, 48 or 72 items per page
   (default 72) with `total`, `total_capped` (the US site counts at most
   9000) and `total_pages`, sorted `top_sellers`, `price_low_to_high`,
-  `price_high_to_low` or `newest`. Facet values feed `filters` as
+  `price_high_to_low` or `newest` (price sorts use the current `price`,
+  before any promo code, not `with_code_price`). Facet values feed `filters` as
   `{ filter: value }`, one value per filter; facet ids feed `browse`
-  (`team_id`, `player_id`, `department_id`, `brand_id`, `collection_id`).
-  `price_band` and `on_sale` are on `browse` (no price bands on jp). A
+  (`team_id`, `player_id`, `department_id`, `brand_id`, `collection_id`;
+  player ids come from the players facet when the page lists one, e.g.
+  Lakers, or from a product's `player`). `price_band` and `on_sale` are on `browse` (no price bands on jp). A
   league alone is a landing page: combine it with another id or a filter.
 - Each item carries `price`, `regular_price`, `sale_price`,
   `clearance_price`, `with_code_price` (the price with the site-wide promo
-  code shown on the page) and `price_label`. `data_as_of` says when Fanatics
+  code shown on the page) and `price_label` (`coupon` means coupon-eligible;
+  a null `with_code_price` means the code does not lower that item). `data_as_of` says when Fanatics
   built each listing; misspellings come back as `corrected_query`.
 - `product` lists every size with `stock_level` (low / out: a level, never
   a unit count), ship-by and delivery estimates, the current promo code,
