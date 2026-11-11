@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 68 platforms on one API key, plus `extract()` to read
+data across 69 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces** — Vinted (27 country sites, local currency and language)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1286,6 +1286,83 @@ Every call raises the request timeout to `JCPENNEY_TIMEOUT` (120s) and never
 lowers a longer client timeout; `reviews` and `questions` raise it to
 `JCPENNEY_REVIEWS_TIMEOUT` (240s), and failed calls are not charged. An
 unknown product id or brand is a 404.
+
+### [Dick's Sporting Goods](https://scavio.dev/docs/dicks-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Nine endpoints on `client.dicks` (new in 0.48.0): `search`, `product`,
+`products`, `reviews`, `category`, `brand`, `deals`, `storeAvailability`,
+`suggestions`. 1 credit each, except `product` and `reviews` (2 credits).
+dickssportinggoods.com (US), prices in USD; no `country`.
+
+- `search`, `category`, `brand` and `deals` share one grid: 48 items per
+  page by default, up to 144 (`page_size`), with `total` and `total_pages`,
+  sorted `relevance`, `top_sellers`, `savings`, `price_low_to_high`,
+  `price_high_to_low`, `featured`, `new_arrivals` or `brand_az`.
+- Filter by `brand` (one value or an array), an approximate `min_price` /
+  `max_price`, or any facet via `filters` as `{ facets[].id: value }`
+  (facets combined with AND). Search returns `did_you_mean` for a misspelled
+  query and follows keywords Dick's sends to a landing page (`clearance`,
+  `golf balls`), reported as `redirected_to`.
+- Merchandised items are flagged `is_pinned` and can make page 1 a few items
+  longer than `page_size`. `scheduled_prices` are the retailer's own planned
+  offer-price windows and can change: not a forecast or price history.
+- `category` takes a `/f/` or `/c/` `path`, a `url` or a `category_id`.
+  `deals` `type`: `clearance` (default), `sale` or `weekly_deals`.
+- `product` takes `product_id` or `url` and lists every SKU with its own
+  price, list price, `percent_off`, `is_clearance`, `online_units`, UPC,
+  `buyable` flag and `map_price_applies` (the price only shows in the cart).
+  Prices differ per size and color, so read the variant you need.
+  `products` is the cheap style-level summary for up to 5 `product_ids`.
+- `reviews` takes `product_id` or `url` and returns the 15 newest reviews
+  with full text plus the rating stats and distribution: no paging, sort or
+  star filter, and questions and answers are counts only.
+- `storeAvailability` takes `skus` (from `product` `variants[].sku`) and a
+  `zip` (or `lat` + `lng`); it returns unit counts at up to 100 DICK'S,
+  Golf Galaxy (`chain: "golf_galaxy"`) or Public Lands
+  (`chain: "public_lands"`) stores with address, phone, hours and distance.
+  There is no standalone store locator, and an unknown SKU reads 0
+  everywhere.
+- No price history, ScoreCard prices or points, international sites,
+  account data or checkout: to track clearance prices, poll and store your
+  own.
+
+```ts
+const clr = (await client.dicks.deals({ type: "clearance", sort: "savings" })) as any;
+console.log(clr.data.label, clr.data.total, clr.data.total_pages);
+for (const i of clr.data.items.slice(0, 5)) {
+  console.log(i.id, i.title, i.price, i.price_max, i.list_price, i.percent_off, i.is_pinned, i.scheduled_prices);
+}
+
+const shoes = (await client.dicks.search({
+  query: "running shoes",
+  brand: "HOKA",
+  filters: { "5495": "Men's" },
+})) as any;
+console.log(shoes.data.total, shoes.data.did_you_mean, shoes.data.redirected_to);
+
+// Slow: usually 20-75s, up to about 2.5 minutes.
+const p = (await client.dicks.product({ product_id: "23FHQMCLFTN9GTXBLMNS" })) as any;
+console.log(p.data.title, p.data.price.min, p.data.price.max, p.data.is_clearance);
+for (const v of p.data.variants.slice(0, 5)) {
+  console.log(v.sku, v.color, v.size, v.price, v.list_price, v.is_clearance, v.online_units);
+}
+
+const skus = p.data.variants.slice(0, 2).map((v: any) => v.sku);
+const near = (await client.dicks.storeAvailability({ skus, zip: "60601" })) as any;
+console.log(near.data.stores_with_stock, near.data.sku_totals);
+for (const st of near.data.stores.slice(0, 3)) {
+  console.log(st.name, st.distance_miles, st.skus.map((s: any) => [s.sku, s.units]));
+}
+
+const rv = (await client.dicks.reviews({ product_id: "26UNDMFITN1HRI9WUAETC" })) as any;
+console.log(rv.data.stats.total, rv.data.stats.average, rv.data.stats.distribution);
+for (const r of rv.data.reviews.slice(0, 3)) console.log(r.rating, r.title, r.submitted_at);
+```
+
+Every call raises the request timeout to `DICKS_TIMEOUT` (120s) and never
+lowers a longer client timeout; `product` and `reviews` raise it to
+`DICKS_PRODUCT_TIMEOUT` (240s), and failed calls are not charged. An
+unknown product id, category or brand is a 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

@@ -64,6 +64,7 @@ import { MacysNamespace } from "./namespaces/macys.js";
 import { SaksNamespace } from "./namespaces/saks.js";
 import { KohlsNamespace } from "./namespaces/kohls.js";
 import { JcpenneyNamespace } from "./namespaces/jcpenney.js";
+import { DicksNamespace } from "./namespaces/dicks.js";
 import { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 import { ChatgptNamespace } from "./namespaces/chatgpt.js";
 import { GeminiNamespace } from "./namespaces/gemini.js";
@@ -241,6 +242,7 @@ export class Scavio extends ScavioCore {
   readonly saks: SaksNamespace;
   readonly kohls: KohlsNamespace;
   readonly jcpenney: JcpenneyNamespace;
+  readonly dicks: DicksNamespace;
   readonly trustpilot: TrustpilotNamespace;
   readonly chatgpt: ChatgptNamespace;
   readonly gemini: GeminiNamespace;
@@ -335,6 +337,7 @@ export class Scavio extends ScavioCore {
     this.saks = new SaksNamespace(this);
     this.kohls = new KohlsNamespace(this);
     this.jcpenney = new JcpenneyNamespace(this);
+    this.dicks = new DicksNamespace(this);
     this.trustpilot = new TrustpilotNamespace(this);
     this.chatgpt = new ChatgptNamespace(this);
     this.gemini = new GeminiNamespace(this);
