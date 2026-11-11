@@ -106,6 +106,7 @@ export { SaksNamespace, SAKS_TIMEOUT } from "./namespaces/saks.js";
 export { KohlsNamespace, KOHLS_TIMEOUT } from "./namespaces/kohls.js";
 export { JcpenneyNamespace, JCPENNEY_TIMEOUT, JCPENNEY_REVIEWS_TIMEOUT } from "./namespaces/jcpenney.js";
 export { DicksNamespace, DICKS_TIMEOUT, DICKS_PRODUCT_TIMEOUT } from "./namespaces/dicks.js";
+export { FootlockerNamespace, FOOTLOCKER_TIMEOUT, FOOTLOCKER_REVIEWS_TIMEOUT } from "./namespaces/footlocker.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -712,6 +713,29 @@ export type {
   DicksStoreAvailabilityOptions,
   DicksSuggestionsOptions,
 } from "./namespaces/dicks.js";
+export type {
+  FootlockerCountry,
+  FootlockerLanguage,
+  FootlockerReleaseCountry,
+  FootlockerSort,
+  FootlockerDealType,
+  FootlockerReleaseStatus,
+  FootlockerReviewSort,
+  FootlockerMarketOptions,
+  FootlockerGridOptions,
+  FootlockerProductTarget,
+  FootlockerWhereOptions,
+  FootlockerSearchOptions,
+  FootlockerProductOptions,
+  FootlockerCategoryOptions,
+  FootlockerBrandOptions,
+  FootlockerDealsOptions,
+  FootlockerReleasesOptions,
+  FootlockerStoresOptions,
+  FootlockerStoreAvailabilityOptions,
+  FootlockerReviewsOptions,
+  FootlockerQuestionsOptions,
+} from "./namespaces/footlocker.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,

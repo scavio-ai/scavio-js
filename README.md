@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 69 platforms on one API key, plus `extract()` to read
+data across 70 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces** — Vinted (27 country sites, local currency and language)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1363,6 +1363,80 @@ Every call raises the request timeout to `DICKS_TIMEOUT` (120s) and never
 lowers a longer client timeout; `product` and `reviews` raise it to
 `DICKS_PRODUCT_TIMEOUT` (240s), and failed calls are not charged. An
 unknown product id, category or brand is a 404.
+
+### [Foot Locker](https://scavio.dev/docs/footlocker-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Ten endpoints on `client.footlocker` (new in 0.49.0), 1 credit each:
+`search`, `product`, `category`, `brand`, `deals`, `releases`, `stores`,
+`storeAvailability`, `reviews`, `questions`. `country` picks the
+storefront: `us` (footlocker.com, USD, default), `ca` (CAD, `language` en
+or fr), `gb` (GBP), `de`, `fr`, `it`, `es`, `nl`, `be` (`language` nl or
+fr), `at`, `ie` (EUR), `au` (AUD) or `nz` (NZD); titles come in the
+storefront's language.
+
+- Search, product, category, brand and deals (`sale`, `discount_eligible`)
+  work on all 13 storefronts; `exclusives` on us and ca; `releases` on us,
+  ca and gb (gb has no prices or reservation windows); `stores`,
+  `storeAvailability`, `reviews` and `questions` are US only.
+- `search`, `category`, `brand` and `deals` share one grid: 48 items per
+  page with `total` and `total_pages`, sorted `relevance`,
+  `price_low_to_high`, `price_high_to_low`, `new_arrivals`, `top_rated`,
+  `name_az` or `brand_az`. Filter by `brand` (any case), `gender`, `color`,
+  `price_range`, `on_sale` or any facet via `filters` as
+  `{ facets[].id: value }`.
+- Listings can be a few hours old: `data_as_of` says when each one was
+  built. A bare brand keyword (`nike`, `hoka`) returns that brand's listing
+  and `redirected_to` says which; a keyword the site sends to a landing page
+  without a product listing is an unbilled 400 pointing to `brand`,
+  `category` or `deals`.
+- `product` lists every colorway with its price and every size with
+  `available`, `ship`, `pickup` and `stores_available` (a store count, not
+  units): availability is yes / no, Foot Locker publishes no unit counts.
+  European storefronts add `lowest_price_30d`.
+- `releases` is the release calendar as monitoring data: launch date and
+  time, retail price, colorway, style code, heat level, size run and
+  reservation windows where the storefront runs them. Nothing here enters,
+  reserves or buys a release.
+- `storeAvailability` answers which nearby Foot Locker stores show a
+  product (or one `size`) as available, yes / no; Foot Locker banner stores
+  only (no Kids Foot Locker or Champs).
+- No search suggestions, member (FLX) prices or account data, price history
+  or checkout: to track prices, poll and store your own.
+
+```ts
+const res = (await client.footlocker.search({ query: "nike dunk", country: "de" })) as any;
+console.log(res.data.currency, res.data.total, res.data.data_as_of, res.data.redirected_to);
+for (const i of res.data.items.slice(0, 5)) {
+  console.log(i.id, i.title, i.price, i.list_price, i.percent_off, i.lowest_price_30d);
+}
+
+const p = (await client.footlocker.product({ product_id: "Q5495005" })) as any;
+console.log(p.data.title, p.data.price, p.data.launch);
+for (const s of p.data.sizes.slice(0, 5)) {
+  console.log(s.size, s.available, s.ship, s.pickup, s.stores_available);
+}
+
+const near = (await client.footlocker.storeAvailability({ product_id: "W2288111", size: "10.0", zip: "10001" })) as any;
+console.log(near.data.stores_with_availability);
+for (const st of near.data.stores.slice(0, 3)) {
+  console.log(st.name_secondary, st.distance_miles, st.available, st.sizes_available);
+}
+
+const cal = (await client.footlocker.releases({ status: "upcoming", brand: "Jordan" })) as any;
+for (const r of cal.data.releases.slice(0, 5)) {
+  console.log(r.launch_at, r.title, r.style, r.retail_price, r.heat_level, r.reservation.status);
+}
+
+// Slow: usually 25-90s, up to about 3-4 minutes.
+const rv = (await client.footlocker.reviews({ product_id: "Q5495005", sort: "most_helpful", limit: 30 })) as any;
+console.log(rv.data.stats.average_rating, rv.data.stats.rating_distribution);
+for (const r of rv.data.reviews.slice(0, 3)) console.log(r.rating, r.title, r.submitted_at);
+```
+
+Every call raises the request timeout to `FOOTLOCKER_TIMEOUT` (120s) and
+never lowers a longer client timeout; `reviews` and `questions` raise it to
+`FOOTLOCKER_REVIEWS_TIMEOUT` (240s), and failed calls are not charged.
+Unknown SKUs, categories and brands are a charged 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
