@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 70 platforms on one API key, plus `extract()` to read
+data across 71 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces** — Vinted (27 country sites, local currency and language)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1437,6 +1437,72 @@ Every call raises the request timeout to `FOOTLOCKER_TIMEOUT` (120s) and
 never lowers a longer client timeout; `reviews` and `questions` raise it to
 `FOOTLOCKER_REVIEWS_TIMEOUT` (240s), and failed calls are not charged.
 Unknown SKUs, categories and brands are a charged 404.
+
+### [Fanatics](https://scavio.dev/docs/fanatics-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Fanatics merchandise and product data (jerseys, hats, fan gear,
+collectibles; not sportsbook odds). Five endpoints on `client.fanatics`
+(new in 0.50.0), 1 credit each: `search`, `product`, `browse`, `deals`,
+`reviews`. `country` picks the storefront: `us` (fanatics.com, USD,
+default), `gb` (GBP), `de`, `fr`, `es`, `it` (EUR), `jp` (JPY) or `ca`
+(CAD, `language` en or fr); titles come in the storefront's language.
+`site` reads a US league store (with country us): `fanatics` (default),
+`nflshop`, `mlbshop`, `nhlshop` or `mlsstore`; the same product ids work on
+every store.
+
+- `search`, `product`, `browse` and `deals` take `country`, `language` and
+  `site`; `reviews` is US only (fanatics.com).
+- `search`, `browse` and `deals` share one grid: 24, 48 or 72 items per page
+  (default 72) with `total`, `total_capped` (the US site counts at most
+  9000) and `total_pages`, sorted `top_sellers`, `price_low_to_high`,
+  `price_high_to_low` or `newest`. Facet values feed `filters` as
+  `{ filter: value }`, one value per filter; facet ids feed `browse`
+  (`team_id`, `player_id`, `department_id`, `brand_id`, `collection_id`).
+  `price_band` and `on_sale` are on `browse` (no price bands on jp). A
+  league alone is a landing page: combine it with another id or a filter.
+- Each item carries `price`, `regular_price`, `sale_price`,
+  `clearance_price`, `with_code_price` (the price with the site-wide promo
+  code shown on the page) and `price_label`. `data_as_of` says when Fanatics
+  built each listing; misspellings come back as `corrected_query`.
+- `product` lists every size with `stock_level` (low / out: a level, never
+  a unit count), ship-by and delivery estimates, the current promo code,
+  personalization fields with the team roster (prices already include
+  personalization), and jersey assurance / authentic flags.
+- `reviews` returns real text with 4 sorts and a star filter (1-50, default
+  10), fit / quality / value and the site's own AI-written summary
+  (`ai_summary`). Fanatics pools reviews across a style, so check each
+  review's `product_id`.
+- No search suggestions, store locator or store stock, Q&A, FanCash, member
+  pricing, unit counts, price history or checkout: to track jersey sale
+  prices, poll and store your own.
+
+```ts
+const res = (await client.fanatics.search({ query: "chiefs jersey", sort: "price_low_to_high" })) as any;
+console.log(res.data.total, res.data.total_capped, res.data.corrected_query, res.data.data_as_of);
+for (const i of res.data.items.slice(0, 5)) {
+  console.log(i.id, i.title, i.price, i.regular_price, i.with_code_price, i.price_label, i.ship_by);
+}
+
+const hats = (await client.fanatics.browse({ team_id: 3372, department_id: 8008, price_band: "25_50" })) as any;
+console.log(hats.data.browse.team, hats.data.browse.department, hats.data.total);
+
+const p = (await client.fanatics.product({ product_id: "3892922" })) as any;
+console.log(p.data.title, p.data.price, p.data.sale_price, p.data.with_code_price, p.data.coupon, p.data.flags);
+for (const s of p.data.sizes) console.log(s.size, s.available, s.stock_level, s.ship_by, s.est_delivery_to);
+
+const de = (await client.fanatics.deals({ country: "de" })) as any;
+console.log(de.data.currency, de.data.total, de.data.data_as_of);
+
+// Slow: usually 20-90s, up to about 4 minutes.
+const rv = (await client.fanatics.reviews({ product_id: "3892922", sort: "most_recent", limit: 30 })) as any;
+console.log(rv.data.stats.average, rv.data.stats.fit, rv.data.ai_summary);
+for (const r of rv.data.reviews.slice(0, 3)) console.log(r.product_id, r.rating, r.fit, r.text);
+```
+
+Every call raises the request timeout to `FANATICS_TIMEOUT` (120s) and
+never lowers a longer client timeout; `reviews` raises it to
+`FANATICS_REVIEWS_TIMEOUT` (300s), and failed calls are not charged.
+Unknown products are a charged 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

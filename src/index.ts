@@ -107,6 +107,7 @@ export { KohlsNamespace, KOHLS_TIMEOUT } from "./namespaces/kohls.js";
 export { JcpenneyNamespace, JCPENNEY_TIMEOUT, JCPENNEY_REVIEWS_TIMEOUT } from "./namespaces/jcpenney.js";
 export { DicksNamespace, DICKS_TIMEOUT, DICKS_PRODUCT_TIMEOUT } from "./namespaces/dicks.js";
 export { FootlockerNamespace, FOOTLOCKER_TIMEOUT, FOOTLOCKER_REVIEWS_TIMEOUT } from "./namespaces/footlocker.js";
+export { FanaticsNamespace, FANATICS_TIMEOUT, FANATICS_REVIEWS_TIMEOUT } from "./namespaces/fanatics.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -736,6 +737,24 @@ export type {
   FootlockerReviewsOptions,
   FootlockerQuestionsOptions,
 } from "./namespaces/footlocker.js";
+export type {
+  FanaticsCountry,
+  FanaticsSite,
+  FanaticsSort,
+  FanaticsGender,
+  FanaticsPriceBand,
+  FanaticsDealType,
+  FanaticsReviewSort,
+  FanaticsId,
+  FanaticsMarketOptions,
+  FanaticsGridOptions,
+  FanaticsFilters,
+  FanaticsSearchOptions,
+  FanaticsProductOptions,
+  FanaticsBrowseOptions,
+  FanaticsDealsOptions,
+  FanaticsReviewsOptions,
+} from "./namespaces/fanatics.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,
