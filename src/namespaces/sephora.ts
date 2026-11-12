@@ -1,6 +1,6 @@
 import type { Scavio } from "../client.js";
 
-// Sephora: 3 endpoints, 1 credit each. sephora.com (US).
+// Sephora: 3 endpoints, search and category 1 credit, product 2. sephora.com (US).
 //
 // search() and category() return 60 products per page. product() takes a
 // result's url (faster) or its product_id, and returns a summary of what
@@ -79,7 +79,7 @@ export class SephoraNamespace {
    * ingredients, images, and pickup and same-day eligibility. An unknown
    * product is a 404.
    *
-   * Costs 1 credit.
+   * Costs 2 credits.
    */
   async product(options: SephoraProductOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/sephora/product", options);

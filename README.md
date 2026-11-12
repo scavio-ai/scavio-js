@@ -639,7 +639,8 @@ await client.cvs.product({ product_id: "832677" });
 await client.cvs.stock({ sku_ids: ["832677"], store_id: "7019" });
 ```
 
-Sephora, Ulta Beauty, ALDI and CVS calls cost 1 credit each. Micro Center
+Sephora `search` and `category`, Ulta Beauty, ALDI and CVS calls cost 1 credit
+each; Sephora `product` costs 2. Micro Center
 `search` and `product` cost 2 and `stores` 1. Walgreens `search`, `product` and
 `stores` cost 2 and `stock` 4. CVS `product` can take 10-30+ seconds, so it
 raises the request timeout to `CVS_PRODUCT_TIMEOUT` (120s) when the client's is
