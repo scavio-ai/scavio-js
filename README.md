@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 73 platforms on one API key, plus `extract()` to read
+data across 74 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -11,7 +11,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
 - **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
-- **Second-hand marketplaces** — Vinted (27 country sites, local currency and language)
+- **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House, Company Enrich (contacts and owner from a website or a Google Maps place)
@@ -1665,6 +1665,84 @@ console.log(hu.data.currency, hu.data.items[0].title, hu.data.items[0].price);
 Every call raises the request timeout to `ALLEGRO_TIMEOUT` (120s; sk and hu
 calls can take up to about a minute) and never lowers a longer client
 timeout; failed calls are not charged. A not-found is a charged 404.
+
+### [OLX](https://scavio.dev/docs/olx-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+OLX Europe classifieds: used goods, cars, real estate and jobs. Nine
+endpoints on `client.olx` (new in 0.54.0), 1 credit each: `search`,
+`offer`, `seller`, `sellerAds`, `filters`, `categories`, `locations`,
+`suggestions`, `similar`. OLX Europe only: `country` is `pl` (olx.pl, PLN,
+default), `ro` (olx.ro, RON), `pt` (olx.pt, EUR), `bg` (olx.bg, EUR), `ua`
+(olx.ua, UAH), `kz` (olx.kz, KZT) or `uz` (olx.uz, UZS); `filters` and
+`similar` are pl, ro, pt, bg and ua only. OLX Brasil, olx.in and other
+OLX-branded sites are not covered. Titles, params and labels come back in
+the site's language (Polish on pl; Russian by default on kz and uz, with
+`language: "kk"` / `"uz"` for Kazakh or Uzbek on `search`, `sellerAds` and
+`offer`).
+
+- `search` and `sellerAds` share one grid: up to 50 ads per page (default
+  40; promoted ads come on top, each flagged `is_promoted` with
+  `promoted_position`; `include_promoted: false` drops them). OLX lets anyone
+  page through the first 1,000 results only (`total_capped`); kz and uz hide
+  large totals (`total` null). A query with no exact match returns the
+  closest ads.
+- Sort by `relevance`, `newest` (last refresh, not first posting: sellers
+  can refresh an ad), `price_low_to_high` or `price_high_to_low`; filter by
+  `min_price` / `max_price`, `condition`, `seller_type` (`private` /
+  `business`), `olx_delivery` (not on kz or uz), `with_photos`,
+  `region_id` / `city_id` / `district_id` with `distance_km`, and the
+  category's own `filter_*` keys discovered with `filters`.
+- When the site converts a price (olx.uz y.e. to UZS, EUR to RON on ro,
+  USD / EUR to UAH on ua), `price.value` is the converted figure and
+  `original_value` / `original_currency` keep what the seller entered. Jobs
+  carry `salary`.
+- Private sellers' names, phone numbers, emails, exact map positions,
+  last-seen times and car VINs are never returned, and phone numbers and
+  emails in ad text are replaced; `business_name` is set for business
+  sellers only. OLX shows no seller ratings or reviews.
+- An ended ad answers the same 404 as a missing one ("not found or no
+  longer active"). No view counts, phone numbers, messaging, delivery
+  prices, checkout, average prices, notifications or price history: to
+  watch for new listings or track prices, poll `sort: "newest"` and store
+  your own.
+
+```ts
+const res = (await client.olx.search({ query: "iphone", sort: "newest", seller_type: "private" })) as any;
+console.log(res.data.total, res.data.total_capped, res.data.promoted_count, res.data.currency);
+for (const i of res.data.items.slice(0, 5)) {
+  console.log(i.id, i.title, i.price.value, i.condition, i.location.city, i.refreshed_at, i.is_promoted);
+}
+
+// Discover a category's filters, then search with them.
+const f = (await client.olx.filters({ category_id: 84 })) as any;
+for (const flt of f.data.filters.slice(0, 5)) console.log(flt.key, flt.label, flt.kind, flt.send_as);
+const cars = (await client.olx.search({
+  category_id: 84,
+  filters: { "filter_float_year:from": 2018, "filter_float_milage:to": 100000 },
+})) as any;
+
+// Places for the location filters.
+const loc = ((await client.olx.locations({ query: "Warszawa" })) as any).data.locations[0];
+const near = (await client.olx.search({ query: "rower", city_id: loc.city_id, distance_km: 30 })) as any;
+
+// One ad, its seller, the seller's ads and similar ads.
+const ad = (await client.olx.offer({ offer_id: "1107557408" })) as any;
+console.log(ad.data.title, ad.data.price, ad.data.category.breadcrumb, ad.data.seller);
+const s = (await client.olx.seller({ user_id: 2547532895 })) as any;
+console.log(s.data.is_business, s.data.business_name, s.data.member_since, s.data.active_ads);
+const ads = (await client.olx.sellerAds({ user_id: 2547532895, sort: "price_low_to_high" })) as any;
+const sim = (await client.olx.similar({ offer_id: "1107557408" })) as any;
+
+// olx.uz: Russian titles by default; y.e. prices come converted to UZS.
+const uz = (await client.olx.search({ query: "iphone", country: "uz" })) as any;
+for (const i of uz.data.items) {
+  if (i.price.original_currency) console.log(i.price.value, i.price.currency, i.price.original_value, i.price.original_currency);
+}
+```
+
+Every call raises the request timeout to `OLX_TIMEOUT` (120s) and never
+lowers a longer client timeout; failed calls are not charged. A not-found is
+a charged 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

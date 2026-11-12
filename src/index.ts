@@ -110,6 +110,7 @@ export { FootlockerNamespace, FOOTLOCKER_TIMEOUT, FOOTLOCKER_REVIEWS_TIMEOUT } f
 export { FanaticsNamespace, FANATICS_TIMEOUT, FANATICS_REVIEWS_TIMEOUT } from "./namespaces/fanatics.js";
 export { CarrefourNamespace, CARREFOUR_TIMEOUT } from "./namespaces/carrefour.js";
 export { AllegroNamespace, ALLEGRO_TIMEOUT } from "./namespaces/allegro.js";
+export { OlxNamespace, OLX_TIMEOUT } from "./namespaces/olx.js";
 export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
@@ -791,6 +792,24 @@ export type {
   AllegroSellerFeedbackOptions,
   AllegroCategoryOptions,
 } from "./namespaces/allegro.js";
+export type {
+  OlxCountry,
+  OlxFiltersCountry,
+  OlxLanguage,
+  OlxSort,
+  OlxDistanceKm,
+  OlxCategoryFilters,
+  OlxGridOptions,
+  OlxSearchOptions,
+  OlxOfferOptions,
+  OlxSellerOptions,
+  OlxSellerAdsOptions,
+  OlxFiltersOptions,
+  OlxCategoriesOptions,
+  OlxLocationsOptions,
+  OlxSuggestionsOptions,
+  OlxSimilarOptions,
+} from "./namespaces/olx.js";
 export type {
   CompanyEnrichOptions,
   CompanySocialNetwork,
