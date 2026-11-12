@@ -14,7 +14,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **Second-hand marketplaces** — Vinted (27 country sites, local currency and language)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
-- **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House
+- **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House, Company Enrich (contacts and owner from a website or a Google Maps place)
 - **Ads transparency** — Google Ads Transparency Center, Meta Ad Library
 - **Social and video** — YouTube, TikTok, Instagram, Threads, X, LinkedIn, Reddit, Kuaishou
 - **Any other page** — `extract()` turns a URL into Markdown, plain text or raw HTML
@@ -2530,6 +2530,39 @@ are all supported. Search is 20 per page and capped at page 50: the register
 serves a 1000-result window per term whatever hit count it advertises, and page
 51 is an HTTP 416. Officers and filing history have no upper page bound — past
 the last page you get an ordinary empty list.
+
+### [Company Enrich](https://scavio.dev/docs/company-enrich?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Find a company's contact details and its owner from its website or a Google
+Maps `place_id`: published emails, phone numbers (digits only), social
+profiles and contact page, plus the owner's name and title with the page that
+names them. One endpoint, `client.company.enrich()` (new in 0.53.0). Pass
+`url` (a bare domain works; social profile URLs are a 400) or `place_id`;
+when both are sent, `url` is the site that gets read.
+
+- 10 credits from a url, 20 from a place_id (1 when the Maps listing has no
+  readable website). A site that cannot be reached is a free 502; 400s are free.
+- `data.owner` is null when no page names one. `owner.email` is set only when
+  an address on the site matches the owner's name (`email_status:
+  "published"`); otherwise it is null with `"not_found"`.
+- `pages_read` lists what was read: the home page, up to 3 contact, about or
+  team pages, privacy and terms.
+
+```ts
+const maps = (await client.google.mapsSearch({ query: "plumber austin tx" })) as any;
+const placeId = maps.local_results[0].place_id;
+
+const res = await client.company.enrich({ place_id: placeId });
+const { company, owner } = res.data;
+console.log(company.name, company.website, company.emails, company.phones, company.address);
+console.log(company.socials.facebook, company.contact_page);
+if (owner) console.log(owner.name, owner.title, owner.source_url, owner.email_status);
+console.log(res.credits_used);
+```
+
+Calls usually take 10-45s, but a slow site can take about 2 minutes, so every call
+raises the request timeout to `COMPANY_ENRICH_TIMEOUT` (180s) and never lowers
+a longer client timeout.
 
 ### Google Ads Transparency
 

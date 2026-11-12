@@ -110,6 +110,7 @@ export { FootlockerNamespace, FOOTLOCKER_TIMEOUT, FOOTLOCKER_REVIEWS_TIMEOUT } f
 export { FanaticsNamespace, FANATICS_TIMEOUT, FANATICS_REVIEWS_TIMEOUT } from "./namespaces/fanatics.js";
 export { CarrefourNamespace, CARREFOUR_TIMEOUT } from "./namespaces/carrefour.js";
 export { AllegroNamespace, ALLEGRO_TIMEOUT } from "./namespaces/allegro.js";
+export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -790,6 +791,14 @@ export type {
   AllegroSellerFeedbackOptions,
   AllegroCategoryOptions,
 } from "./namespaces/allegro.js";
+export type {
+  CompanyEnrichOptions,
+  CompanySocialNetwork,
+  CompanyEnrichCompany,
+  CompanyEnrichOwner,
+  CompanyEnrichData,
+  CompanyEnrichResponse,
+} from "./namespaces/company.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,
