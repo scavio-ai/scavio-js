@@ -109,6 +109,7 @@ export { DicksNamespace, DICKS_TIMEOUT, DICKS_PRODUCT_TIMEOUT } from "./namespac
 export { FootlockerNamespace, FOOTLOCKER_TIMEOUT, FOOTLOCKER_REVIEWS_TIMEOUT } from "./namespaces/footlocker.js";
 export { FanaticsNamespace, FANATICS_TIMEOUT, FANATICS_REVIEWS_TIMEOUT } from "./namespaces/fanatics.js";
 export { CarrefourNamespace, CARREFOUR_TIMEOUT } from "./namespaces/carrefour.js";
+export { AllegroNamespace, ALLEGRO_TIMEOUT } from "./namespaces/allegro.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -775,6 +776,20 @@ export type {
   CarrefourStoreAvailabilityOptions,
   CarrefourStoreOptions,
 } from "./namespaces/carrefour.js";
+export type {
+  AllegroCountry,
+  AllegroSort,
+  AllegroOfferSort,
+  AllegroPriceConditionOptions,
+  AllegroGridOptions,
+  AllegroSearchOptions,
+  AllegroOfferOptions,
+  AllegroProductOptions,
+  AllegroProductOffersOptions,
+  AllegroSellerOptions,
+  AllegroSellerFeedbackOptions,
+  AllegroCategoryOptions,
+} from "./namespaces/allegro.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,

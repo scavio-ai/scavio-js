@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 72 platforms on one API key, plus `extract()` to read
+data across 73 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces** — Vinted (27 country sites, local currency and language)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1586,6 +1586,85 @@ console.log(be.data.country, be.data.language, be.data.currency, be.data.total);
 Every call raises the request timeout to `CARREFOUR_TIMEOUT` (120s) and
 never lowers a longer client timeout; failed calls are not charged. A
 not-found is a charged 404.
+
+### [Allegro](https://scavio.dev/docs/allegro-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Allegro offers, every seller's price for one product, sellers and seller
+feedback. Seven endpoints on `client.allegro` (new in 0.52.0), 2 credits
+each: `search`, `offer`, `product`, `productOffers`, `seller`,
+`sellerFeedback`, `category`. Every endpoint takes `country`: `pl`
+(allegro.pl, PLN, default), `cz` (allegro.cz, CZK), `sk` (allegro.sk, EUR)
+or `hu` (allegro.hu, HUF). Titles, parameters and labels come back in the
+site's language (Polish on pl).
+
+- An offer is one seller's listing (`offer_id`); a catalogue product
+  (`product_id`) groups many sellers' offers. `productOffers` lists every
+  seller's price for one product (price, price with delivery, condition,
+  seller, Smart!, `is_featured` for the buy box): the price-monitoring call.
+- `search`, `category` and `seller` share one grid: 60 organic offers per
+  page (sponsored slots on top), up to 100 pages, exact `total` and every
+  facet. Sort by relevance, price, price with delivery, `popularity`,
+  `ending_soonest` or `newest`; filter by `min_price` / `max_price`,
+  `condition`, `smart`, and on pl only `buying_format` (`buy_now` /
+  `auction`) and `deals` (Allegro's deals zone, Black Weeks included while
+  it runs); the pl-only filters are a 400 elsewhere.
+- Each item carries `price`, `price_with_delivery`, `condition`,
+  `is_auction`, `discount_percent`, `lowest_price_30d`, the seller
+  (`super_seller`, `positive_feedback_percent`, `is_business`),
+  `sold_count`, `smart`, `placement` (regular, promoted, sponsored or
+  featured) and `source` (`allegro_lokalnie` for Allegro Lokalnie offers
+  inside pl results).
+- `lowest_price_30d` is the EU disclosure Allegro shows next to a discount
+  (the lowest price in the 30 days before it): null without a discount, and
+  not a price history. `sold_count` is null on auctions and on cz, sk and hu
+  offer pages.
+- `offer` adds the auction state (current price, minimum next bid, ends at,
+  has bids; no bid history), every parameter with GTIN and brand, delivery
+  methods, returns, warranty and `company_name` for business sellers.
+  `product` returns `lowest_price`, `offer_count`, the featured offer, the
+  star distribution, review aspects and the first 20 reviews as shown.
+- `seller` returns id, login, `is_business` and the seller's categories
+  (`slug` feeds `category`); super seller status, positive percent and
+  member since come from `sellerFeedback` (20 ratings per page, no buyer
+  identity).
+- No search suggestions, bidding, buying or checkout, Allegro Lokalnie as
+  its own source, Smart! account data, seller revenue, seller addresses or
+  tax ids, price history or reviews past the first 20: to track prices, poll
+  and store your own.
+
+```ts
+const res = (await client.allegro.search({ query: "laptop", sort: "price_low_to_high", condition: "new" })) as any;
+console.log(res.data.total, res.data.total_pages, res.data.currency, res.data.language);
+for (const i of res.data.items.slice(0, 5)) {
+  console.log(i.offer_id, i.title, i.price, i.price_with_delivery, i.sold_count, i.seller.login, i.placement);
+}
+
+const o = (await client.allegro.offer({ offer_id: "18801787032" })) as any;
+console.log(o.data.price, o.data.original_price, o.data.lowest_price_30d, o.data.discount_percent);
+console.log(o.data.stock, o.data.sold_count, o.data.seller.login, o.data.seller.company_name);
+
+const p = (await client.allegro.product({ product_id: "90d08230-e02a-4210-913d-d417453321b8" })) as any;
+console.log(p.data.title, p.data.lowest_price, p.data.offer_count, p.data.rating.average);
+const offers = (await client.allegro.productOffers({
+  product_id: p.data.product_id,
+  sort: "price_with_delivery_low_to_high",
+})) as any;
+for (const of of offers.data.offers.slice(0, 5)) {
+  console.log(of.seller.login, of.price, of.price_with_delivery, of.smart, of.is_featured);
+}
+
+const s = (await client.allegro.seller({ login: "Yupilo_pl", query: "lenovo", category: "komputery" })) as any;
+console.log(s.data.seller.is_business, s.data.categories.map((c: any) => [c.name, c.slug]));
+const fb = (await client.allegro.sellerFeedback({ login: "Yupilo_pl" })) as any;
+console.log(fb.data.summary.positive_percent, fb.data.summary.super_seller, fb.data.summary.member_since);
+
+const hu = (await client.allegro.search({ query: "laptop", country: "hu" })) as any;
+console.log(hu.data.currency, hu.data.items[0].title, hu.data.items[0].price);
+```
+
+Every call raises the request timeout to `ALLEGRO_TIMEOUT` (120s; sk and hu
+calls can take up to about a minute) and never lowers a longer client
+timeout; failed calls are not charged. A not-found is a charged 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
