@@ -108,6 +108,7 @@ export { JcpenneyNamespace, JCPENNEY_TIMEOUT, JCPENNEY_REVIEWS_TIMEOUT } from ".
 export { DicksNamespace, DICKS_TIMEOUT, DICKS_PRODUCT_TIMEOUT } from "./namespaces/dicks.js";
 export { FootlockerNamespace, FOOTLOCKER_TIMEOUT, FOOTLOCKER_REVIEWS_TIMEOUT } from "./namespaces/footlocker.js";
 export { FanaticsNamespace, FANATICS_TIMEOUT, FANATICS_REVIEWS_TIMEOUT } from "./namespaces/fanatics.js";
+export { CarrefourNamespace, CARREFOUR_TIMEOUT } from "./namespaces/carrefour.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
 export { GeminiNamespace } from "./namespaces/gemini.js";
@@ -755,6 +756,25 @@ export type {
   FanaticsDealsOptions,
   FanaticsReviewsOptions,
 } from "./namespaces/fanatics.js";
+export type {
+  CarrefourCountry,
+  CarrefourSort,
+  CarrefourReviewSort,
+  CarrefourPromotionType,
+  CarrefourStoreService,
+  CarrefourStoreRef,
+  CarrefourFilterOptions,
+  CarrefourGridOptions,
+  CarrefourSearchOptions,
+  CarrefourProductOptions,
+  CarrefourReviewsOptions,
+  CarrefourCategoryOptions,
+  CarrefourPromotionsOptions,
+  CarrefourSuggestionsOptions,
+  CarrefourStoresOptions,
+  CarrefourStoreAvailabilityOptions,
+  CarrefourStoreOptions,
+} from "./namespaces/carrefour.js";
 export type {
   TrustpilotReviewsDateRange,
   TrustpilotReviewsSort,

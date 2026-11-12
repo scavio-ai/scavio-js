@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 71 platforms on one API key, plus `extract()` to read
+data across 72 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces** — Vinted (27 country sites, local currency and language)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1508,6 +1508,83 @@ Every call raises the request timeout to `FANATICS_TIMEOUT` (120s) and
 never lowers a longer client timeout; `reviews` raises it to
 `FANATICS_REVIEWS_TIMEOUT` (300s), and failed calls are not charged.
 Unknown products are a charged 404.
+
+### [Carrefour](https://scavio.dev/docs/carrefour-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Carrefour grocery prices by store, promotions, Nutri-Score and stores. Nine
+endpoints on `client.carrefour` (new in 0.51.0), 1 credit each: `search`,
+`product`, `reviews`, `category`, `promotions`, `suggestions`, `stores`,
+`storeAvailability`, `store`. carrefour.fr (France) serves every endpoint;
+`search` and `product` also take `country` `ar` (Argentina, ARS), `ro`
+(Romania, RON) or `be` (Belgium, EUR, `language` fr or nl; 2 credits). Data
+comes back in the market's language: French titles, labels and ingredients
+on fr.
+
+- Without `store` a price is carrefour.fr's national online price; pass a
+  store ref from `stores` (`store_ref` or `pickup_refs[].ref`) or
+  `storeAvailability` (`stores[].store.ref`) for that store's shelf price
+  and assortment (Nutella 400 g: 3.99 national, 3.69 at two stores, 4.61 at
+  another). The response says which (`store`, `price_scope`).
+- `search`, `category` and `promotions` share one grid (30 items per page on
+  fr; ar and ro 24, be 36) with `total`, `total_pages` and every facet;
+  filter by `brand`, `promotion`, `nutriscore`, `organic`,
+  `carrefour_brands` or `min_price` / `max_price`, sort by `relevance`,
+  price, unit price or `top_rated` (ar and ro: relevance and the price
+  sorts; be: relevance).
+- Each item carries `price`, `unit_price` with `unit_price_label` (per kg /
+  L), `nutriscore`, `ecoscore` and `promotion` (`type`, `label`,
+  `loyalty_only` for loyalty-card prices, `discounted_price`,
+  `initial_price`, `quantity`, `starts_at`, `ends_at`). On multi-buy deals
+  ("Le 2ème à -50%") the prices cover `quantity` items and
+  `discounted_price` is null when the site does not price the deal.
+- `product` adds ingredients, allergens, nutrition per 100 g and per
+  portion, the marketplace seller and offers, and the rating distribution.
+- `promotions` lists `catalogue`, `immediate`, `loyalty` (member prices) or
+  `festive` (the site's seasonal selection) items, optionally for one aisle.
+- `reviews` returns 1-50 verified-purchase reviews (default 10) with 4
+  sorts, a star filter and `offset` paging.
+- `storeAvailability` is yes / no per store near a postal code, no price.
+  `store` returns services, hours, the next pickup slots as shown and, at
+  stores with a fuel station, fuel prices per litre with update times.
+- No Q&A, printed leaflet, delivery-slot booking, cart, loyalty account data
+  or price history: to track prices, poll and store your own. Spain, Italy,
+  Poland, Brazil and the Middle East sites are not covered.
+
+```ts
+const res = (await client.carrefour.search({ query: "nutella" })) as any;
+console.log(res.data.total, res.data.store, res.data.price_scope, res.data.currency);
+for (const i of res.data.items.slice(0, 5)) {
+  console.log(i.ean, i.title, i.price, i.unit_price_label, i.nutriscore, i.promotion);
+}
+
+const st = (await client.carrefour.stores({ postal_code: "69003" })) as any;
+for (const s of st.data.stores.slice(0, 3)) console.log(s.store_ref, s.name, s.banner, s.distance_km, s.slug);
+const local = (await client.carrefour.search({ query: "nutella", store: "840093" })) as any;
+console.log(local.data.store, local.data.price_scope, local.data.total);
+
+const p = (await client.carrefour.product({ ean: "3017620422003" })) as any;
+console.log(p.data.title, p.data.price, p.data.unit_price, p.data.ingredients, p.data.allergens);
+for (const n of p.data.nutrition.per_100.values) console.log(n.nutrient, n.quantity);
+
+const promo = (await client.carrefour.promotions({ type: "loyalty", category: "Boissons" })) as any;
+for (const i of promo.data.items.slice(0, 3)) {
+  console.log(i.title, i.promotion.label, i.promotion.loyalty_only, i.promotion.discounted_price, i.promotion.ends_at);
+}
+
+const av = (await client.carrefour.storeAvailability({ ean: "3017620422003", postal_code: "69003" })) as any;
+console.log(av.data.available_count, av.data.stores.slice(0, 3).map((s: any) => [s.store.ref, s.available]));
+
+const store = (await client.carrefour.store({ slug: "venissieux" })) as any;
+console.log(store.data.store.name, store.data.store.next_slots);
+for (const f of store.data.fuel?.prices ?? []) console.log(f.fuel, f.price_per_litre, f.updated_at);
+
+const be = (await client.carrefour.search({ query: "chocolat", country: "be", language: "nl" })) as any;
+console.log(be.data.country, be.data.language, be.data.currency, be.data.total);
+```
+
+Every call raises the request timeout to `CARREFOUR_TIMEOUT` (120s) and
+never lowers a longer client timeout; failed calls are not charged. A
+not-found is a charged 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
