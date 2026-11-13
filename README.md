@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 74 platforms on one API key, plus `extract()` to read
+data across 75 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1795,6 +1795,59 @@ Every call raises the request timeout to `KROGER_TIMEOUT` (120s; search and
 prices can take up to about a minute) and never lowers a longer client
 timeout; failed calls are not charged. An unknown UPC or store id is a
 charged 404.
+
+### [Publix](https://scavio.dev/docs/publix-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Publix grocery data by store: the weekly ad with BOGO deals, Extra Savings,
+digital coupons, the deli and bakery order-ahead menu (Pub Subs) with store
+prices, product search, category listings, nutrition facts and store
+locations. Eleven endpoints on `client.publix` (new in 0.56.0), 1 credit
+each: `search`, `product`, `category`, `categories`, `weeklyAd`,
+`extraSavings`, `coupons`, `savingsSearch`, `orderAhead`, `stores` and
+`suggestions`.
+
+- Every price endpoint is store-scoped: pass `store_id`, a Publix store
+  number from `stores()` (string or number). Prices and promotions differ by
+  store: a Publix Chicken Tender Sub measured $12.09 in Miami (store 1614)
+  and $11.99 in Atlanta (store 1825).
+- Publix does not show regular shelf prices online. `price` is a number only
+  for items on promotion (weekly ad, BOGO, multi-buy, Extra Savings) and for
+  order-ahead items, and `null` otherwise; it is never estimated. Multi-buys
+  ("2 for $5.00") carry `bundle` {quantity, price}.
+- Weekly ads run Thursday to Wednesday in Florida and Wednesday to Tuesday in
+  Georgia and North Carolina (`weekly_ad_break_day` per store); English ad
+  only. About 700 items per store, about 230 of them BOGO.
+- `search` and `category` serve 48 items per page, `orderAhead` 60.
+  Products are keyed by Publix item code: Publix does not publish UPCs,
+  ingredients, allergens or reviews online.
+- `coupons()` lists the store's digital coupons; nothing is clipped and no
+  account is used. No cart or ordering.
+
+```typescript
+// Find a store: store_id feeds every other call.
+const st = (await client.publix.stores({ zip: "33101", limit: 5 })) as any;
+const storeId = st.data.stores[0].store_id;
+console.log(storeId, st.data.stores[0].name, st.data.stores[0].weekly_ad_break_day);
+
+// This week's ad at that store: BOGO, sale prices, multi-buys.
+const ad = (await client.publix.weeklyAd({ store_id: storeId, bogo_only: true })) as any;
+console.log(ad.data.ad.start_date, ad.data.ad.end_date, ad.data.count);
+for (const i of ad.data.items.slice(0, 5)) console.log(i.title, i.savings_text, i.deal_type, i.price);
+
+// Search: price is a number only when Publix shows one.
+const res = (await client.publix.search({ query: "chicken", store_id: storeId, on_sale: true })) as any;
+for (const p of res.data.items.slice(0, 5)) console.log(p.item_code, p.title, p.aisle, p.price, p.price_text, p.promo);
+
+// Pub Subs with this store's prices, a product with nutrition, savings across feeds.
+const subs = (await client.publix.orderAhead({ store_id: storeId })) as any;
+const sub = (await client.publix.product({ item_code: "90355", store_id: storeId })) as any;
+const hits = (await client.publix.savingsSearch({ query: "coffee", store_id: storeId })) as any;
+console.log(subs.data.items[0].price, sub.data.nutrition, hits.data.items.map((h: any) => h.saving_type));
+```
+
+Every call raises the request timeout to `PUBLIX_TIMEOUT` (120s) and never
+lowers a longer client timeout; failed calls are not charged. An unknown item
+code or store id is a charged 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

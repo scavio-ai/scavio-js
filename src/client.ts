@@ -36,6 +36,7 @@ import { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 import { CostcoNamespace } from "./namespaces/costco.js";
 import { HebNamespace } from "./namespaces/heb.js";
 import { KrogerNamespace } from "./namespaces/kroger.js";
+import { PublixNamespace } from "./namespaces/publix.js";
 import { DecathlonNamespace } from "./namespaces/decathlon.js";
 import { SpecsNamespace } from "./namespaces/specs.js";
 import { LowesNamespace } from "./namespaces/lowes.js";
@@ -220,6 +221,7 @@ export class Scavio extends ScavioCore {
   readonly costco: CostcoNamespace;
   readonly heb: HebNamespace;
   readonly kroger: KrogerNamespace;
+  readonly publix: PublixNamespace;
   readonly decathlon: DecathlonNamespace;
   readonly specs: SpecsNamespace;
   readonly lowes: LowesNamespace;
@@ -321,6 +323,7 @@ export class Scavio extends ScavioCore {
     this.costco = new CostcoNamespace(this);
     this.heb = new HebNamespace(this);
     this.kroger = new KrogerNamespace(this);
+    this.publix = new PublixNamespace(this);
     this.decathlon = new DecathlonNamespace(this);
     this.specs = new SpecsNamespace(this);
     this.lowes = new LowesNamespace(this);

@@ -75,6 +75,7 @@ export { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 export { CostcoNamespace } from "./namespaces/costco.js";
 export { HebNamespace } from "./namespaces/heb.js";
 export { KrogerNamespace, KROGER_TIMEOUT } from "./namespaces/kroger.js";
+export { PublixNamespace, PUBLIX_TIMEOUT } from "./namespaces/publix.js";
 export { LowesNamespace } from "./namespaces/lowes.js";
 export { SamsClubNamespace } from "./namespaces/sams-club.js";
 export { CanadianTireNamespace } from "./namespaces/canadian-tire.js";
@@ -439,6 +440,22 @@ export type {
   KrogerCouponsOptions,
   KrogerSuggestionsOptions,
 } from "./namespaces/kroger.js";
+export type {
+  PublixStoreId,
+  PublixSort,
+  PublixOrderAheadSection,
+  PublixGridOptions,
+  PublixSearchOptions,
+  PublixProductOptions,
+  PublixCategoryOptions,
+  PublixCategoriesOptions,
+  PublixWeeklyAdOptions,
+  PublixStoreOptions,
+  PublixSavingsSearchOptions,
+  PublixOrderAheadOptions,
+  PublixStoresOptions,
+  PublixSuggestionsOptions,
+} from "./namespaces/publix.js";
 export type {
   LowesReviewSort,
   LowesSearchOptions,
