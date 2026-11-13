@@ -74,7 +74,7 @@ export { GoogleAdsNamespace } from "./namespaces/google-ads.js";
 export { MetaAdsNamespace } from "./namespaces/meta-ads.js";
 export { CostcoNamespace } from "./namespaces/costco.js";
 export { HebNamespace } from "./namespaces/heb.js";
-export { KrogerNamespace } from "./namespaces/kroger.js";
+export { KrogerNamespace, KROGER_TIMEOUT } from "./namespaces/kroger.js";
 export { LowesNamespace } from "./namespaces/lowes.js";
 export { SamsClubNamespace } from "./namespaces/sams-club.js";
 export { CanadianTireNamespace } from "./namespaces/canadian-tire.js";
@@ -429,8 +429,15 @@ export type {
   HebStoresOptions,
 } from "./namespaces/heb.js";
 export type {
+  KrogerBanner,
   KrogerSearchOptions,
   KrogerProductOptions,
+  KrogerPricesOptions,
+  KrogerStoresOptions,
+  KrogerCategoryOptions,
+  KrogerDealsOptions,
+  KrogerCouponsOptions,
+  KrogerSuggestionsOptions,
 } from "./namespaces/kroger.js";
 export type {
   LowesReviewSort,

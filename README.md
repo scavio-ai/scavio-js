@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1743,6 +1743,58 @@ for (const i of uz.data.items) {
 Every call raises the request timeout to `OLX_TIMEOUT` (120s) and never
 lowers a longer client timeout; failed calls are not charged. A not-found is
 a charged 404.
+
+### [Kroger](https://scavio.dev/docs/kroger-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Kroger, QFC and Fred Meyer grocery data. Eight endpoints on `client.kroger`
+(six new in 0.55.0): `search` and `product` cost 2 credits, `prices` 3, and
+`stores`, `category`, `deals`, `coupons` and `suggestions` 1 each. Every
+endpoint takes `banner`: `kroger` (kroger.com, default), `qfc` (QFC, qfc.com:
+Washington and Oregon) or `fred_meyer` (Fred Meyer, fredmeyer.com: the
+Pacific Northwest and Alaska, grocery plus general merchandise, apparel and
+home). Other Kroger banners (Ralphs, King Soopers, Fry's, Harris Teeter,
+Smith's...) are not supported yet.
+
+- Prices are integer cents (`price` 399 = $3.99) and differ by banner and by
+  store.
+- `search`, `product`, `category` and `deals` return the prices, promotions,
+  stock and aisle of a store the site chooses for the request (`store`; it can
+  change between calls). For one store, take a `location_id` from `stores()`
+  and pass it as `store_id` to `prices()` (up to 25 UPCs). QFC store ids start
+  with 705, Fred Meyer ids with 701.
+- `search`, `category` and `deals` serve the first page only (up to 24
+  products), with no sort: `page` above 1 is a 400 and is not charged.
+- Ratings are average, count and star distribution; review text is not
+  available. `stores()` returns fuel center locations, not fuel prices.
+- `coupons()` lists the digital coupons at one store, 24 per page
+  (`has_more`); nothing is clipped and no account is used. `deals()` is the
+  weekly digital deals list; the printed weekly ad circular is not available.
+
+```typescript
+// Search: prices are those of the store the site chose (data.store).
+const res = (await client.kroger.search({ query: "coffee", banner: "qfc" })) as any;
+console.log(res.data.total, res.data.store.location_id, res.data.store.name);
+for (const p of res.data.products.slice(0, 5)) console.log(p.upc, p.name, p.price, p.promo_price);
+
+// One specific store: find it, then price up to 25 UPCs there.
+const st = (await client.kroger.stores({ zip: "97201", banner: "fred_meyer" })) as any;
+const storeId = st.data.stores[0].location_id;
+const pr = (await client.kroger.prices({ store_id: storeId, upcs: ["0001111050438"] })) as any;
+for (const i of pr.data.items) console.log(i.upc, i.price, i.promo_price, i.in_stock, i.quantity, i.aisle);
+
+// Product, a category, this week's digital deals, coupons and suggestions.
+const milk = (await client.kroger.product({ upc: "0001111050438", banner: "fred_meyer" })) as any;
+const beer = (await client.kroger.category({ taxonomy_id: "08190", slug: "Import-Beer", banner: "qfc" })) as any;
+const deals = (await client.kroger.deals({ banner: "qfc" })) as any;
+const coupons = (await client.kroger.coupons({ store_id: "70100011", category: "Dairy" })) as any;
+const sugg = (await client.kroger.suggestions({ query: "almond mi", banner: "qfc" })) as any;
+console.log(milk.data.store_location, beer.data.total, deals.data.deals_week, coupons.data.total_at_store, sugg.data.suggestions);
+```
+
+Every call raises the request timeout to `KROGER_TIMEOUT` (120s; search and
+prices can take up to about a minute) and never lowers a longer client
+timeout; failed calls are not charged. An unknown UPC or store id is a
+charged 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
