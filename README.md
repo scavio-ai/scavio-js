@@ -1876,7 +1876,10 @@ per market that answered.
 - Some markets (us, ca, jp, au, kr, in, my, sg, ph ...) sell the same product
   under a different article number, so `found` is false there in `compare`.
 - `reviews` returns the 20 most recent reviews the product page shows (no
-  paging, sort or star filter); ratings are pooled across markets. `stock`
+  paging, sort or star filter). Ratings are what each market's site shows:
+  many markets share one pool (KALLAX: 8,241 in Germany, Spain, Sweden),
+  others have their own (France 2,760, Italy 1,887) and some show none
+  (Estonia, Latvia, Lithuania, Israel, Iceland). `stock`
   is a level per store (in_stock_high, in_stock_low, out_of_stock), not a
   quantity.
 - Puerto Rico, Dominican Republic and the islands return the first 40 search

@@ -226,9 +226,11 @@ export class IkeaNamespace {
    * items with item_no, item_no_global, is_combination, name, type_name,
    * design, measure_text, url, image, images, price, previous_price,
    * discount_amount, discount_percent, price_tag (family_price,
-   * new_lower_price, lower_price_in_store, new_product, discontinued or
-   * none), price_tag_text, lowest_price, price_valid_from / to, rating,
-   * rating_count (pooled across markets), badge, colors, variant_count,
+   * new_lower_price, time_restricted_offer (a limited-time reduced price,
+   * with previous_price and valid dates), lower_price_in_store, new_product,
+   * discontinued or none), price_tag_text, lowest_price, price_valid_from / to, rating,
+   * rating_count (per market as shown; many markets share one pool, some
+   * show none), badge, colors, variant_count,
    * variants, last_chance, online_sellable, category_path and availability
    * (with store_id). The franchise sites (pr, do, es_islands, is) take query
    * and page only; Puerto Rico, Dominican Republic and the islands return the
@@ -260,8 +262,10 @@ export class IkeaNamespace {
    * An IKEA product's rating, rating_count, secondary_ratings and the 20
    * most recent reviews the product page shows (title, text, rating, date,
    * author, country), plus highlighted reviews. No paging, sort or star
-   * filter. Ratings and reviews are pooled across IKEA markets. Can take up
-   * to about 100 seconds.
+   * filter. rating and rating_count are what that market's site shows: many
+   * markets share one pool (KALLAX: 8,241 in Germany, Spain, Sweden), others
+   * have their own (France 2,760, Italy 1,887), and some show none (Estonia,
+   * Latvia, Lithuania, Israel, Iceland). Can take up to about 100 seconds.
    *
    * Costs 1 credit.
    */
