@@ -456,6 +456,30 @@ export type {
   PublixStoresOptions,
   PublixSuggestionsOptions,
 } from "./namespaces/publix.js";
+export { IkeaNamespace, IKEA_TIMEOUT, IKEA_PRODUCT_TIMEOUT } from "./namespaces/ikea.js";
+export type {
+  IkeaCountry,
+  IkeaIsland,
+  IkeaSort,
+  IkeaAvailability,
+  IkeaDealType,
+  IkeaItemNo,
+  IkeaStoreId,
+  IkeaMarketOptions,
+  IkeaGridOptions,
+  IkeaSearchOptions,
+  IkeaProductOptions,
+  IkeaReviewsOptions,
+  IkeaCategoryOptions,
+  IkeaCategoriesOptions,
+  IkeaDealsOptions,
+  IkeaSuggestionsOptions,
+  IkeaStoresOptions,
+  IkeaStockOptions,
+  IkeaItemsOptions,
+  IkeaCompareOptions,
+  IkeaAsIsOptions,
+} from "./namespaces/ikea.js";
 export type {
   LowesReviewSort,
   LowesSearchOptions,

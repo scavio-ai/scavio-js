@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 75 platforms on one API key, plus `extract()` to read
+data across 76 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1848,6 +1848,64 @@ console.log(subs.data.items[0].price, sub.data.nutrition, hits.data.items.map((h
 Every call raises the request timeout to `PUBLIX_TIMEOUT` (120s) and never
 lowers a longer client timeout; failed calls are not charged. An unknown item
 code or store id is a charged 404.
+
+### [IKEA](https://scavio.dev/docs/ikea-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+IKEA product data across 55 markets: IKEA prices by country for one article
+number, search, product detail, reviews, categories, deal lists, stores,
+stock by store, bulk item lookup and As-is (second-hand) offers. Twelve
+endpoints on `client.ikea` (new in 0.57.0), 1 credit each: `search`,
+`product`, `reviews`, `category`, `categories`, `deals`, `suggestions`,
+`stores`, `stock`, `items`, `compare` and `asIs`. `compare` costs 1 credit
+per market that answered.
+
+- `country` is the market code (default `us`). `search` and `product` cover
+  55 markets: the 50 ikea.com markets (us ca gb ie de at ch fr be nl dk se no
+  fi ee lv lt pl cz sk hu hr si rs ro pt es it il ae sa kw qa bh om jo eg ma
+  in my sg ph th jp kr au nz mx cl co) plus cn (ikea.cn), pr (Puerto Rico), do
+  (Dominican Republic), es_islands (Canary and Balearic islands, with
+  `island`) and is (Iceland). `category`, `deals`, `suggestions` and `items`
+  serve the 50 ikea.com markets plus cn; `reviews`, `categories`, `stores`,
+  `stock` and `compare` the 50 ikea.com markets; `asIs` us, gb, de, fr, se,
+  jp, nl, es, it, pl, au, ch and at. Ukraine, Greece, Cyprus, Bulgaria, Hong
+  Kong, Taiwan, Indonesia and Turkey are not available.
+- `language` is one of the market's languages (ca en/fr, be nl/fr/en, ch
+  de/fr/it/en, us en/es ...). Data comes in that language and prices in the
+  market's own currency, never converted: on 2026-11-13 KALLAX 80275887 was
+  EUR 49.99 in de and nl, EUR 59.99 in fr and SEK 599 in se.
+- Some markets (us, ca, jp, au, kr, in, my, sg, ph ...) sell the same product
+  under a different article number, so `found` is false there in `compare`.
+- `reviews` returns the 20 most recent reviews the product page shows (no
+  paging, sort or star filter); ratings are pooled across markets. `stock`
+  is a level per store (in_stock_high, in_stock_low, out_of_stock), not a
+  quantity.
+- Puerto Rico, Dominican Republic and the islands return the first 40 search
+  results only; franchise products (pr, do, es_islands, is) return basic
+  detail. Pass article numbers as strings to keep leading zeros.
+
+```typescript
+// IKEA prices by country: one article number on up to 10 markets, each in its own currency.
+const cmp = (await client.ikea.compare({ item_no: "80275887", countries: ["de", "fr", "se", "nl", "es", "it"] })) as any;
+for (const m of cmp.data.markets) console.log(m.country, m.found, m.currency, m.price, m.previous_price, m.price_tag);
+
+// Search one market, sorted; a full product with packaging and variants.
+const res = (await client.ikea.search({ query: "kallax", country: "de", sort: "price_asc" })) as any;
+for (const p of res.data.items.slice(0, 5)) console.log(p.item_no, p.name, p.type_name, p.price, p.price_tag);
+const prod = (await client.ikea.product({ item_no: "20522046" })) as any;
+console.log(prod.data.name, prod.data.price, prod.data.currency, prod.data.packaging.number_of_packages);
+
+// Stock level (not a quantity) at one store, the 20 newest reviews, As-is offers.
+const stock = (await client.ikea.stock({ item_nos: ["20522046", "20631663"], store_id: "399" })) as any;
+console.log(stock.data.items.map((i: any) => [i.item_no, i.store_availability.status]));
+const reviews = (await client.ikea.reviews({ item_no: "80275887", country: "de" })) as any;
+const asIs = (await client.ikea.asIs({ store_id: "257" })) as any;
+console.log(reviews.data.rating_count, asIs.data.total, asIs.data.offers[0].min_price);
+```
+
+Every call raises the request timeout to `IKEA_TIMEOUT` (120s), `product` and
+`reviews` to `IKEA_PRODUCT_TIMEOUT` (180s: a product page can take up to about
+100 seconds), and never lowers a longer client timeout; failed calls are not
+charged. An unknown article number, category or store id is a charged 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
