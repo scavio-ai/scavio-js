@@ -508,6 +508,27 @@ export type {
   AshleyStoresOptions,
   AshleyStoreOptions,
 } from "./namespaces/ashley.js";
+export { MaisonsDuMondeNamespace, MAISONSDUMONDE_TIMEOUT } from "./namespaces/maisonsdumonde.js";
+export type {
+  MaisonsDuMondeCountry,
+  MaisonsDuMondeStoreCountry,
+  MaisonsDuMondeMarketplaceCountry,
+  MaisonsDuMondeLanguage,
+  MaisonsDuMondeSort,
+  MaisonsDuMondeReviewSort,
+  MaisonsDuMondeDealEvent,
+  MaisonsDuMondeMarketOptions,
+  MaisonsDuMondeGridOptions,
+  MaisonsDuMondeSearchOptions,
+  MaisonsDuMondeProductOptions,
+  MaisonsDuMondeCategoryOptions,
+  MaisonsDuMondeDealsOptions,
+  MaisonsDuMondeReviewsOptions,
+  MaisonsDuMondeStoresOptions,
+  MaisonsDuMondeStoreOptions,
+  MaisonsDuMondeAvailabilityOptions,
+  MaisonsDuMondeSellerOptions,
+} from "./namespaces/maisonsdumonde.js";
 export type {
   LowesReviewSort,
   LowesSearchOptions,

@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 78 platforms on one API key, plus `extract()` to read
+data across 79 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -2012,6 +2012,64 @@ console.log(store.data.phone, store.data.hours[0], mx.data.currency, mx.data.pri
 Every call raises the request timeout to `ASHLEY_TIMEOUT` (120s) and never
 lowers a longer client timeout; failed calls are not charged. An unknown item
 number, category or store is a charged 404.
+
+### [Maisons du Monde](https://scavio.dev/docs/maisonsdumonde-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Maisons du Monde (furniture and home decor) product data for nine storefronts.
+Nine endpoints on `client.maisonsdumonde` (new in 0.60.0), 1 credit each:
+`search`, `product`, `category`, `deals`, `reviews`, `stores`, `store`,
+`availability` and `seller`.
+
+- Markets (`country`, default `fr`) and languages (`language`, default the
+  market's first): fr (French), be (French or Dutch), lu (French), nl (Dutch),
+  de (German), es (Spanish), it (Italian), pt (Portuguese), all in EUR, and ch
+  (French, German or Italian) in CHF. `search`, `product`, `category`, `deals`
+  and `reviews` serve all nine; `stores`, `store` and `availability` serve fr,
+  be, de, es, it, pt and ch (not nl or lu); `seller` and the `seller` /
+  `sold_by` filters serve the marketplace markets fr, de, es and it.
+- Prices are numbers in the market's currency, never converted. Measured on
+  2026-11-14 on 4 products, the euro storefronts shared one price per product
+  and Switzerland was priced separately in CHF (round mirror 204172: 74.99, now
+  37.45 EUR on every euro market; 91.90, now 45.95 CHF). `was_price` is the
+  crossed-out price shown next to a discount. Maisons du Monde shows no 30-day
+  lowest price and no price history, so poll to track changes.
+- Grids (search, category, deals, seller) are 40 per page with the exact
+  total, sorted by relevance, price or rating; items carry `sold_by` (mdm or
+  marketplace) but not the seller name (`product` has it). The German site does
+  not sort keyword results, so a sorted search on `de` comes back in relevance
+  order with a note.
+- `reviews` are pooled across every market and shown translated into the
+  request language, with cursor paging and no star filter; a product with no
+  reviews is a charged 404.
+- Store stock: `stores` (by postcode) for the store id, then `availability`
+  (Maisons du Monde items only). Home delivery is a from-price per product and
+  market (no postcode-exact cost). `deals` events are `black_friday` and
+  `second_chance` (fr). No search suggestions.
+
+```typescript
+// Search: price next to the crossed-out price, and who sells each item.
+const res = (await client.maisonsdumonde.search({ query: "table" })) as any;
+for (const p of res.data.items.slice(0, 5)) console.log(p.id, p.name, p.price, p.was_price, p.sold_by);
+
+// The same product in France and in Switzerland (CHF, German).
+const fr = (await client.maisonsdumonde.product({ id: "204172" })) as any;
+const ch = (await client.maisonsdumonde.product({ id: "204172", country: "ch", language: "de" })) as any;
+console.log(fr.data.price, fr.data.was_price, ch.data.price, ch.data.currency);
+
+// Black Friday, and reviews pooled across markets with cursor paging.
+const bf = (await client.maisonsdumonde.deals({ country: "es" })) as any;
+const rev = (await client.maisonsdumonde.reviews({ id: "186339", sort: "rating_asc" })) as any;
+console.log(bf.data.total, rev.data.rating_histogram, rev.data.next_cursor);
+
+// Stores near a postcode, then one item's stock at a store and the delivery from-price.
+const near = (await client.maisonsdumonde.stores({ postcode: "75011" })) as any;
+const stock = (await client.maisonsdumonde.availability({ id: "204172", store_id: near.data.stores[0].id })) as any;
+console.log(stock.data.in_stock, stock.data.quantity, stock.data.delivery);
+```
+
+Every call raises the request timeout to `MAISONSDUMONDE_TIMEOUT` (120s) and
+never lowers a longer client timeout; failed calls are not charged, a
+not-found is charged.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
