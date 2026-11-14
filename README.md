@@ -586,8 +586,9 @@ await client.dollarGeneral.deals({ store_id: "12629", type: "clearance" }); // o
 await client.dollarGeneral.coupons();
 ```
 
-Lowe's `search`, `product` and `stores` cost 2 credits and `reviews` 1; every
-Sam's Club, Canadian Tire and Dollar General call costs 1. Sam's Club caps
+Lowe's `search`, `product` and `stores` cost 2 credits and `reviews` 1; Sam's
+Club `clubs` costs 1 and every other Sam's Club call 2; every Canadian Tire and
+Dollar General call costs 1. Sam's Club caps
 `available_quantity` at 8 (8 means 8 or more). Dollar General clearance items
 carry the current price only, with no was-price. Canadian Tire and Dollar
 General return a rating and review count but no review text.

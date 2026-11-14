@@ -1,6 +1,6 @@
 import type { Scavio } from "../client.js";
 
-// Sam's Club: 6 endpoints, 1 credit each.
+// Sam's Club: 6 endpoints, clubs 1 credit, the other five 2 (since 2026-11-14).
 //
 // search(), savings() and category() answer for a club picked by location,
 // echoed in data.club. product({ club_id }) prices and stocks one specific
@@ -74,7 +74,7 @@ export class SamsClubNamespace {
    * stock, pickup/delivery/shipping availability and aisle. The club is picked
    * by location and returned in data.club.
    *
-   * Costs 1 credit.
+   * Costs 2 credits.
    */
   async search(options: SamsClubSearchOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/samsclub/search", options);
@@ -86,7 +86,7 @@ export class SamsClubNamespace {
    * UPC, model, specifications, and per-method fulfillment with stock and
    * aisle. Pass club_id to price and stock a specific club.
    *
-   * Costs 1 credit.
+   * Costs 2 credits.
    */
   async product(options: SamsClubProductOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/samsclub/product", options);
@@ -108,7 +108,7 @@ export class SamsClubNamespace {
    * savings amount, plus each offer's amount, end date, purchase limit and
    * channels.
    *
-   * Costs 1 credit.
+   * Costs 2 credits.
    */
   async savings(options: SamsClubSavingsOptions = {}): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/samsclub/savings", options);
@@ -118,7 +118,7 @@ export class SamsClubNamespace {
    * Products in a Sam's Club category, paged, with the same fields as
    * search(). Clearance is category "1150109".
    *
-   * Costs 1 credit.
+   * Costs 2 credits.
    */
   async category(options: SamsClubCategoryOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/samsclub/category", options);
@@ -129,7 +129,7 @@ export class SamsClubNamespace {
    * author, date, verified purchase and helpful votes, plus the average rating,
    * total count and 1-5 star breakdown.
    *
-   * Costs 1 credit.
+   * Costs 2 credits.
    */
   async reviews(options: SamsClubReviewsOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/samsclub/reviews", options);
