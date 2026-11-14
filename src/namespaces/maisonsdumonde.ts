@@ -10,11 +10,12 @@ import type { Scavio } from "../client.js";
 // the marketplace markets fr, de, es and it. Every answer carries country,
 // language and currency.
 //
-// Prices are numbers in the market's currency, never converted: Switzerland is
-// priced separately in CHF and the euro markets shared one price per product
-// (measured on 2026-11-14 on 4 products). was_price is the crossed-out price
-// shown next to a discount. Maisons du Monde shows no 30-day lowest price and
-// no price history.
+// Prices are numbers in the market's currency, never converted, and can differ
+// by market: measured on 2026-11-14 on about 170 discounted sofas, lu, nl, de,
+// es, it and pt matched fr on every item, be differed on 19, and ch is priced
+// separately in CHF. Read each market you report. was_price is the
+// crossed-out price shown next to a discount. Maisons du Monde shows no 30-day
+// lowest price and no price history.
 //
 // The server enforces the cross-field rules: language must be one the market
 // serves; product() takes id or url; category() takes category or

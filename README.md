@@ -2027,10 +2027,12 @@ Nine endpoints on `client.maisonsdumonde` (new in 0.60.0), 1 credit each:
   and `reviews` serve all nine; `stores`, `store` and `availability` serve fr,
   be, de, es, it, pt and ch (not nl or lu); `seller` and the `seller` /
   `sold_by` filters serve the marketplace markets fr, de, es and it.
-- Prices are numbers in the market's currency, never converted. Measured on
-  2026-11-14 on 4 products, the euro storefronts shared one price per product
-  and Switzerland was priced separately in CHF (round mirror 204172: 74.99, now
-  37.45 EUR on every euro market; 91.90, now 45.95 CHF). `was_price` is the
+- Prices are numbers in the market's currency, never converted, and can differ
+  by market: measured on 2026-11-14 on about 170 discounted sofas, Luxembourg,
+  the Netherlands, Germany, Spain, Italy and Portugal matched France on every
+  item, Belgium differed on 19, and Switzerland is priced separately in CHF
+  (round mirror 204172: 74.99, now 37.45 EUR on every euro market; 91.90, now
+  45.95 CHF). Read each market you report. `was_price` is the
   crossed-out price shown next to a discount. Maisons du Monde shows no 30-day
   lowest price and no price history, so poll to track changes.
 - Grids (search, category, deals, seller) are 40 per page with the exact
