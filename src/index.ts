@@ -480,6 +480,20 @@ export type {
   IkeaCompareOptions,
   IkeaAsIsOptions,
 } from "./namespaces/ikea.js";
+export { WayfairNamespace, WAYFAIR_TIMEOUT } from "./namespaces/wayfair.js";
+export type {
+  WayfairCountry,
+  WayfairLanguage,
+  WayfairSite,
+  WayfairSort,
+  WayfairMinRating,
+  WayfairMarketOptions,
+  WayfairGridOptions,
+  WayfairSearchOptions,
+  WayfairProductOptions,
+  WayfairCategoryOptions,
+  WayfairDealsOptions,
+} from "./namespaces/wayfair.js";
 export type {
   LowesReviewSort,
   LowesSearchOptions,

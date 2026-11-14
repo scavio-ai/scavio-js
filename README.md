@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 76 platforms on one API key, plus `extract()` to read
+data across 77 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1909,6 +1909,54 @@ Every call raises the request timeout to `IKEA_TIMEOUT` (120s), `product` and
 `reviews` to `IKEA_PRODUCT_TIMEOUT` (180s: a product page can take up to about
 100 seconds), and never lowers a longer client timeout; failed calls are not
 charged. An unknown article number, category or store id is a charged 404.
+
+### [Wayfair](https://scavio.dev/docs/wayfair-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Wayfair product data for wayfair.com, wayfair.ca (English or French),
+wayfair.co.uk and wayfair.ie, plus Wayfair's US sites AllModern, Birch Lane,
+Joss & Main and Perigold. Four endpoints on `client.wayfair` (new in 0.58.0),
+1 credit each: `search`, `product`, `category` and `deals`.
+
+- `country` is the market (default `us`, `ca`, `gb`, `ie`); `language` is
+  `en` or `fr` on `ca`; `site` picks a US banner site (allmodern, birchlane,
+  jossandmain, perigold) on `search`, `product` and `category`. Wayfair no
+  longer sells in Germany or Austria.
+- Prices are numbers in the market's currency, never converted. `was_price`
+  is Wayfair's strikethrough price: Wayfair's terms state it is the
+  manufacturer's suggested price or the highest price Wayfair offered or sold
+  the item at in the past, and its Sale label means a discount against a
+  price in the previous 90 days. Wayfair shows no price history, so poll
+  `price`, `sale_price`, `was_price` and `badge` to build one.
+- Option choices carry no price: call `product` with `option_id` for each
+  option's price and stock. `product` returns the 5 reviews the page shows
+  plus the rating histogram and review summary (no review paging), and a
+  delivery estimate for `zip` (us and ca only).
+- Keyword pages return 30 results (category pages 48) and `total` is
+  approximate. `brand` takes brand ids (`items[].brand.id`), not names.
+  `deals` lists the current sale events; use `on_sale`, `closeout` or
+  `open_box` on `search` or `category` for products.
+
+```typescript
+// Search, sorted and filtered; a keyword that matches a category says so in redirected_to.
+const res = (await client.wayfair.search({ query: "office chair", sort: "price_asc", on_sale: true })) as any;
+for (const p of res.data.items.slice(0, 5)) console.log(p.sku, p.name, p.price, p.was_price, p.price_label, p.badge);
+
+// One product: price, was price, badge, 5 reviews and the delivery estimate for a ZIP.
+const prod = (await client.wayfair.product({ sku: "W005006988", zip: "10001" })) as any;
+console.log(prod.data.price, prod.data.was_price, prod.data.percent_off, prod.data.rating_histogram);
+console.log(prod.data.delivery.map((d: any) => [d.name, d.date_min, d.text]));
+
+// One option's price and stock, a category grid, another market, and the sale events.
+const opt = (await client.wayfair.product({ sku: "W005006988", option_id: "1820607042" })) as any;
+const cat = (await client.wayfair.category({ category_id: "413892", sort: "rating" })) as any;
+const uk = (await client.wayfair.search({ query: "sofa", country: "gb" })) as any;
+const events = (await client.wayfair.deals()) as any;
+console.log(opt.data.price, cat.data.category.name, uk.data.currency, events.data.count);
+```
+
+Every call raises the request timeout to `WAYFAIR_TIMEOUT` (120s) and never
+lowers a longer client timeout; failed calls are not charged. An unknown SKU
+or category is a charged 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
