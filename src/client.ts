@@ -39,6 +39,7 @@ import { KrogerNamespace } from "./namespaces/kroger.js";
 import { PublixNamespace } from "./namespaces/publix.js";
 import { IkeaNamespace } from "./namespaces/ikea.js";
 import { WayfairNamespace } from "./namespaces/wayfair.js";
+import { AshleyNamespace } from "./namespaces/ashley.js";
 import { DecathlonNamespace } from "./namespaces/decathlon.js";
 import { SpecsNamespace } from "./namespaces/specs.js";
 import { LowesNamespace } from "./namespaces/lowes.js";
@@ -226,6 +227,7 @@ export class Scavio extends ScavioCore {
   readonly publix: PublixNamespace;
   readonly ikea: IkeaNamespace;
   readonly wayfair: WayfairNamespace;
+  readonly ashley: AshleyNamespace;
   readonly decathlon: DecathlonNamespace;
   readonly specs: SpecsNamespace;
   readonly lowes: LowesNamespace;
@@ -330,6 +332,7 @@ export class Scavio extends ScavioCore {
     this.publix = new PublixNamespace(this);
     this.ikea = new IkeaNamespace(this);
     this.wayfair = new WayfairNamespace(this);
+    this.ashley = new AshleyNamespace(this);
     this.decathlon = new DecathlonNamespace(this);
     this.specs = new SpecsNamespace(this);
     this.lowes = new LowesNamespace(this);

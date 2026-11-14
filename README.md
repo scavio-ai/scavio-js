@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 77 platforms on one API key, plus `extract()` to read
+data across 78 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -1958,6 +1958,60 @@ console.log(opt.data.price, cat.data.category.name, uk.data.currency, events.dat
 Every call raises the request timeout to `WAYFAIR_TIMEOUT` (120s) and never
 lowers a longer client timeout; failed calls are not charged. An unknown SKU
 or category is a charged 404.
+
+### [Ashley Furniture](https://scavio.dev/docs/ashley-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Ashley Furniture product data for ashleyfurniture.com, plus search and product
+on Ashley's licensed storefronts in Canada, Mexico, the Philippines, Saudi
+Arabia and Turkey. Six endpoints on `client.ashley` (new in 0.59.0):
+`search`, `product`, `category`, `deals`, `stores` and `store`.
+
+- `search` and `product` cost 2 credits on `us` (the default) and `mx` and 1
+  credit on `ca`, `ph`, `sa` and `tr`; `category`, `deals`, `stores` and
+  `store` are us only at 2 credits.
+- Prices are numbers in the market's currency, never converted.
+  `regular_price` is Ashley's own Regular Price, which Ashley's terms define
+  as its highest advertised price in store and online, offered to customers
+  using special long-term financing.
+- Ashley prices vary by region and there is no ZIP input: every us answer
+  returns `priced_for` (`zipcode`, `price_zone`), the ZIP and price zone
+  Ashley priced that answer for, so two calls can come back priced for
+  different zones and consecutive pages can overlap slightly.
+- `product` returns the first 10 reviews the page shows plus the rating
+  histogram, customer photos and Q&A (no review paging). Search facets are
+  informational: filter with `category`.
+- On the licensed storefronts `search` returns up to 10 matches (`tr` its
+  first results page) with no paging or sort, and `product` takes `handle`
+  (with `country`) or `url`, not `sku`.
+- `deals` events are `black_friday` (default), `clearance` and `hot_buys`.
+  `stores` takes `lat` and `lng` only (no ZIP or city lookup) and lists stores
+  alphabetically; call `store` for the address, phone and hours.
+
+```typescript
+// Search (us): 48 per page, exact total, and the ZIP / price zone the answer was priced for.
+const res = (await client.ashley.search({ query: "sofa", sort: "price_asc" })) as any;
+console.log(res.data.total, res.data.priced_for);
+for (const p of res.data.items.slice(0, 5)) console.log(p.sku, p.name, p.price, p.regular_price);
+
+// One product: price vs Regular Price, stock, the first 10 reviews and the histogram.
+const prod = (await client.ashley.product({ sku: "5950418" })) as any;
+console.log(prod.data.price, prod.data.regular_price, prod.data.stock.status, prod.data.rating_histogram);
+
+// A category grid with a facet filter, and the Black Friday deals.
+const cat = (await client.ashley.category({ path: "furniture/living-room/sofas", filters: { facetUpholsteryDesign: "Chaise" } })) as any;
+const deals = (await client.ashley.deals({ event: "black_friday" })) as any;
+console.log(cat.data.total, deals.data.event_name, deals.data.total);
+
+// Stores near a point, then one store's hours; a licensed storefront by handle.
+const near = (await client.ashley.stores({ lat: 40.7506, lng: -73.9972, radius: 25 })) as any;
+const store = (await client.ashley.store({ store_id: near.data.stores[0].store_id })) as any;
+const mx = (await client.ashley.product({ handle: "cashton-sofa", country: "mx" })) as any;
+console.log(store.data.phone, store.data.hours[0], mx.data.currency, mx.data.price);
+```
+
+Every call raises the request timeout to `ASHLEY_TIMEOUT` (120s) and never
+lowers a longer client timeout; failed calls are not charged. An unknown item
+number, category or store is a charged 404.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

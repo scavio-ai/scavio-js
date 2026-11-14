@@ -494,6 +494,20 @@ export type {
   WayfairCategoryOptions,
   WayfairDealsOptions,
 } from "./namespaces/wayfair.js";
+export { AshleyNamespace, ASHLEY_TIMEOUT } from "./namespaces/ashley.js";
+export type {
+  AshleyCountry,
+  AshleySort,
+  AshleyDealEvent,
+  AshleyStoreRadius,
+  AshleyGridOptions,
+  AshleySearchOptions,
+  AshleyProductOptions,
+  AshleyCategoryOptions,
+  AshleyDealsOptions,
+  AshleyStoresOptions,
+  AshleyStoreOptions,
+} from "./namespaces/ashley.js";
 export type {
   LowesReviewSort,
   LowesSearchOptions,
