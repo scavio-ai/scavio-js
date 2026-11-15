@@ -139,6 +139,25 @@ export type {
   TrendyolSuggestionsOptions,
   TrendyolDeliveryOptions,
 } from "./namespaces/trendyol.js";
+export { NintendoNamespace, NINTENDO_TIMEOUT } from "./namespaces/nintendo.js";
+export type {
+  NintendoCountry,
+  NintendoPricesCountry,
+  NintendoLanguage,
+  NintendoSort,
+  NintendoDealSort,
+  NintendoType,
+  NintendoPlatform,
+  NintendoReleaseType,
+  NintendoMarketOptions,
+  NintendoProductRef,
+  NintendoSearchOptions,
+  NintendoProductOptions,
+  NintendoPricesOptions,
+  NintendoDealsOptions,
+  NintendoReleasesOptions,
+  NintendoDlcOptions,
+} from "./namespaces/nintendo.js";
 export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";

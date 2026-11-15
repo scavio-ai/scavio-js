@@ -76,6 +76,7 @@ import { CarrefourNamespace } from "./namespaces/carrefour.js";
 import { AllegroNamespace } from "./namespaces/allegro.js";
 import { OlxNamespace } from "./namespaces/olx.js";
 import { TrendyolNamespace } from "./namespaces/trendyol.js";
+import { NintendoNamespace } from "./namespaces/nintendo.js";
 import { CompanyNamespace } from "./namespaces/company.js";
 import { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 import { ChatgptNamespace } from "./namespaces/chatgpt.js";
@@ -266,6 +267,7 @@ export class Scavio extends ScavioCore {
   readonly allegro: AllegroNamespace;
   readonly olx: OlxNamespace;
   readonly trendyol: TrendyolNamespace;
+  readonly nintendo: NintendoNamespace;
   readonly company: CompanyNamespace;
   readonly trustpilot: TrustpilotNamespace;
   readonly chatgpt: ChatgptNamespace;
@@ -373,6 +375,7 @@ export class Scavio extends ScavioCore {
     this.allegro = new AllegroNamespace(this);
     this.olx = new OlxNamespace(this);
     this.trendyol = new TrendyolNamespace(this);
+    this.nintendo = new NintendoNamespace(this);
     this.company = new CompanyNamespace(this);
     this.trustpilot = new TrustpilotNamespace(this);
     this.chatgpt = new ChatgptNamespace(this);

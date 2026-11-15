@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 80 platforms on one API key, plus `extract()` to read
+data across 81 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -11,6 +11,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
 - **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Trendyol (Turkey plus 34 international storefronts), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
+- **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
@@ -949,6 +950,65 @@ const stock = await client.tcgplayer.sellerProducts({ seller_key: "58f7acae", ga
 Every call raises the request timeout to `TCGPLAYER_TIMEOUT` (120s) and never
 lowers a longer client timeout. An unknown product id, game, set or seller key
 is a 404. No store locator, product reviews or buylist prices.
+
+### [Nintendo](https://scavio.dev/docs/nintendo-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+The Nintendo eShop and My Nintendo Store in 46 countries. Six endpoints on
+`client.nintendo` (new in 0.62.0), 1 credit each: `search`, `product`,
+`prices`, `deals`, `releases` and `dlc`.
+
+- Markets (`country`, default `us`) and languages (`language`, default the
+  market's first): Americas us (USD), ca (CAD; en or fr), mx (MXN; es), br
+  (BRL; pt), ar (ARS), cl (CLP), co (COP) and pe (PEN) (es); Europe in the
+  market's language: gb (GBP) and ie (EUR) (en), de and at (EUR; de), ch
+  (CHF; de, fr or it), fr, be (fr or nl), nl, lu (fr), it, es and pt (EUR), au
+  (AUD), nz (NZD) and za (ZAR) (en); pl (PLN), cz (CZK), se (SEK), no (NOK),
+  dk (DKK), fi, sk, hu, ro, bg, gr, hr, si, ee, lv, lt, mt and cy (EUR) read
+  the English European catalog with that country's own prices; jp (JPY; ja).
+  `prices` also serves kr (KRW), hk (HKD), tw (TWD) and il (EUR, European
+  item ids). ph (no Philippines item ids published yet), ru (no eShop), uk
+  (use gb) and countries with no eShop data answer 400.
+- Item ids (`nsuid`) are per eShop region: Americas, Europe (EU / EFTA, GB,
+  AU, NZ, ZA, IL), Japan, Korea, and Hong Kong + Taiwan (Taiwan uses Hong
+  Kong ids). An id from one region is `not_found` in another and there is no
+  cross-region title mapping: look the game up with `search` or `product` in
+  that region, then call `prices` for any country of the region (up to 50
+  ids). Americas search tiles carry a `slug` and no `nsuid`: read the product
+  with the slug.
+- Prices are always the requested country's eShop price in its currency;
+  `sale_start` and `sale_end` are the eShop's own sale window. Nintendo shows
+  no price history or historical low: poll `prices` to build one.
+- Americas `deals` are Nintendo's featured sale pages, not every discounted
+  game (check any id with `prices`); Europe and Japan `deals` are every game
+  on sale.
+- Americas `search` sorts by relevance or newest only and takes no filters;
+  the Americas `releases` lists are one page. An unsupported sort or filter
+  answers 400, never silently dropped.
+- No user reviews (Nintendo's stores have none; age ratings only), no
+  best-seller charts and no autocomplete.
+
+```typescript
+// One game's price, sale price and sale end in each Americas eShop country.
+for (const country of ["us", "ca", "mx", "br"] as const) {
+  const r = (await client.nintendo.prices({ ids: ["70010000095431"], country })) as any;
+  const p = r.data.prices[0];
+  console.log(country, p.currency, p.price, p.regular_price, p.sale_price, p.sale_end);
+}
+
+// A product by nsuid; Americas search tiles carry a slug instead.
+const prod = (await client.nintendo.product({ nsuid: "70010000095431" })) as any;
+console.log(prod.data.product.title, prod.data.product.platform, prod.data.product.price);
+
+// Europe search with an nsuid per item, Americas deals with their sale pages, and a game's DLC.
+const gb = (await client.nintendo.search({ query: "mario", country: "gb", sort: "price_asc" })) as any;
+const deals = (await client.nintendo.deals({ sort: "ending_soon" })) as any;
+const dlc = (await client.nintendo.dlc({ slug: "super-smash-bros-ultimate-switch" })) as any;
+console.log(gb.data.total, deals.data.sales, dlc.data.game.title, dlc.data.count);
+```
+
+Every call raises the request timeout to `NINTENDO_TIMEOUT` (120s; Americas
+searches take about 8 to 13s) and never lowers a longer client timeout;
+failed calls are not charged, a not-found is charged.
 
 ### [Vinted](https://scavio.dev/docs/vinted-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
