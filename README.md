@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 79 platforms on one API key, plus `extract()` to read
+data across 80 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Trendyol (Turkey plus 34 international storefronts), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
@@ -2072,6 +2072,66 @@ console.log(stock.data.in_stock, stock.data.quantity, stock.data.delivery);
 Every call raises the request timeout to `MAISONSDUMONDE_TIMEOUT` (120s) and
 never lowers a longer client timeout; failed calls are not charged, a
 not-found is charged.
+
+### [Trendyol](https://scavio.dev/docs/trendyol-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Trendyol (Turkey's largest online marketplace) and its international
+storefronts: 35 markets. Twelve endpoints on `client.trendyol` (new in
+0.61.0), 1 credit each: `search`, `product`, `category`, `brand`, `reviews`,
+`questions`, `seller`, `deals`, `coupons`, `rankings`, `suggestions` and
+`delivery`.
+
+- Markets (`country`, default `tr`) and languages (`language`, default the
+  market's first): tr (TRY; tr, en or ar), de and at (EUR; de), fr, be, hr,
+  dk, ee, fi, it, lv, lt, nl, pt, si, es, se and lu (EUR; en), bg (EUR; bg or
+  en), gr (EUR; el or en), sk (EUR; sk or en), cz (CZK; cs or en), hu (HUF; hu
+  or en), pl (PLN; pl or en), ro (RON; ro or en), rs (RSD; sr or en), ua (UAH;
+  uk or en), md (MDL; ro or en), ae (AED; en or ar), sa (SAR; ar or en), qa,
+  kw, om and bh (QAR, KWD, OMR, BHD; ar or en) and az (AZN; tr). `deals` and
+  `coupons` are tr only; `rankings` is not on the 15 English-language EU
+  storefronts, which have no ranking lists; `delivery`'s `city_id` /
+  `district_id` are tr only (Istanbul 133, Sisli 54; there is no city list).
+- `product` returns the `buy_box` seller and `other_sellers`: every other
+  seller's price, seller score (out of 10), badges and lowest-price badge.
+  Trendyol's developer FAQ says the buy box is chosen by algorithm metrics,
+  not price alone, so compare the two rather than assuming the buy box is the
+  lowest price.
+- The international storefronts are mostly sold cross-border by Trendyol
+  itself and have their own price lists, not a currency conversion of the
+  Turkish price (measured on 2 products on 2026-11-15).
+- `lowest_price_badge` is the site's "lowest price of the last N days" tag (7,
+  10, 14, 30 or 90 days): a day count, not a numeric 30-day lowest price.
+  There is no price history, so poll to track changes.
+- Grids (search, category, brand, deals, seller products) are 36 per page, at
+  most 138 pages; `total` stops at 100,000 (`total_capped`). Sponsored cards
+  are flagged `sponsored`, kept, and repeat across pages. Search cards give
+  favourites and orders as the site's rounded text.
+- Coupons belong to each seller's listing: the buy box often has none while
+  another seller has some, so pass `seller_id` from `other_sellers`.
+- Reviews carry the site's masked author only; no seller e-mail, tax number or
+  address is returned.
+
+```typescript
+// One product: the buy-box seller and every other seller's price and score.
+const p = (await client.trendyol.product({ content_id: 975557855 })) as any;
+console.log(p.data.buy_box.seller.name, p.data.buy_box.seller.score, p.data.buy_box.price, p.data.currency);
+for (const o of p.data.other_sellers) console.log(o.seller.name, o.seller.score, o.price, o.lowest_price_badge);
+
+// Search: 36 per page, sponsored cards flagged.
+const res = (await client.trendyol.search({ query: "telefon", sort: "price_asc" })) as any;
+console.log(res.data.total, res.data.total_capped, res.data.count, res.data.sponsored_count);
+
+// Reviews, coupons on one listing, a top-100 list and a delivery estimate.
+const rev = (await client.trendyol.reviews({ content_id: 975557855, sort: "newest" })) as any;
+const cp = (await client.trendyol.coupons({ content_id: 1164743007 })) as any;
+const top = (await client.trendyol.rankings({ category_id: 56 })) as any;
+const dl = (await client.trendyol.delivery({ content_id: 975557855, city_id: 133, district_id: 54 })) as any;
+console.log(rev.data.rating_histogram, cp.data.coupons, top.data.items[0], dl.data.listings[0].delivery);
+```
+
+Every call raises the request timeout to `TRENDYOL_TIMEOUT` (120s) and never
+lowers a longer client timeout; failed calls are not charged, a not-found is
+charged.
 
 ### [Mercado Libre](https://scavio.dev/docs/mercadolibre-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

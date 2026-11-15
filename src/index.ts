@@ -112,6 +112,33 @@ export { FanaticsNamespace, FANATICS_TIMEOUT, FANATICS_REVIEWS_TIMEOUT } from ".
 export { CarrefourNamespace, CARREFOUR_TIMEOUT } from "./namespaces/carrefour.js";
 export { AllegroNamespace, ALLEGRO_TIMEOUT } from "./namespaces/allegro.js";
 export { OlxNamespace, OLX_TIMEOUT } from "./namespaces/olx.js";
+export { TrendyolNamespace, TRENDYOL_TIMEOUT } from "./namespaces/trendyol.js";
+export type {
+  TrendyolCountry,
+  TrendyolRankingsCountry,
+  TrendyolLanguage,
+  TrendyolSort,
+  TrendyolReviewSort,
+  TrendyolRanking,
+  TrendyolDealType,
+  TrendyolSellerType,
+  TrendyolMarketOptions,
+  TrendyolFilterOptions,
+  TrendyolGridOptions,
+  TrendyolProductRef,
+  TrendyolSearchOptions,
+  TrendyolProductOptions,
+  TrendyolCategoryOptions,
+  TrendyolBrandOptions,
+  TrendyolReviewsOptions,
+  TrendyolQuestionsOptions,
+  TrendyolSellerOptions,
+  TrendyolDealsOptions,
+  TrendyolCouponsOptions,
+  TrendyolRankingsOptions,
+  TrendyolSuggestionsOptions,
+  TrendyolDeliveryOptions,
+} from "./namespaces/trendyol.js";
 export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
