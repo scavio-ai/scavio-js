@@ -3062,7 +3062,7 @@ the last page you get an ordinary empty list.
 ### [Company Enrich](https://scavio.dev/docs/company-enrich?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
 Find a company's contact details and its owner from its website or a Google
-Maps `place_id`: published emails, phone numbers (digits only), social
+Maps `place_id`: published emails, phone numbers (E.164), social
 profiles and contact page, plus the owner's name and title with the page that
 names them. One endpoint, `client.company.enrich()` (new in 0.53.0). Pass
 `url` (a bare domain works; social profile URLs are a 400) or `place_id`;

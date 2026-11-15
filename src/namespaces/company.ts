@@ -39,9 +39,9 @@ export interface CompanyEnrichCompany {
   name: string | null;
   website: string | null;
   domain: string | null;
-  /** Emails published on the site, company-domain addresses first. */
+  /** Emails published on the site, company-domain addresses first; other companies' addresses are dropped. */
   emails: string[];
-  /** Digits only. */
+  /** E.164 ("+15122226029") when the number validates, otherwise digits as printed. */
   phones: string[];
   socials: Partial<Record<CompanySocialNetwork, string>>;
   contact_page: string | null;
