@@ -158,6 +158,28 @@ export type {
   NintendoReleasesOptions,
   NintendoDlcOptions,
 } from "./namespaces/nintendo.js";
+export { HmNamespace, HM_TIMEOUT } from "./namespaces/hm.js";
+export type {
+  HmCountry,
+  HmSharedEuCountry,
+  HmProductCountry,
+  HmStoresCountry,
+  HmLanguage,
+  HmSort,
+  HmDepartment,
+  HmMarketOptions,
+  HmGridOptions,
+  HmArticleRef,
+  HmSearchOptions,
+  HmProductOptions,
+  HmStockOptions,
+  HmStoresOptions,
+  HmCategoryOptions,
+  HmDealsOptions,
+  HmNewArrivalsOptions,
+  HmSuggestionsOptions,
+  HmProductionOptions,
+} from "./namespaces/hm.js";
 export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";

@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 81 platforms on one API key, plus `extract()` to read
+data across 82 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Trendyol (Turkey plus 34 international storefronts), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
@@ -1009,6 +1009,70 @@ console.log(gb.data.total, deals.data.sales, dlc.data.game.title, dlc.data.count
 Every call raises the request timeout to `NINTENDO_TIMEOUT` (120s; Americas
 searches take about 8 to 13s) and never lowers a longer client timeout;
 failed calls are not charged, a not-found is charged.
+
+### [H&M](https://scavio.dev/docs/hm-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+H&M in 47 countries. Nine endpoints on `client.hm` (new in 0.63.0):
+`search`, `product` (2 credits), `stock`, `stores`, `category`, `deals`,
+`newArrivals`, `suggestions` and `production` (1 credit each).
+
+- Markets (`country`, default `us`) and languages (`language`, default the
+  market's first): us (USD), ca (CAD; en or fr), mx (MXN; es), gb (GBP), ie
+  (EUR), de and at (EUR; de), ch (CHF; de, fr or it), fr, be (nl or fr), nl,
+  it, es, pt (EUR), se (SEK), fi (EUR; fi or sv), dk (DKK), no (NOK), pl
+  (PLN), cz (CZK), sk (EUR), hu (HUF), ro (RON), bg (EUR), gr (EUR), rs
+  (RSD), tr (TRY), ua (UAH), il (ILS; he), hk and mo (HKD; zh or en), tw
+  (TWD; zh or en), jp (JPY), kr (KRW), in (INR), my (MYR), ph (PHP), sg
+  (SGD), vn (VND), au (AUD), each in its own language; and hr, cy, ee, lv,
+  lt, lu and si on H&M's shared English EUR store (answers say store `eu`).
+- Every endpoint serves all 47 except `product` (not mo, tw or the shared EU
+  store countries: use `search` or `stock` there) and `stores` (not mo: H&M
+  lists no stores there). Countries where H&M runs a separate site (ae, eg,
+  id, th, br, cn) or has no online store, ru, and uk (use gb) answer 400
+  before anything is charged.
+- Article codes are global: the same 10-digit code in every market, so one
+  code compares a price across markets with one call per `country`.
+- `price` is what a non-member pays now; `member_price` is H&M's member price
+  as shown to signed-in members; `prior_price` is the earlier price H&M shows
+  next to an EU markdown; `product` adds `price_disclosure` where H&M shows
+  one.
+- `stock` is online stock per size: H&M publishes no per-size store stock
+  (`search` with `store` lists a store's assortment). `product` carries the
+  rating and the latest reviews H&M shows (up to 10, with fit feedback): there
+  is no full review list.
+- Category ids are the same in every market (`ladies_dresses`, `men_jeans`,
+  ...). H&M runs sales in seasons, so `deals` may return an empty grid
+  between sales.
+- No price history (poll to track changes), no checkout or member-only cart
+  prices; H&M's sibling brands (COS, Weekday, & Other Stories, Monki, ARKET)
+  are not covered.
+
+```typescript
+// One article's price in several markets: article codes are the same everywhere.
+for (const country of ["gb", "ca", "ch", "pl", "se"] as const) {
+  const p = ((await client.hm.product({ article_code: "1347936009", country })) as any).data;
+  console.log(country, p.currency, p.price, p.regular_price, p.sale_price, p.member_price);
+}
+
+// Online stock by size (not store stock) for every colour of a product.
+const st = ((await client.hm.stock({ article_code: "1310382004" })) as any).data;
+console.log(st.sizes_in_stock, st.sizes_total, st.colors[0].sizes);
+
+// Search, a category grid, the sale grid (may be empty between sales) and stores.
+const res = (await client.hm.search({ query: "jeans", country: "de", language: "de", sort: "price_asc" })) as any;
+const dresses = (await client.hm.category({ category: "ladies_dresses", country: "gb" })) as any;
+const sale = (await client.hm.deals({ country: "gb", department: "men" })) as any;
+const stores = (await client.hm.stores({ city: "New York" })) as any;
+console.log(res.data.total, dresses.data.total, sale.data.total, stores.data.stores[0].store_code);
+
+// Where an article is made, as H&M publishes it.
+const made = (await client.hm.production({ article_code: "1310382004" })) as any;
+console.log(made.data.production_countries, made.data.countries[0].suppliers[0].name);
+```
+
+Every call raises the request timeout to `HM_TIMEOUT` (120s; `product` can
+take up to about a minute) and never lowers a longer client timeout; failed
+calls are not charged, a not-found is charged.
 
 ### [Vinted](https://scavio.dev/docs/vinted-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
