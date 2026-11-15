@@ -2096,9 +2096,10 @@ storefronts: 35 markets. Twelve endpoints on `client.trendyol` (new in
   Trendyol's developer FAQ says the buy box is chosen by algorithm metrics,
   not price alone, so compare the two rather than assuming the buy box is the
   lowest price.
-- The international storefronts are mostly sold cross-border by Trendyol
-  itself and have their own price lists, not a currency conversion of the
-  Turkish price (measured on 2 products on 2026-11-15).
+- The international storefronts have their own price lists, not a currency
+  conversion of the Turkish price (measured on 2 products on 2026-11-15), and
+  their items are sold by Trendyol itself or by other sellers (check `buy_box`
+  and `other_sellers`).
 - `lowest_price_badge` is the site's "lowest price of the last N days" tag (7,
   10, 14, 30 or 90 days): a day count, not a numeric 30-day lowest price.
   There is no price history, so poll to track changes.

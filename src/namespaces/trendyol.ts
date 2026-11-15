@@ -15,8 +15,9 @@ import type { Scavio } from "../client.js";
 // product() returns the buy-box seller and every other seller's offer
 // (other_sellers): Trendyol's developer FAQ says the buy box is chosen by
 // algorithm metrics, not price alone. Each international storefront has its
-// own price list (mostly sold cross-border by Trendyol itself), not a currency
-// conversion of the Turkish price. lowest_price_badge is the site's "lowest
+// own price list, not a currency conversion of the Turkish price; items there
+// are sold by Trendyol itself or by other sellers (see buy_box and
+// other_sellers). lowest_price_badge is the site's "lowest
 // price of the last N days" tag: a day count only. Trendyol publishes no
 // numeric 30-day lowest price and no price history.
 //
