@@ -3013,8 +3013,8 @@ when both are sent, `url` is the site that gets read.
 - `data.owner` is null when no page names one. `owner.email` is set only when
   an address on the site matches the owner's name (`email_status:
   "published"`); otherwise it is null with `"not_found"`.
-- `pages_read` lists what was read: the home page, up to 3 contact, about or
-  team pages, privacy and terms.
+- Each call reads the home page, up to 3 contact, about or team pages, and the
+  privacy and terms pages.
 
 ```ts
 const maps = (await client.google.mapsSearch({ query: "plumber austin tx" })) as any;

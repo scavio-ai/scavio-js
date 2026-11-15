@@ -66,8 +66,6 @@ export interface CompanyEnrichData {
   company: CompanyEnrichCompany;
   /** null when no page names an owner. */
   owner: CompanyEnrichOwner | null;
-  /** Home page, up to 3 contact/about/team pages, privacy and terms. */
-  pages_read: string[];
 }
 
 export interface CompanyEnrichResponse {
