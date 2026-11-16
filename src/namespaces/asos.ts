@@ -19,8 +19,12 @@ import type { Scavio } from "../client.js";
 // country, currency, store and language.
 //
 // Product and category ids are global: the same id on every store (titles in
-// the store's language). Prices are set per store + currency, not per country
-// inside a store, and come back as numbers in the request's currency, never
+// the store's language). Countries served by the same ASOS store in the same
+// currency share one price list, except Ireland, which has its own euro prices
+// on ASOS's European store (measured 2026-11-16 on all 245 country-currency
+// combinations); which products are offered still differs by country. price is
+// the lowest size price when ASOS prices sizes differently (variants carry each
+// size's price). Prices come back as numbers in the request's currency, never
 // converted: price, previous_price, rrp, lowest_price_30d, is_marked_down,
 // is_outlet, discount_percent and discount_basis. stock() is online stock per
 // variant (ASOS has no physical stores) with variant ids, not size names.
@@ -250,9 +254,12 @@ export class AsosNamespace {
    * Reviews of one product on one store, up to 50 per page: summary (average,
    * count, distribution, recommended, fit and quality averages), ai_summary
    * (ASOS's labelled AI summary) and reviews (rating, title, text, date, fit,
-   * quality, verified_purchaser, syndicated, source, photos). Reviews are per
-   * store; the European and international stores share one pool. No reviewer
-   * names.
+   * quality, verified_purchaser, syndicated, source, photos). Which reviews
+   * come back depends on the store: gb, us, au and ASOS's European and
+   * international stores share one English review pool; es, it, nl, se, dk and
+   * pl add reviews written in their own language to that pool; fr and de show
+   * only reviews written in French or German (each review carries its
+   * language; totals differ by store). No reviewer names.
    *
    * Costs 1 credit.
    */

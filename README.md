@@ -1169,16 +1169,23 @@ credit each: `search`, `product`, `stock`, `reviews`, `suggestions`,
   selling there), uk (use gb) and countries ASOS does not list answer 400
   before anything is charged.
 - Product and category ids are the same on every store (titles in the
-  store's language). Prices are set per store and currency, not per country
-  inside a store, and come back as numbers in the requested currency, never
+  store's language). Countries served by the same ASOS store in the same
+  currency share one price list, except Ireland, which has its own euro
+  prices on ASOS's European store (measured 2026-11-16 on all 245
+  country-currency combinations); which products are offered still differs by
+  country. `price` is the lowest size price when ASOS prices sizes differently
+  (variants carry each size's price). Prices come back as numbers in the requested currency, never
   converted: `price`, `previous_price` (ASOS's "was"), `rrp`,
   `lowest_price_30d` where ASOS shows it, `is_marked_down`, `is_outlet`,
   `discount_percent` and `discount_basis`.
 - `stock` is online stock per variant for up to 100 product ids per call
   (ASOS has no physical stores) and carries variant ids, not size names:
   `product` carries the sizes.
-- Reviews are per store (the European and international stores share one
-  pool), up to 50 per page, with fit and quality averages and ASOS's
+- Which reviews come back depends on the store: gb, us, au and ASOS's
+  European and international stores share one English review pool; es, it,
+  nl, se, dk and pl add reviews written in their own language to that pool; fr
+  and de show only reviews written in French or German (each review carries
+  its language). Up to 50 per page, with fit and quality averages and ASOS's
   labelled AI summary; no reviewer names.
 - Keyword search serves at most 2,088 results whatever `total` says
   (`max_reachable`); `category`, `deals` and `newArrivals` page through
@@ -1203,7 +1210,7 @@ for (const m of stores) {
 const st = (await client.asos.stock({ product_ids: ["205338218", "206956133", "209793673"], country: "de" })) as any;
 console.log(st.data.products.map((x: any) => [x.product_id, x.price, x.in_stock]), st.data.not_found);
 
-// Search, reviews per store and the SALE list.
+// Search, reviews and the SALE list.
 const res = (await client.asos.search({ query: "jeans", sort: "price_asc", gender: "women" })) as any;
 console.log(res.data.total, res.data.max_reachable, res.data.items[0]?.title);
 const rv = (await client.asos.reviews({ product_id: "210309625", sort: "newest", page_size: 50 })) as any;
