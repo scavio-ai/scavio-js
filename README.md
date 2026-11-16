@@ -1102,9 +1102,10 @@ Zara in 102 storefronts. Twelve endpoints on `client.zara` (new in 0.64.0):
   (not ad, al, am, az, ba, dz, mk, mo, uz or xk). Belarus, uk (use gb) and the
   countries Zara serves only from its worldwide store answer 400 before
   anything is charged.
-- Product ids (one per colour) and references are global on Zara's
-  international site, so `prices` compares one reference across up to 10
-  markets in one call; `cn` runs its own ids, so use the reference there.
+- References are global on Zara's international site, so `prices` compares
+  one reference across up to 10 markets in one call. A colour's product id
+  is usually the same across markets but can differ, and `cn` runs its own
+  ids, so match across markets with the reference.
   Prices are numbers in the market's own currency, never converted;
   `old_price` is set only on a markdown.
 - `stock` is online stock per size; `storeStock` is units per size in
