@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 83 platforms on one API key, plus `extract()` to read
+data across 84 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), ASOS (235 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
@@ -1144,6 +1144,75 @@ console.log(deals.data.total, fresh.data.total);
 ```
 
 Every call raises the request timeout to `ZARA_TIMEOUT` (120s) and never
+lowers a longer client timeout; failed calls are not charged, a not-found is
+charged.
+
+### [ASOS](https://scavio.dev/docs/asos-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+ASOS in 235 countries. Eleven endpoints on `client.asos` (new in 0.65.0), 1
+credit each: `search`, `product`, `stock`, `reviews`, `suggestions`,
+`category`, `categories`, `brands`, `deals`, `newArrivals` and `markets`.
+
+- Markets (`country`, default `gb`; `currency`, default ASOS's own default
+  for the country): the 235 countries in ASOS's own country selector, served
+  by 13 ASOS stores. Eleven have a site of their own in their own language:
+  gb (GBP), us and pr (USD), fr and mc (EUR, French; the French overseas
+  territories in USD), de and at (EUR, German), es and ad (EUR, Spanish), it,
+  sm and va (EUR, Italian), au (AUD), dk (DKK), nl (EUR), pl (PLN) and se
+  (SEK). ASOS's European store (33 countries, English) and its international
+  store (170 countries, English) serve the rest. `currency` takes any
+  currency ASOS offers the country (245 combinations, e.g. ae AED or GBP, il
+  ILS, GBP or USD, jp USD or GBP); `markets` lists them, and the
+  `AsosCountry` type lists all 235.
+- Every endpoint serves every combination except `suggestions` on pl (ASOS's
+  Polish store answers no suggestions). Russia and Belarus (ASOS is not
+  selling there), uk (use gb) and countries ASOS does not list answer 400
+  before anything is charged.
+- Product and category ids are the same on every store (titles in the
+  store's language). Prices are set per store and currency, not per country
+  inside a store, and come back as numbers in the requested currency, never
+  converted: `price`, `previous_price` (ASOS's "was"), `rrp`,
+  `lowest_price_30d` where ASOS shows it, `is_marked_down`, `is_outlet`,
+  `discount_percent` and `discount_basis`.
+- `stock` is online stock per variant for up to 100 product ids per call
+  (ASOS has no physical stores) and carries variant ids, not size names:
+  `product` carries the sizes.
+- Reviews are per store (the European and international stores share one
+  pool), up to 50 per page, with fit and quality averages and ASOS's
+  labelled AI summary; no reviewer names.
+- Keyword search serves at most 2,088 results whatever `total` says
+  (`max_reachable`); `category`, `deals` and `newArrivals` page through
+  everything. The `search` brand filter takes brand facet ids from a search
+  answer; `brands` returns category ids to pass to `category`.
+- No outlet (ASOS's outlet categories are empty), no promo codes (shown only
+  to signed-in shoppers), no price history (poll `stock`).
+
+```typescript
+// One product's price and online stock by size in several stores and currencies.
+// import type { AsosCountry, AsosCurrency } from "scavio";
+const stores: Array<{ country: AsosCountry; currency?: AsosCurrency }> = [
+  { country: "gb" }, { country: "us" }, { country: "fr" }, { country: "ae", currency: "AED" },
+];
+for (const m of stores) {
+  const p = (await client.asos.product({ product_id: "210309625", ...m })) as any;
+  console.log(p.data.store, p.data.currency, p.data.price, p.data.previous_price, p.data.rrp);
+  console.log(p.data.variants.map((v: any) => [v.size, v.in_stock, v.low_stock]));
+}
+
+// Price and online stock of up to 100 ids in one call (variant ids; product() has the sizes).
+const st = (await client.asos.stock({ product_ids: ["205338218", "206956133", "209793673"], country: "de" })) as any;
+console.log(st.data.products.map((x: any) => [x.product_id, x.price, x.in_stock]), st.data.not_found);
+
+// Search, reviews per store and the SALE list.
+const res = (await client.asos.search({ query: "jeans", sort: "price_asc", gender: "women" })) as any;
+console.log(res.data.total, res.data.max_reachable, res.data.items[0]?.title);
+const rv = (await client.asos.reviews({ product_id: "210309625", sort: "newest", page_size: 50 })) as any;
+console.log(rv.data.summary.average, rv.data.ai_summary);
+const sale = (await client.asos.deals({ country: "us", gender: "men" })) as any;
+console.log(sale.data.total);
+```
+
+Every call raises the request timeout to `ASOS_TIMEOUT` (120s) and never
 lowers a longer client timeout; failed calls are not charged, a not-found is
 charged.
 

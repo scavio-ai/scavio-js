@@ -206,6 +206,32 @@ export type {
   ZaraPricesOptions,
   ZaraSuggestionsOptions,
 } from "./namespaces/zara.js";
+export { AsosNamespace, ASOS_TIMEOUT } from "./namespaces/asos.js";
+export type {
+  AsosCountry,
+  AsosSuggestionsCountry,
+  AsosCurrency,
+  AsosSort,
+  AsosReviewSort,
+  AsosGender,
+  AsosSection,
+  AsosColor,
+  AsosRange,
+  AsosMarketOptions,
+  AsosGridOptions,
+  AsosSearchOptions,
+  AsosProductOptions,
+  AsosStockOptions,
+  AsosReviewsOptions,
+  AsosSuggestionsOptions,
+  AsosCategoryOptions,
+  AsosCategoriesOptions,
+  AsosBrandsOptions,
+  AsosListOptions,
+  AsosDealsOptions,
+  AsosNewArrivalsOptions,
+  AsosMarketsOptions,
+} from "./namespaces/asos.js";
 export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
