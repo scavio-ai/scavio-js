@@ -80,6 +80,7 @@ import { NintendoNamespace } from "./namespaces/nintendo.js";
 import { HmNamespace } from "./namespaces/hm.js";
 import { ZaraNamespace } from "./namespaces/zara.js";
 import { AsosNamespace } from "./namespaces/asos.js";
+import { MercariNamespace } from "./namespaces/mercari.js";
 import { CompanyNamespace } from "./namespaces/company.js";
 import { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 import { ChatgptNamespace } from "./namespaces/chatgpt.js";
@@ -274,6 +275,7 @@ export class Scavio extends ScavioCore {
   readonly hm: HmNamespace;
   readonly zara: ZaraNamespace;
   readonly asos: AsosNamespace;
+  readonly mercari: MercariNamespace;
   readonly company: CompanyNamespace;
   readonly trustpilot: TrustpilotNamespace;
   readonly chatgpt: ChatgptNamespace;
@@ -385,6 +387,7 @@ export class Scavio extends ScavioCore {
     this.hm = new HmNamespace(this);
     this.zara = new ZaraNamespace(this);
     this.asos = new AsosNamespace(this);
+    this.mercari = new MercariNamespace(this);
     this.company = new CompanyNamespace(this);
     this.trustpilot = new TrustpilotNamespace(this);
     this.chatgpt = new ChatgptNamespace(this);

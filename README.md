@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 84 platforms on one API key, plus `extract()` to read
+data across 85 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -12,7 +12,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), ASOS (235 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
-- **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
+- **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House, Company Enrich (contacts and owner from a website or a Google Maps place)
@@ -1280,6 +1280,69 @@ for (const f of reviews.data.feedback.slice(0, 3)) console.log(f.rating, f.creat
 Every call raises the request timeout to `VINTED_TIMEOUT` (120s) and never
 lowers a longer client timeout. An unknown item or member id on `product` or
 `seller` is a 404.
+
+### [Mercari](https://scavio.dev/docs/mercari-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Mercari US (mercari.com, USD, English) and Mercari Japan (jp.mercari.com, JPY,
+Japanese). Eleven endpoints on `client.mercari` (new in 0.66.0), 1 credit
+each: `search`, `item`, `category`, `categories`, `brands`, `brand`, `deals`,
+`trending`, `seller`, `sellerReviews` and `shop`.
+
+- Markets (`country`): `us` (default) and `jp`. `search`, `item`,
+  `category`, `categories`, `brands` and `brand` serve both; `deals` and
+  `trending` are us only; `seller`, `sellerReviews` and `shop` are jp only.
+  A market an endpoint does not serve, Mercari UK (closed: gb / uk) and any
+  other value answer 400 before anything is charged. Item, category, brand
+  and seller ids are per market: an id from us is not valid on jp.
+- Sold prices: `status: "sold"` returns sold listings (sold and in transit)
+  with their prices, so asking prices (`on_sale`, the default) and sold
+  prices for the same query come from `search`. Grids carry no likes and no
+  sold time; `item` has both (`sold_at`), and a sold item keeps its full
+  data.
+- Prices are numbers, US dollars on us and whole yen on jp;
+  `original_price` is the seller's earlier price when above `price`, with
+  `discount_percent` against it.
+- Search depth: us 50 per page up to page 20 (1,000 results), jp 120 per
+  page up to page 91. Sorts: relevance, newest, price_asc, price_desc, plus
+  `likes` on jp and `recently_sold` on us; jp `newest` follows Mercari
+  Japan's own order, where relisted items move up.
+- Mercari Japan data is in Japanese as sellers wrote it (not translated), and
+  jp calls are slower (search typically 30-60 s). jp `item` adds the full
+  public comment list (no commenter names) and Mercari Shops products.
+- `seller` (jp) is the public profile with good / normal / bad ratings and
+  the first 30 listings; `sellerReviews` (jp) the most recent 100 reviews
+  with no reviewer names; `shop` (jp) the Mercari Shops shop profile (for
+  its products use `search` with `shops_only` or `item`).
+- Not available: US seller profiles and reviews, US search suggestions,
+  Japanese trending and price-drop history.
+
+```typescript
+// Asking prices vs sold prices for the same query.
+const onSale = (await client.mercari.search({ query: "nintendo switch" })) as any;
+const sold = (await client.mercari.search({ query: "nintendo switch", status: "sold", sort: "recently_sold" })) as any;
+console.log(onSale.data.total, onSale.data.items.map((i: any) => i.price).slice(0, 5));
+console.log(sold.data.total, sold.data.items.map((i: any) => [i.price, i.status]).slice(0, 5));
+
+// One listing: the seller's earlier price, sold_at, shipping, likes and the seller summary.
+const it = (await client.mercari.item({ item_id: "m38943035688" })) as any;
+console.log(it.data.price, it.data.original_price, it.data.sold_at, it.data.likes, it.data.seller);
+
+// Mercari Japan (Japanese, yen): search, an item with its comments, a seller and their reviews.
+const jp = (await client.mercari.search({ query: "ポケモンカード", country: "jp" })) as any;
+const jpItem = (await client.mercari.item({ item_id: "m65962821601", country: "jp" })) as any;
+const seller = (await client.mercari.seller({ seller_id: "477123966" })) as any;
+const reviews = (await client.mercari.sellerReviews({ seller_id: "477123966" })) as any;
+console.log(jp.data.page_size, jpItem.data.comments.length, seller.data.seller.ratings, reviews.data.summary);
+
+// US only: trending keywords and brands, and the deals filter.
+const trending = (await client.mercari.trending()) as any;
+console.log(trending.data.keywords.slice(0, 5).map((k: any) => [k.keyword, k.rank_change]));
+const deals = (await client.mercari.deals()) as any;
+```
+
+Every call raises the request timeout to `MERCARI_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls are not charged, a not-found is
+charged.
 
 ### [Macy's](https://scavio.dev/docs/macys-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

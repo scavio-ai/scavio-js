@@ -232,6 +232,25 @@ export type {
   AsosNewArrivalsOptions,
   AsosMarketsOptions,
 } from "./namespaces/asos.js";
+export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
+export type {
+  MercariCountry,
+  MercariStatus,
+  MercariSort,
+  MercariCondition,
+  MercariShipping,
+  MercariGridOptions,
+  MercariSearchOptions,
+  MercariItemOptions,
+  MercariCategoryOptions,
+  MercariCategoriesOptions,
+  MercariBrandsOptions,
+  MercariBrandOptions,
+  MercariDealsOptions,
+  MercariTrendingOptions,
+  MercariSellerOptions,
+  MercariShopOptions,
+} from "./namespaces/mercari.js";
 export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
