@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 82 platforms on one API key, plus `extract()` to read
+data across 83 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), OLX (7 OLX Europe sites)
@@ -1073,6 +1073,78 @@ console.log(made.data.production_countries, made.data.countries[0].suppliers[0].
 Every call raises the request timeout to `HM_TIMEOUT` (120s; `product` can
 take up to about a minute) and never lowers a longer client timeout; failed
 calls are not charged, a not-found is charged.
+
+### [Zara](https://scavio.dev/docs/zara-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Zara in 102 storefronts. Twelve endpoints on `client.zara` (new in 0.64.0):
+`search`, `product`, `materials`, `stock`, `stores`, `storeStock`,
+`categories`, `category`, `deals`, `newArrivals`, `prices` and
+`suggestions`.
+
+- Credits are what each request spent (`credits_used` in the response): 2
+  per call for `search`, `materials`, `stock`, `stores`, `categories` and
+  `category`; `product` 2 (4 by `reference` or when the slug is another
+  market's or language's, 6 for both); `storeStock` 2 with `store_ids`, 4
+  with `lat` + `lng`; `deals` 4 (2 when the market has no special-prices
+  category); `newArrivals` 4; `prices` 2 per market that answered;
+  `suggestions` 2 (4 when the English fallback runs). China (`cn`, Zara's
+  separate site) costs 1 credit per call instead of 2.
+- Markets (`country`, default `us`; `gb` for the United Kingdom): the 102
+  Zara storefronts with an online store of their own, each in its own
+  currency and Zara's own languages (`language`, default the first Zara
+  lists; 205 market-languages), e.g. us (USD; en, es), ca (CAD; en, fr), mx,
+  br, gb, the euro countries, ch (CHF; en, fr, de, it), pl, tr, il, ae, sa,
+  eg, ma, in, jp (JPY), kr (KRW), cn (CNY), hk, mo and tw (zh-Hant, en), sg,
+  th, vn, au, nz, za and the rest of Latin America and Europe Zara sells
+  online in. The `ZaraCountry` type lists all 102.
+- Every endpoint serves all 102 except `stores` and `storeStock` (not ao or
+  iq: Zara lists no stores there), `newArrivals` (not dz) and `suggestions`
+  (not ad, al, am, az, ba, dz, mk, mo, uz or xk). Belarus, uk (use gb) and the
+  countries Zara serves only from its worldwide store answer 400 before
+  anything is charged.
+- Product ids (one per colour) and references are global on Zara's
+  international site, so `prices` compares one reference across up to 10
+  markets in one call; `cn` runs its own ids, so use the reference there.
+  Prices are numbers in the market's own currency, never converted;
+  `old_price` is set only on a markdown.
+- `stock` is online stock per size; `storeStock` is units per size in
+  physical stores (sales floor and stockroom). `materials` gives composition,
+  care and the country of production as Zara states it.
+- Zara runs seasonal sales and lists special prices between them: `deals`
+  finds each market's special-prices list live and answers an empty list (not
+  an error) where a market has none for the section. Category ids are shared
+  across the northern-hemisphere catalogue; au, za and br run their own.
+- No reviews (Zara shows none), no price history (poll `prices`); Inditex's
+  other brands (Pull&Bear, Massimo Dutti, Bershka, Stradivarius, Oysho, Zara
+  Home, Lefties) are not covered.
+
+```typescript
+// Zara prices by country: one reference in up to 10 markets, each in its own currency.
+const p = (await client.zara.prices({ reference: "4591/381", countries: ["us", "gb", "es", "jp", "mx"] })) as any;
+for (const m of p.data.markets) console.log(m.country, m.currency, m.price, m.old_price, m.title);
+
+// Search, then the product page (product_id + seo_slug) and online stock by size.
+const res = (await client.zara.search({ query: "blazer" })) as any;
+const item = res.data.items[0];
+const prod = (await client.zara.product({ product_id: item.product_id, slug: item.seo_slug })) as any;
+const st = (await client.zara.stock({ product_id: "588478514" })) as any;
+console.log(prod.data.colors[0].sizes, st.data.sizes_in_stock, st.data.sizes_total);
+
+// Stores near a point, then units per size in those stores.
+const stores = (await client.zara.stores({ lat: 40.7128, lng: -74.006 })) as any;
+const ids = stores.data.stores.slice(0, 8).map((s: any) => s.store_id);
+const units = (await client.zara.storeStock({ product_id: "553306790", store_ids: ids })) as any;
+console.log(units.data.stores_with_stock, units.data.stores_without_stock);
+
+// The SPECIAL PRICES list (empty where a market has none) and new arrivals.
+const deals = (await client.zara.deals({ section: "woman" })) as any;
+const fresh = (await client.zara.newArrivals({ country: "gb", section: "woman" })) as any;
+console.log(deals.data.total, fresh.data.total);
+```
+
+Every call raises the request timeout to `ZARA_TIMEOUT` (120s) and never
+lowers a longer client timeout; failed calls are not charged, a not-found is
+charged.
 
 ### [Vinted](https://scavio.dev/docs/vinted-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

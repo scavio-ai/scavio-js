@@ -180,6 +180,32 @@ export type {
   HmSuggestionsOptions,
   HmProductionOptions,
 } from "./namespaces/hm.js";
+export { ZaraNamespace, ZARA_TIMEOUT } from "./namespaces/zara.js";
+export type {
+  ZaraCountry,
+  ZaraStoresCountry,
+  ZaraNewArrivalsCountry,
+  ZaraSuggestionsCountry,
+  ZaraLanguage,
+  ZaraSort,
+  ZaraSearchSection,
+  ZaraCategorySection,
+  ZaraTreeSection,
+  ZaraMarketOptions,
+  ZaraPagingOptions,
+  ZaraSearchOptions,
+  ZaraProductOptions,
+  ZaraMaterialsOptions,
+  ZaraStockOptions,
+  ZaraStoresOptions,
+  ZaraStoreStockOptions,
+  ZaraCategoriesOptions,
+  ZaraCategoryOptions,
+  ZaraDealsOptions,
+  ZaraNewArrivalsOptions,
+  ZaraPricesOptions,
+  ZaraSuggestionsOptions,
+} from "./namespaces/zara.js";
 export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
