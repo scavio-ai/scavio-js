@@ -12,13 +12,19 @@ import type { Scavio } from "../client.js";
 // Item, category, brand and seller ids are per market: an id from us is not
 // valid on jp (a charged not-found). status "sold" returns sold listings (sold
 // and in transit) with their prices, so asking and sold prices for the same
-// query come from search(). Grids carry no likes and no sold time; item() has
-// both, and a sold item keeps its full data. Prices are numbers: US dollars on
-// us, whole yen on jp; original_price is the seller's earlier price when above
-// price, with discount_percent against it. Search depth: us 50 per page up to
-// page 20 (1,000 results), jp 120 per page up to page 91. jp data is in
-// Japanese as sellers wrote it (not translated) and jp calls are slower
-// (search typically 30-60 s). Not available: US seller profiles and reviews,
+// query come from search(). On us, Mercari orders sold results most recently
+// sold first whatever relevance asks (price sorts apply) and matches the
+// keyword more loosely than on-sale results: check titles before comparing
+// prices. Grids carry no likes and no sold time; item() has both (sold_at when
+// Mercari shows it), and a sold item keeps its full data. On us, grid
+// free_shipping is set only when you filter by shipping. Prices are numbers:
+// US dollars on us, whole yen on jp; original_price is the seller's earlier
+// price when above price, with discount_percent against it (never set on jp
+// results). Search depth: us 50 per page up to page 20 (later pages can repeat
+// earlier items: dedupe by item_id), jp 120 per page up to page 91; total stops
+// at 10,000 on us and 15,000 on jp (that many or more). jp data is in Japanese
+// as sellers wrote it (not translated) and jp calls are slower (typically
+// 10-20 s, up to about a minute). Not available: US seller profiles and reviews,
 // US search suggestions, Japanese trending, price-drop history.
 //
 // The server enforces the cross-field rules: search() needs query,
@@ -50,9 +56,9 @@ type Id = string | number;
 export interface MercariGridOptions {
   /** on_sale (default), sold (sold listings, including items sold but still in transit) or all. */
   status?: MercariStatus;
-  /** Results page, 1-based: us 50 per page up to 20, jp 120 per page up to 91. */
+  /** Results page, 1-based: us 50 per page up to 20 (later pages can repeat items: dedupe by item_id), jp 120 per page up to 91. */
   page?: number;
-  /** Sort order. Defaults to "relevance". jp newest follows Mercari Japan's own order (relisted items move up). */
+  /** Sort order. Defaults to "relevance". A us sold search comes most recently sold first under relevance too. jp newest follows Mercari Japan's own order (relisted items move up). */
   sort?: MercariSort;
   /** Lowest price: US dollars on us, whole yen on jp. */
   price_min?: number;
@@ -60,7 +66,7 @@ export interface MercariGridOptions {
   price_max?: number;
   /** One or more conditions; several are ORed. */
   condition?: MercariCondition | MercariCondition[] | string;
-  /** free or buyer_pays. */
+  /** free or buyer_pays. On us, result rows carry free_shipping only when this is sent. */
   shipping?: MercariShipping;
   /** us only: a Mercari US size id. */
   size_id?: Id;
@@ -194,7 +200,8 @@ export class MercariNamespace {
    * seller_id, free_shipping, created_at; jp adds is_shop, shop_id,
    * is_auction, updated_at), total, page, page_size, max_page, has_more.
    * status "sold" returns sold listings (sold and in transit) with their
-   * prices. us and jp.
+   * prices; on us they come most recently sold first and match the keyword
+   * loosely, so check titles before comparing prices. us and jp.
    *
    * Costs 1 credit.
    */
@@ -204,8 +211,10 @@ export class MercariNamespace {
 
   /**
    * One listing by item_id or link: description, price, original_price,
-   * discount_percent (us also price_with_buyer_fee), status, sold_at,
-   * condition, category path, size, color, shipping (payer, method, fee,
+   * discount_percent (us also price_with_buyer_fee: price plus buyer fees,
+   * plus shipping when the buyer pays it), status, sold_at (when Mercari
+   * shows it), condition, category path, size, color, shipping (payer,
+   * method, fee: the shipping label cost paid by payer,
    * days_to_ship, ships_from), likes, photos and the seller summary (us
    * sold_count, jp good / normal / bad ratings). jp adds the full public
    * comment list (text, date, is_seller; no commenter names) and Mercari
