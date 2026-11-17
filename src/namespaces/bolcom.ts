@@ -10,8 +10,9 @@ import type { Scavio } from "../client.js";
 // Product, EAN, category, seller and offer ids are the same on every
 // storefront; prices, offers and stock can differ between the Netherlands and
 // Belgium. product_id is a 16-digit STRING (too long for a JSON number). On
-// be-fr bol's own texts are French, some partner titles stay Dutch and review
-// texts are bol's translation (is_translated).
+// be-fr bol's own texts are French, some partner titles stay Dutch,
+// review_topics (topic and summary) come back in Dutch as bol serves them, and
+// review texts are bol's translation (is_translated).
 //
 // reference_price_type is rrp (the supplier's recommended price) or
 // most_shown_price (bol's most-shown non-promotional price over the last 90
@@ -22,8 +23,9 @@ import type { Scavio } from "../client.js";
 // but relevance can narrow bol's result set, and price sorts follow bol's own
 // ordering (small inversions against the live buy-box price occur). The
 // listing endpoints (sellerProducts, category, brand, campaign) default to
-// popularity and do not offer relevance. List items carry no EAN; the offers
-// list does not mark the buy box (product's buy_box.offer_id names it).
+// popularity, page 1 to 500, and do not offer relevance. List items carry no
+// EAN; offers() returns the 10 lowest-priced offers (no paging) and does not
+// mark the buy box (product's buy_box.offer_id names it).
 // Reviews are the first 10 as bol shows them, pooled across the product
 // family, with no reviewer names. Not available: search suggestions, review
 // paging, seller review texts, price history or 30-day lowest price, pickup
@@ -86,7 +88,7 @@ export interface BolcomFilterOptions {
 }
 
 export interface BolcomListOptions {
-  /** Results page, 1-based, about 24 items per page (max_page in the answer). */
+  /** Results page, 1-based, 1-500, about 24 items per page (max_page in the answer; bol lists at most 500 pages, higher answers 400). */
   page?: number;
   /** Sort order. Defaults to "popularity". */
   sort?: BolcomListSort;
@@ -199,11 +201,14 @@ export class BolcomNamespace {
   }
 
   /**
-   * Every seller's offer for one product: counts (new, refurbished,
-   * second_hand) and offers (price, reference price, condition with
-   * refurbished_grade / second_hand_state, shipping_cost, delivery promise,
-   * seller with rating out of 10, rating_percent, top_seller, labels). The
-   * buy box is not marked: product()'s buy_box.offer_id names it.
+   * The lowest-priced 10 offers for one product: counts (new, refurbished,
+   * second_hand: all of the product's offers) and offers (up to 10, lowest
+   * price first: price, reference price, condition with refurbished_grade /
+   * second_hand_state, shipping_cost, delivery promise, seller with rating
+   * out of 10, top_seller, labels), has_more (true when bol has more offers
+   * than the 10 returned: the higher-priced ones are not returned and there
+   * is no paging). The buy box is not marked: product()'s buy_box.offer_id
+   * names it.
    *
    * Costs 2 credits.
    */
@@ -212,8 +217,11 @@ export class BolcomNamespace {
   }
 
   /**
-   * A seller's public profile: rating out of 10 with product_info,
-   * delivery_time, shipping and service sub-ratings, positive_percent,
+   * A seller's public profile: rating out of 10 with up to four sub-ratings
+   * (product_info, delivery_time, shipping, service; some sellers have
+   * fewer), rating_method (recent_reviews: the last 3 months; all_reviews:
+   * all of the seller's reviews), positive_percent (bol's positive percentage
+   * over those reviews),
    * review totals, product_count and business (company_name, city, country,
    * registration_number, vat_number; no street address). No review texts.
    *
@@ -235,7 +243,8 @@ export class BolcomNamespace {
 
   /**
    * Products in one category, paged, sorted (default popularity) and
-   * filtered like search(), with the category breadcrumbs. An unknown
+   * filtered like search(), with the category breadcrumbs; deeper than
+   * search (up to page 500). An unknown
    * category is a charged 404.
    *
    * Costs 2 credits.
@@ -255,8 +264,8 @@ export class BolcomNamespace {
   }
 
   /**
-   * Today's deals: day_deal (title, campaign_id, url, ends_at,
-   * highlighted_product) and category_deals (products with price, reference
+   * Today's deals: day_deal (title, campaign_id, url on the asked
+   * storefront, ends_at, highlighted_product) and category_deals (products with price, reference
    * price, discount; seller_id only). Open the day deal with campaign().
    *
    * Costs 2 credits.
@@ -268,8 +277,9 @@ export class BolcomNamespace {
   /**
    * The products of one promotion (a Black Friday list, the day deal) by
    * campaign_id or link, paged and sorted (default popularity): campaign
-   * (campaign_id, name, description, type, ends_at) and items. An ended or
-   * unknown campaign is a charged 404.
+   * (campaign_id, name, description, type, ends_at) and items; each item's
+   * offer is the product's buy box, which does not always carry this
+   * campaign's label. An ended or unknown campaign is a charged 404.
    *
    * Costs 2 credits.
    */

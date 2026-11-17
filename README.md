@@ -2011,7 +2011,7 @@ timeout; failed calls are not charged. A not-found is a charged 404.
 ### [bol.com](https://scavio.dev/docs/bolcom-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
 bol.com competitor prices for the Netherlands and Belgium (EUR): the buy box
-and every seller's offer on a product, product lookup by id, link or EAN,
+and the lowest-priced competing offers on a product, product lookup by id, link or EAN,
 sellers, listings and deals. Nine endpoints on `client.bolcom` (new in
 0.67.0), 2 credits each (`product` by `ean` 4): `search`, `product`,
 `offers`, `seller`, `sellerProducts`, `category`, `brand`, `deals` and
@@ -2022,22 +2022,28 @@ sellers, listings and deals. Nine endpoints on `client.bolcom` (new in
   `language: "fr"`, French). Product, EAN, category, seller and offer ids are
   the same on every storefront; prices, offers and stock can differ between
   the Netherlands and Belgium. On be-fr bol's own texts are French, some
-  partner titles stay Dutch and review texts are bol's translation.
+  partner titles and the review topics stay Dutch, and review texts are
+  bol's translation.
 - `product_id` is a 16-digit string: never send it as a number.
 - `product` returns the buy box (price, `reference_price` with
   `reference_price_type` `rrp` or `most_shown_price`, seller rating out of
   10, shipping cost, delivery promise), `offer_count`, cheapest new, fastest
   new, cheapest second-hand and refurbished grades, the rating distribution,
   bol's AI review topics and the first 10 reviews (pooled across the product
-  family, no reviewer names). `offers` lists every seller's offer; the buy
-  box is not marked there (`buy_box.offer_id` names it).
-- `seller` returns the rating out of 10 with four sub-ratings, positive
+  family, no reviewer names). `offers` lists the 10 lowest-priced offers,
+  lowest price first, with counts by condition for all its offers and
+  `has_more` when bol has more (no paging); the buy box is not marked there
+  (`buy_box.offer_id` names it).
+- `seller` returns the rating out of 10 with up to four sub-ratings, positive
   percent, review totals, product count and the public EU trader data
   (company, city, country, registration and VAT number; no street address).
 - `search` stops at page 10 and sorts by relevance (default), popularity,
   price, rating or wishlist (no newest); other sorts can narrow the result
   set, and price sorts follow bol's own ordering. `sellerProducts`,
-  `category`, `brand` and `campaign` default to popularity. `brand_facet_id`
+  `category`, `brand` and `campaign` default to popularity, page 1 to 500;
+  a campaign item's offer is its buy box, which does not always carry the
+  campaign's label. `deals` links the day deal on the asked storefront.
+  `brand_facet_id`
   (search / category filter) and `brand_id` (`brand`) are different id
   spaces.
 - No search suggestions, review paging, seller review texts, price history or
