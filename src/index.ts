@@ -251,6 +251,27 @@ export type {
   MercariSellerOptions,
   MercariShopOptions,
 } from "./namespaces/mercari.js";
+export { BolcomNamespace, BOLCOM_TIMEOUT } from "./namespaces/bolcom.js";
+export type {
+  BolcomCountry,
+  BolcomLanguage,
+  BolcomSearchSort,
+  BolcomListSort,
+  BolcomCondition,
+  BolcomDelivery,
+  BolcomLocaleOptions,
+  BolcomFilterOptions,
+  BolcomListOptions,
+  BolcomSearchOptions,
+  BolcomProductOptions,
+  BolcomOffersOptions,
+  BolcomSellerOptions,
+  BolcomSellerProductsOptions,
+  BolcomCategoryOptions,
+  BolcomBrandOptions,
+  BolcomDealsOptions,
+  BolcomCampaignOptions,
+} from "./namespaces/bolcom.js";
 export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";

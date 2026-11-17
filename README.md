@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 85 platforms on one API key, plus `extract()` to read
+data across 86 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), ASOS (235 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), ASOS (235 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), OLX (7 OLX Europe sites)
@@ -2007,6 +2007,60 @@ console.log(hu.data.currency, hu.data.items[0].title, hu.data.items[0].price);
 Every call raises the request timeout to `ALLEGRO_TIMEOUT` (120s; sk and hu
 calls can take up to about a minute) and never lowers a longer client
 timeout; failed calls are not charged. A not-found is a charged 404.
+
+### [bol.com](https://scavio.dev/docs/bolcom-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+bol.com competitor prices for the Netherlands and Belgium (EUR): the buy box
+and every seller's offer on a product, product lookup by id, link or EAN,
+sellers, listings and deals. Nine endpoints on `client.bolcom` (new in
+0.67.0), 2 credits each (`product` by `ean` 4): `search`, `product`,
+`offers`, `seller`, `sellerProducts`, `category`, `brand`, `deals` and
+`campaign`.
+
+- Storefronts on every endpoint: nl-nl (`country: "nl"`, default, Dutch),
+  be-nl (`country: "be"`, Dutch) and be-fr (`country: "be"`,
+  `language: "fr"`, French). Product, EAN, category, seller and offer ids are
+  the same on every storefront; prices, offers and stock can differ between
+  the Netherlands and Belgium. On be-fr bol's own texts are French, some
+  partner titles stay Dutch and review texts are bol's translation.
+- `product_id` is a 16-digit string: never send it as a number.
+- `product` returns the buy box (price, `reference_price` with
+  `reference_price_type` `rrp` or `most_shown_price`, seller rating out of
+  10, shipping cost, delivery promise), `offer_count`, cheapest new, fastest
+  new, cheapest second-hand and refurbished grades, the rating distribution,
+  bol's AI review topics and the first 10 reviews (pooled across the product
+  family, no reviewer names). `offers` lists every seller's offer; the buy
+  box is not marked there (`buy_box.offer_id` names it).
+- `seller` returns the rating out of 10 with four sub-ratings, positive
+  percent, review totals, product count and the public EU trader data
+  (company, city, country, registration and VAT number; no street address).
+- `search` stops at page 10 and sorts by relevance (default), popularity,
+  price, rating or wishlist (no newest); other sorts can narrow the result
+  set, and price sorts follow bol's own ordering. `sellerProducts`,
+  `category`, `brand` and `campaign` default to popularity. `brand_facet_id`
+  (search / category filter) and `brand_id` (`brand`) are different id
+  spaces.
+- No search suggestions, review paging, seller review texts, price history or
+  30-day lowest price, pickup points or Select member prices: to track
+  prices, poll and store your own.
+
+```ts
+const p = (await client.bolcom.product({ product_id: "9300000239314960" })) as any;
+console.log(p.data.buy_box.price, p.data.buy_box.reference_price, p.data.offer_count, p.data.fastest_new);
+
+const offers = (await client.bolcom.offers({ product_id: "9300000240171936", country: "be" })) as any;
+for (const o of offers.data.offers) console.log(o.seller.name, o.price, o.condition, o.shipping_cost);
+
+const byEan = (await client.bolcom.product({ ean: "4242005483976", country: "be", language: "fr" })) as any; // 4 credits
+const seller = (await client.bolcom.seller({ seller_id: "1770745" })) as any;
+const stock = (await client.bolcom.sellerProducts({ seller_id: "1767374", sort: "price_asc" })) as any;
+const deals = (await client.bolcom.deals()) as any;
+const promo = (await client.bolcom.campaign({ campaign_id: deals.data.day_deal.campaign_id })) as any;
+```
+
+Every call raises the request timeout to `BOLCOM_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls are not charged, a not-found is
+charged.
 
 ### [OLX](https://scavio.dev/docs/olx-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
