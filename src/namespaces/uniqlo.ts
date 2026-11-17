@@ -23,10 +23,19 @@ import type { Scavio } from "../client.js";
 //
 // Product ids (E479000-000) are global on uniqlo.com; tw, hk and cn use their
 // own codes (u0000000055478). Prices are numbers in the market's own currency,
-// never converted. On us, jp and kr a sale or limited-time-offer drop is a
-// FLAG (on_sale, limited_offer, price_flags): promo_price equals price there;
-// Europe and Southeast Asia show promo_price below price. No price history,
-// no store-level prices, no GU.
+// never converted. On us, jp, kr and ca (and on some items sg, my and in)
+// Uniqlo marks a drop with flags only (on_sale, limited_offer, price_flags), so
+// promo_price equals price; in Europe, Australia and most of Southeast Asia
+// promo_price is below price. Only a limited-time offer has a window: quote
+// Uniqlo's own label in price_flags.name (e.g. "until 11/18"), not a date read
+// from end; a sale flag carries a start but no end, and Select Colors/Sizes
+// Only carries no dates. price_group: product and prices default to "00",
+// Uniqlo's regular price list; search can list the same product_id again in
+// group "01", mostly the Select Colors/Sizes Only sale price for some colours /
+// sizes (pass price_group "01" to product() to read it); prices compares "00"
+// unless price_group is sent. No price history, no store-level prices. GU is a
+// separate brand and not a separate platform here; Uniqlo's own listings can
+// include GU collaboration items (kr limited offers did).
 //
 // The server enforces the cross-field rules: language must be one the market
 // serves; product() takes product_id or url; storeStock() takes l2_id or
@@ -116,7 +125,7 @@ export interface UniqloProductOptions extends UniqloMarketOptions<UniqloProductC
   product_id?: string;
   /** A Uniqlo product link from any market; its market is used unless country is sent. */
   url?: string;
-  /** Price group (items[].price_group, default "00"). */
+  /** Price group (items[].price_group, default "00" = Uniqlo's regular price list; "01" is mostly the Select Colors/Sizes Only sale price search lists for some colours / sizes). */
   price_group?: string;
   [key: string]: unknown;
 }
@@ -124,6 +133,7 @@ export interface UniqloProductOptions extends UniqloMarketOptions<UniqloProductC
 export interface UniqloStockOptions extends UniqloMarketOptions {
   /** A uniqlo.com product id, e.g. "E479000-000". */
   product_id: string;
+  /** Price group (items[].price_group, default "00"). */
   price_group?: string;
   [key: string]: unknown;
 }
@@ -137,6 +147,7 @@ export interface UniqloStoreStockOptions extends UniqloMarketOptions {
   l2_id?: string;
   /** With color and size, instead of l2_id (2 credits). */
   product_id?: string;
+  /** Price group the variant came from (items[].price_group or the product's price_group, default "00"), with l2_id or with product_id + color + size. A variant of price group 01 asked as 00 reads out of stock in every store. */
   price_group?: string;
   /** With product_id: colour code (colors[].code, e.g. "COL67"). */
   color?: string;
@@ -208,6 +219,7 @@ export interface UniqloCategoriesOptions extends UniqloMarketOptions {
 export interface UniqloPricesOptions {
   /** A uniqlo.com product id (e.g. "E479000-000"), the same in every market. */
   product_id: string;
+  /** Price group (default "00", Uniqlo's regular price list); prices compares group 00 unless this is sent. */
   price_group?: string;
   /** 1 to 10 markets (default jp, us, gb, de, fr, kr, au, ca, sg, th). */
   countries?: UniqloPricesCountry[];
@@ -230,7 +242,9 @@ export class UniqloNamespace {
    * sizes, lengths, rating, review_count, image, store_only), total, count,
    * page, page_size, has_more, sort, facets and related_keywords. On tw, hk,
    * cn: Uniqlo's Greater China catalogue in Chinese (u-code product ids,
-   * style_code, in_stock, season). Not served on other storefronts.
+   * style_code, in_stock, season). Not served on other storefronts. Search
+   * can list one product_id twice: price_group "00" (regular price list) and
+   * "01" (mostly the Select Colors/Sizes Only sale price).
    *
    * Costs 1 credit.
    */
@@ -244,7 +258,8 @@ export class UniqloNamespace {
    * on_sale, limited_offer, price_flags, lowest_price_30d (Europe), tax,
    * colors, sizes, lengths, rating (with fit), images; variants with l2_id on
    * us, jp, kr. A product a market does not sell is a charged 404. Ratings
-   * are per region (Europe shares one pool).
+   * are per region (Europe shares one pool). price_group "01" reads the
+   * Select Colors/Sizes Only sale price and the colours / sizes it covers.
    *
    * Costs 1 credit.
    */
@@ -267,9 +282,10 @@ export class UniqloNamespace {
   /**
    * Stock of one variant in the stores nearest a point: per store
    * store_code, name, distance_km, status (no unit counts), store_status,
-   * order_and_pick, sections; stores_with_stock, total_stores. By l2_id or by
-   * product_id + color + size (+ length). Many stores answer out_of_stock,
-   * which is Uniqlo's real answer. us, jp, kr.
+   * order_and_pick, sections; price_group, stores_with_stock, total_stores.
+   * By l2_id or by product_id + color + size (+ length), with the price_group
+   * the variant came from (default "00"): a variant of price group 01 asked
+   * as 00 reads out of stock in every store. us, jp, kr.
    *
    * Costs 1 credit with l2_id, 2 with product_id + color + size.
    */
@@ -323,8 +339,10 @@ export class UniqloNamespace {
 
   /**
    * The sale (type sale) or limited-time-offer (type limited_offer) list of a
-   * market, optionally one gender, with limited_offer start / end where
-   * Uniqlo shows them. us, jp, kr.
+   * market, optionally one gender, with limited_offer (name: Uniqlo's own
+   * label, start / end its window) where Uniqlo shows them. Uniqlo's own
+   * listings can include GU collaboration items (kr limited offers did).
+   * us, jp, kr.
    *
    * Costs 1 credit.
    */
@@ -357,7 +375,8 @@ export class UniqloNamespace {
    * (country, language, currency, available, title, price, promo_price,
    * discount_percent, on_sale, limited_offer, price_flags, lowest_price_30d,
    * tax, url), not_sold and errors. Each price is in that market's own
-   * currency, never converted. Greater China is not offered (own codes).
+   * currency, never converted. Compares price group "00" unless price_group
+   * is sent. Greater China is not offered (own codes).
    *
    * Costs 1 credit per market that answered; failed markets are not charged.
    */

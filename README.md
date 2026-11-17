@@ -1171,20 +1171,32 @@ Uniqlo in 41 markets. Twelve endpoints on `client.uniqlo` (new in 0.68.0):
   answer 400 before anything is charged.
 - Product ids (`E479000-000`) are global on uniqlo.com, so `prices` compares
   one id across up to 10 markets in one call. Prices are numbers in the
-  market's own currency, never converted. On us, jp and kr Uniqlo shows a
-  sale or limited-time-offer drop only as a flag: `promo_price` equals
-  `price` there, and `on_sale`, `limited_offer` and `price_flags` (with start
-  and end dates) carry it; Europe and Southeast Asia show `promo_price` below
-  `price`.
+  market's own currency, never converted. On us, jp, kr and ca (and on some
+  items sg, my and in) Uniqlo marks a drop with flags only, so `promo_price`
+  equals `price`; in Europe, Australia and most of Southeast Asia
+  `promo_price` is below `price`. `on_sale`, `limited_offer` and
+  `price_flags` carry the flags. Only a limited-time offer has a window:
+  quote Uniqlo's own label in `price_flags.name` (e.g. "until 11/18"), not a
+  date read from `end`; a sale flag carries a start but no end, and Select
+  Colors/Sizes Only carries no dates.
+- `price_group`: `product` and `prices` default to `"00"`, Uniqlo's regular
+  price list. Search can list the same `product_id` a second time in price
+  group `"01"`, mostly Uniqlo's Select Colors/Sizes Only sale price for some
+  colours / sizes; pass `price_group: "01"` to `product` to read that price
+  and the colours / sizes it covers. `prices` compares group `"00"` unless
+  `price_group` is sent.
 - `stock` is online stock per variant (Uniqlo caps the quantity it shows at
-  11); `storeStock` is the status per store near a point (no unit counts),
-  and many stores answer `out_of_stock`, which is Uniqlo's real answer.
+  11); `storeStock` is the status per store near a point (no unit counts).
+  Send it the price group the variant came from (`price_group`, default
+  `"00"`): a variant of price group 01 asked as 00 reads out of stock in
+  every store.
 - `reviews` carry rating, title, text, date, fit (1 tight to 5 loose, null
   when not given), purchased size and colour, and height, weight and age
   ranges; no reviewer names or locations. Review totals are pooled per region
   (the European markets share one pool).
-- No price history (poll `prices` and store your own), no store-level prices,
-  and GU is not covered.
+- No price history (poll `prices` and store your own) and no store-level
+  prices. GU is a separate brand and not a separate platform here; Uniqlo's
+  own listings can include GU collaboration items (kr limited offers did).
 
 ```typescript
 // Uniqlo prices by country: one product id in up to 10 markets, each in its own currency.
@@ -1192,14 +1204,15 @@ const p = (await client.uniqlo.prices({ product_id: "E479000-000" })) as any;
 for (const m of p.data.markets) console.log(m.country, m.currency, m.price, m.promo_price, m.on_sale);
 console.log("not sold in:", p.data.not_sold);
 
-// On us, jp and kr a limited-time offer is a flag: promo_price equals price there.
+// On us, jp, kr and ca a sale or limited-time offer is a flag: promo_price equals price there.
 const prod = (await client.uniqlo.product({ product_id: "E479000-000" })) as any;
 console.log(prod.data.price, prod.data.promo_price, prod.data.limited_offer, prod.data.price_flags);
 
 // Online stock per colour x size, then one variant in the stores near a point.
 const st = (await client.uniqlo.stock({ product_id: "E479000-000" })) as any;
 console.log(st.data.variants_in_stock, st.data.variants_total);
-const near = (await client.uniqlo.storeStock({ lat: 40.758, lng: -73.9855, l2_id: "08665900" })) as any;
+// Send the price group the variant came from (default "00").
+const near = (await client.uniqlo.storeStock({ lat: 40.758, lng: -73.9855, l2_id: "08665900", price_group: "00" })) as any;
 console.log(near.data.stores_with_stock, near.data.total_stores);
 
 // Reviews with fit and the purchased size.

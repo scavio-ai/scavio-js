@@ -10,6 +10,7 @@ const ENDPOINTS: Row[] = [
   ["product", { url: "https://www.uniqlo.com/us/en/products/E479000-000/00" }, "/api/v1/uniqlo/product"],
   ["stock", { product_id: "E479000-000" }, "/api/v1/uniqlo/stock"],
   ["storeStock", { lat: 40.758, lng: -73.9855, l2_id: "08665900" }, "/api/v1/uniqlo/store-stock"],
+  ["storeStock", { lat: 40.758, lng: -73.9855, l2_id: "08665900", price_group: "01" }, "/api/v1/uniqlo/store-stock"],
   [
     "storeStock",
     { lat: 35.6595, lng: 139.7005, product_id: "E479000-000", color: "COL04", size: "INS022", country: "jp" },
