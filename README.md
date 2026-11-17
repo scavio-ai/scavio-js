@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 86 platforms on one API key, plus `extract()` to read
+data across 87 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), ASOS (235 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), OLX (7 OLX Europe sites)
@@ -1144,6 +1144,76 @@ console.log(deals.data.total, fresh.data.total);
 ```
 
 Every call raises the request timeout to `ZARA_TIMEOUT` (120s) and never
+lowers a longer client timeout; failed calls are not charged, a not-found is
+charged.
+
+### [Uniqlo](https://scavio.dev/docs/uniqlo-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Uniqlo in 41 markets. Twelve endpoints on `client.uniqlo` (new in 0.68.0):
+`search`, `product`, `stock`, `storeStock`, `stores`, `reviews`,
+`suggestions`, `category`, `deals`, `newArrivals`, `categories` and
+`prices`.
+
+- 1 credit per call; `storeStock` 2 when resolved from `product_id` +
+  `color` + `size` (1 with `l2_id`); `prices` 1 per market that answered (a
+  market that does not sell the product answers too; failed markets are
+  free).
+- Markets (`country`, default `us`; `language`, default the local language):
+  every endpoint on us (USD), jp (JPY), kr (KRW); `search` + `product` on
+  Uniqlo's Greater China sites tw (TWD), hk (HKD), cn (CNY), in Chinese, with
+  their own product codes; `product` + `prices` on au, be (nl, fr, en), ca
+  (en, fr), de, dk, es, fr, gb (GBP; `uk` accepted), id, in, it, my, nl, ph,
+  se, sg, th, vn and Uniqlo's EU store (EUR, English) for at, bg, cz, ee, fi,
+  gr, hr, hu, ie, lt, lu, lv, pl, pt, ro, si and sk. The `UniqloProductCountry`
+  type lists all 41.
+- Countries with no Uniqlo online store (ch, no, nz, mx, tr, ae, il, ru), a
+  market an endpoint does not serve and a language a market does not serve
+  answer 400 before anything is charged.
+- Product ids (`E479000-000`) are global on uniqlo.com, so `prices` compares
+  one id across up to 10 markets in one call. Prices are numbers in the
+  market's own currency, never converted. On us, jp and kr Uniqlo shows a
+  sale or limited-time-offer drop only as a flag: `promo_price` equals
+  `price` there, and `on_sale`, `limited_offer` and `price_flags` (with start
+  and end dates) carry it; Europe and Southeast Asia show `promo_price` below
+  `price`.
+- `stock` is online stock per variant (Uniqlo caps the quantity it shows at
+  11); `storeStock` is the status per store near a point (no unit counts),
+  and many stores answer `out_of_stock`, which is Uniqlo's real answer.
+- `reviews` carry rating, title, text, date, fit (1 tight to 5 loose, null
+  when not given), purchased size and colour, and height, weight and age
+  ranges; no reviewer names or locations. Review totals are pooled per region
+  (the European markets share one pool).
+- No price history (poll `prices` and store your own), no store-level prices,
+  and GU is not covered.
+
+```typescript
+// Uniqlo prices by country: one product id in up to 10 markets, each in its own currency.
+const p = (await client.uniqlo.prices({ product_id: "E479000-000" })) as any;
+for (const m of p.data.markets) console.log(m.country, m.currency, m.price, m.promo_price, m.on_sale);
+console.log("not sold in:", p.data.not_sold);
+
+// On us, jp and kr a limited-time offer is a flag: promo_price equals price there.
+const prod = (await client.uniqlo.product({ product_id: "E479000-000" })) as any;
+console.log(prod.data.price, prod.data.promo_price, prod.data.limited_offer, prod.data.price_flags);
+
+// Online stock per colour x size, then one variant in the stores near a point.
+const st = (await client.uniqlo.stock({ product_id: "E479000-000" })) as any;
+console.log(st.data.variants_in_stock, st.data.variants_total);
+const near = (await client.uniqlo.storeStock({ lat: 40.758, lng: -73.9855, l2_id: "08665900" })) as any;
+console.log(near.data.stores_with_stock, near.data.total_stores);
+
+// Reviews with fit and the purchased size.
+const rev = (await client.uniqlo.reviews({ product_id: "E479000-000", sort: "most_helpful" })) as any;
+for (const r of rev.data.reviews) console.log(r.rating, r.fit, r.fit_label, r.purchased_size);
+
+// Search, limited-time offers, and Greater China search with its own codes.
+const res = (await client.uniqlo.search({ query: "heattech", sort: "price_asc" })) as any;
+const offers = (await client.uniqlo.deals({ type: "limited_offer" })) as any;
+const tw = (await client.uniqlo.search({ query: "牛仔褲", country: "tw" })) as any;
+console.log(res.data.total, offers.data.total, tw.data.items[0].product_id);
+```
+
+Every call raises the request timeout to `UNIQLO_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls are not charged, a not-found is
 charged.
 

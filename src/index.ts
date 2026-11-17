@@ -272,6 +272,34 @@ export type {
   BolcomDealsOptions,
   BolcomCampaignOptions,
 } from "./namespaces/bolcom.js";
+export { UniqloNamespace, UNIQLO_TIMEOUT } from "./namespaces/uniqlo.js";
+export type {
+  UniqloFullCountry,
+  UniqloGreaterChinaCountry,
+  UniqloSearchCountry,
+  UniqloPricesCountry,
+  UniqloProductCountry,
+  UniqloLanguage,
+  UniqloSort,
+  UniqloSearchSort,
+  UniqloGender,
+  UniqloFlag,
+  UniqloReviewSort,
+  UniqloMarketOptions,
+  UniqloPagingOptions,
+  UniqloSearchOptions,
+  UniqloProductOptions,
+  UniqloStockOptions,
+  UniqloStoreStockOptions,
+  UniqloStoresOptions,
+  UniqloReviewsOptions,
+  UniqloSuggestionsOptions,
+  UniqloCategoryOptions,
+  UniqloDealsOptions,
+  UniqloNewArrivalsOptions,
+  UniqloCategoriesOptions,
+  UniqloPricesOptions,
+} from "./namespaces/uniqlo.js";
 export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
