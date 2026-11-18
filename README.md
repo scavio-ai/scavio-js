@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 87 platforms on one API key, plus `extract()` to read
+data across 88 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -12,7 +12,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
-- **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), OLX (7 OLX Europe sites)
+- **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House, Company Enrich (contacts and owner from a website or a Google Maps place)
@@ -1429,6 +1429,69 @@ const deals = (await client.mercari.deals()) as any;
 ```
 
 Every call raises the request timeout to `MERCARI_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls are not charged, a not-found is
+charged.
+
+### [Depop](https://scavio.dev/docs/depop-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Depop resale prices across its 9 storefronts. Fourteen endpoints on
+`client.depop` (new in 0.69.0): `search`, `product`, `category`, `brand`,
+`explore`, `suggestions`, `shop`, `shopProducts`, `shopSold`,
+`shopReviews`, `shopsSearch`, `categories`, `brands` and `similar`.
+
+- Credits: `search`, `category`, `brand` and `explore` 1 (5 on nz);
+  `product` 1 on us, 2 on gb, au, ie, ca, de, fr, it and 6 on nz; everything
+  else 1. `credits_used` in the response is the exact charge.
+- Markets (`country`, the buyer's country, default `us`): us (USD), gb (GBP;
+  `uk` accepted), au (AUD), ie (EUR), ca (CAD), nz (NZD), de (EUR), fr (EUR),
+  it (EUR). `search`, `product`, `category`, `brand`, `explore` and
+  `suggestions` serve all nine; `similar` is us only; the shop endpoints,
+  `categories` and `brands` are global (no `country`). Any other country
+  answers 400 before anything is charged.
+- `search`, `category`, `brand` and `explore` return the first 24 results per
+  query: Depop serves no next page, so narrow with filters, sort or a price
+  range. Sorts are relevance, `price_asc` and `price_desc`.
+- Prices are numbers for a buyer in the market as Depop shows them: `price`,
+  `original_price`, `buyer_fee`, `tax` (`tax_type`), `shipping`
+  (`shipping_boundary`), `total` and `headline_price`. `price.currency` is the
+  listing's currency, usually the market's (some sellers list in another
+  one). Listing ids are global: the same listing priced from another market
+  adds that buyer's fee, tax and shipping. On us, Depop returns a buyer fee on
+  some calls and not on others for the same listing.
+- Sold prices come per shop from `shopSold`: Depop has no keyword search of
+  sold listings and shows no sale date (`updated_at` is the listing's last
+  update). `shopReviews` returns no reviewer names.
+- Depop's interface is English in every storefront; titles and descriptions
+  are what sellers wrote (often German, French or Italian on de, fr, it);
+  `categories` answers names in en, en-US, de, fr or it.
+- Not available: results past the first 24, keyword sold search, trending
+  searches, views, join date, Top Seller badge, offers / bundles, price
+  history, `similar` outside us.
+
+```typescript
+// What listings ask in one buyer market (the first 24 results).
+const res = (await client.depop.search({ query: "levis 501", country: "gb", sort: "price_asc" })) as any;
+console.log(res.data.count, res.data.total_count, res.data.items.slice(0, 3).map((i: any) => i.price));
+
+// One listing priced for a buyer in the market, plus the seller's own price and summary.
+const item = (await client.depop.product({ slug: "f0omem-levis-550-38x36-blue-jeans-662f" })) as any;
+console.log(item.data.price, item.data.listing_price, item.data.seller.items_sold);
+
+// What a shop's items sold for (cursor-paged), the shop profile and its reviews.
+const sold = (await client.depop.shopSold({ username: "flomem" })) as any;
+console.log(sold.data.items.map((i: any) => [i.title, i.price.price, i.price.currency, i.updated_at]).slice(0, 3));
+const next = sold.data.has_more ? await client.depop.shopSold({ username: "flomem", cursor: sold.data.next_cursor }) : null;
+const shop = (await client.depop.shop({ username: "flomem" })) as any;
+const reviews = (await client.depop.shopReviews({ username: "flomem" })) as any;
+console.log(shop.data.reviews_rating, shop.data.items_sold, reviews.data.reviews.length);
+
+// Category paths feed category(), brand slugs feed brand().
+const tree = (await client.depop.categories()) as any;
+const jeans = (await client.depop.category({ category: "mens/bottoms/jeans", country: "de" })) as any;
+const carhartt = (await client.depop.brand({ slug: "carhartt" })) as any;
+```
+
+Every call raises the request timeout to `DEPOP_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls are not charged, a not-found is
 charged.
 

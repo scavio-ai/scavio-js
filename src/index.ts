@@ -300,6 +300,30 @@ export type {
   UniqloCategoriesOptions,
   UniqloPricesOptions,
 } from "./namespaces/uniqlo.js";
+export { DepopNamespace, DEPOP_TIMEOUT } from "./namespaces/depop.js";
+export type {
+  DepopCountry,
+  DepopSort,
+  DepopCondition,
+  DepopColor,
+  DepopGender,
+  DepopLanguage,
+  DepopReviewRole,
+  DepopFilterOptions,
+  DepopSearchOptions,
+  DepopProductOptions,
+  DepopCategoryOptions,
+  DepopBrandOptions,
+  DepopExploreOptions,
+  DepopSuggestionsOptions,
+  DepopShopOptions,
+  DepopShopListOptions,
+  DepopShopReviewsOptions,
+  DepopShopsSearchOptions,
+  DepopCategoriesOptions,
+  DepopBrandsOptions,
+  DepopSimilarOptions,
+} from "./namespaces/depop.js";
 export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
