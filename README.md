@@ -1451,15 +1451,21 @@ Depop resale prices across its 9 storefronts. Fourteen endpoints on
 - `search`, `category`, `brand` and `explore` return the first 24 results per
   query: Depop serves no next page, so narrow with filters, sort or a price
   range. Sorts are relevance, `price_asc` and `price_desc`.
-- Prices are numbers for a buyer in the market as Depop shows them: `price`,
-  `original_price`, `buyer_fee`, `tax` (`tax_type`), `shipping`
-  (`shipping_boundary`), `total` and `headline_price`. `price.currency` is the
+- Prices are numbers as Depop shows them to a buyer in the market: `price`,
+  `original_price` (the seller's own original price), `buyer_fee`, `tax`
+  (`tax_type`), `shipping` (what the buyer pays; `shipping_boundary`),
+  `total` (Scavio's sum of price, buyer fee, tax and shipping) and
+  `headline_price` (the price Depop itself headlines: us leaves out
+  shipping, gb includes the fee and shipping). `price.currency` is the
   listing's currency, usually the market's (some sellers list in another
-  one). Listing ids are global: the same listing priced from another market
-  adds that buyer's fee, tax and shipping. On us, Depop returns a buyer fee on
+  one): list items carry `buyer_market_price`, false for those, which Depop
+  shows unconverted (product too). List items carry no seller country;
+  `product` has `seller.country`. Listing ids are global: the same listing
+  priced from another market shows that buyer's fee, tax and shipping. On us, Depop returns a buyer fee on
   some calls and not on others for the same listing.
-- Sold prices come per shop from `shopSold`: Depop has no keyword search of
-  sold listings and shows no sale date (`updated_at` is the listing's last
+- Sold prices come per shop from `shopSold`: `status` is `sold` (sold on
+  Depop) or `marked_as_sold` (the seller marked it sold, which may be outside
+  Depop). Depop has no keyword search of sold listings and shows no sale date (`updated_at` is the listing's last
   update). `shopReviews` returns no reviewer names.
 - Depop's interface is English in every storefront; titles and descriptions
   are what sellers wrote (often German, French or Italian on de, fr, it);
@@ -1479,7 +1485,7 @@ console.log(item.data.price, item.data.listing_price, item.data.seller.items_sol
 
 // What a shop's items sold for (cursor-paged), the shop profile and its reviews.
 const sold = (await client.depop.shopSold({ username: "flomem" })) as any;
-console.log(sold.data.items.map((i: any) => [i.title, i.price.price, i.price.currency, i.updated_at]).slice(0, 3));
+console.log(sold.data.items.map((i: any) => [i.title, i.status, i.price.price, i.price.currency, i.updated_at]).slice(0, 3));
 const next = sold.data.has_more ? await client.depop.shopSold({ username: "flomem", cursor: sold.data.next_cursor }) : null;
 const shop = (await client.depop.shop({ username: "flomem" })) as any;
 const reviews = (await client.depop.shopReviews({ username: "flomem" })) as any;

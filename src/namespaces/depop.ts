@@ -16,15 +16,22 @@ import type { Scavio } from "../client.js";
 // search, category, brand and explore return the first 24 results per query:
 // Depop serves no next page, so narrow with filters, sort or a price range.
 // Sorts are relevance, price_asc and price_desc (newest and most popular are
-// not available). Prices are numbers for a buyer in the market as Depop shows
-// them: price, original_price, buyer_fee, tax (tax_type), shipping
-// (shipping_boundary), total and headline_price. price.currency is the
+// not available). Prices are numbers as Depop shows them to a buyer in the
+// market: price, original_price (the seller's own original price; it can be
+// far above price), buyer_fee, tax (tax_type), shipping (what the buyer pays;
+// shipping_boundary), total (Scavio's sum: price + buyer_fee + tax +
+// shipping) and headline_price (the price Depop itself headlines: us leaves
+// out shipping, gb includes the fee and shipping). price.currency is the
 // listing's currency, usually the market's (some sellers list in another
-// one). Listing ids are global: the same listing priced from another market
-// adds that buyer's fee, tax and shipping. On us, Depop returns a buyer fee on
+// one): search, category, brand, explore and similar items carry
+// buyer_market_price, false for those, which Depop shows unconverted (product
+// too). List items carry no seller country; product has seller.country (the
+// seller account's). Listing ids are global: the same listing priced from
+// another market shows that buyer's fee, tax and shipping. On us, Depop returns a buyer fee on
 // some calls and not on others for the same listing. Depop has no keyword
-// search of sold listings: sold prices come per shop from shopSold(), and
-// Depop shows no sale date (updated_at is the listing's last update). Depop's
+// search of sold listings: sold prices come per shop from shopSold() (status
+// sold = sold on Depop, marked_as_sold = the seller marked it sold, which may
+// be outside Depop), and Depop shows no sale date (updated_at is the listing's last update). Depop's
 // interface is English in every storefront; titles and descriptions are what
 // sellers wrote (often German, French or Italian on de, fr, it). Not
 // available: results past the first 24, keyword sold search, trending
@@ -201,10 +208,10 @@ export class DepopNamespace {
   /**
    * Search listings for sale in one buyer market: the first 24 results per
    * query (Depop serves no next page). items (product_id, slug, url, title,
-   * description, brand, category, group, product_type, status,
-   * seller_country, pictures, picture_count, sizes, condition, colors,
-   * gender, kids, like_count, boosted, discounted, discount_percentage,
-   * price), count, total_count (approximate), facets, country, currency,
+   * description, brand, category, group, product_type, status (on_sale),
+   * pictures, picture_count, sizes, condition, colors, gender, kids,
+   * like_count, boosted, discounted, discount_percentage, price,
+   * buyer_market_price), count, total_count (approximate), facets, country, currency,
    * sort, filters. All 9 markets.
    *
    * Costs 1 credit (5 on nz).
@@ -216,9 +223,11 @@ export class DepopNamespace {
   /**
    * One listing by slug, link or product_id, priced for a buyer in the
    * market: description, hashtags, brand, category with breadcrumbs,
-   * condition, colors, sizes, shipping, discount, price (buyer market:
-   * buyer_fee, tax, shipping, total), listing_price (the seller's own currency
-   * and price) and seller (username, verified, country, reviews_rating,
+   * condition, colors, sizes, shipping (national_cost: the seller's domestic
+   * rate, can differ from price.shipping), discount, price (buyer market:
+   * buyer_fee, tax, shipping, total, headline_price), listing_price (the
+   * seller's own currency and price) and seller (username, verified, country:
+   * the seller account's, reviews_rating,
    * reviews_total, items_sold, last_seen, average_shipping_days). All 9
    * markets.
    *
@@ -286,8 +295,8 @@ export class DepopNamespace {
 
   /**
    * A shop's listings for sale, cursor-paged (up to 24 per page), with
-   * created_at and updated_at; has_more and next_cursor. Prices in the
-   * seller's listing currency. Global.
+   * created_at and updated_at (status on_sale); has_more and next_cursor.
+   * Prices in the seller's listing currency; no buyer_market_price. Global.
    *
    * Costs 1 credit per page.
    */
@@ -298,8 +307,9 @@ export class DepopNamespace {
   /**
    * A shop's sold listings with the price they sold at (price,
    * original_price, discounted, discount_percentage), cursor-paged (up to 24
-   * per page). Depop shows no sale date: updated_at is the listing's last
-   * update. Depop's only sold data: there is no keyword sold search. Global.
+   * per page). status sold = sold on Depop, marked_as_sold = the seller
+   * marked it sold, which may be outside Depop. Depop shows no sale date:
+   * updated_at is the listing's last update. Depop's only sold data: there is no keyword sold search. Global.
    *
    * Costs 1 credit per page.
    */
@@ -353,7 +363,7 @@ export class DepopNamespace {
 
   /**
    * Listings Depop shows as similar to one listing, for a US buyer, with
-   * created_at and updated_at. us only.
+   * buyer_market_price, created_at and updated_at. us only.
    *
    * Costs 1 credit.
    */
