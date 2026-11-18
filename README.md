@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 88 platforms on one API key, plus `extract()` to read
+data across 89 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -12,7 +12,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
-- **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), OLX (7 OLX Europe sites)
+- **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House, Company Enrich (contacts and owner from a website or a Google Maps place)
@@ -1498,6 +1498,68 @@ const carhartt = (await client.depop.brand({ slug: "carhartt" })) as any;
 ```
 
 Every call raises the request timeout to `DEPOP_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls are not charged, a not-found is
+charged.
+
+### [Poshmark](https://scavio.dev/docs/poshmark-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Poshmark sold prices, listings, closets and Love Notes on poshmark.com (us,
+USD) and poshmark.ca (ca, CAD). Fifteen endpoints on `client.poshmark` (new
+in 0.70.0), 1 credit each: `search`, `sold`, `product`, `category`, `brand`,
+`closet`, `closetListings`, `loveNotes`, `closetsSearch`, `categories`,
+`brands`, `suggestions`, `parties`, `partyListings` and `similar`.
+
+- Markets (`country`, default `us`): us (USD) and ca (CAD); both storefronts
+  are English. `search`, `sold`, `category`, `brand`, `brands`,
+  `suggestions`, `parties`, `partyListings` and `similar` return that
+  market's own listings in its currency. Listing ids and closets are global:
+  a listing opens from either market in its own currency (no conversion), and
+  closet listings are read in the seller's home market. Any other country
+  answers 400 before anything is charged.
+- Sold search: up to 480 sold listings per query and filter combination (10
+  pages of 48, Poshmark's own limit); narrow with filters or split by
+  `price_min` / `price_max` to reach more. On a sold listing, `price` is the
+  price shown on the sold listing (Poshmark says a sold listing reflects the
+  final order price; offers are private and not returned) and `sold_at` is
+  the date Poshmark marked it sold.
+- `original_price` is the original price the seller entered; `first_price`
+  is the price it was first listed at, which can be below `price` when the
+  seller raised the price. Active search reaches about 5,000 listings per
+  query (105 pages of 48); `total` is Poshmark's approximate count.
+- Conditions: `new_with_tags`, `new_with_tags_or_boutique`, `boutique`,
+  `like_new`, `good`, `fair`. Sorts: relevance, `just_shared`, `just_in`,
+  `price_asc`, `price_desc`, `price_drop`, `most_liked`.
+- `loveNotes` returns the latest 100 Love Notes with the closet's total
+  count; no authors. Seller usernames only: no real names, cities, likers or
+  comment authors.
+- Not available: sold results beyond 480 per query and filter combination,
+  Love Notes beyond the latest 100, Posh Shows, trending searches, the full
+  brand directory (top 50; brand inputs take any name), offers, bundles,
+  price history.
+
+```typescript
+// Sold prices by keyword: the price shown on the sold listing and the date Poshmark marked it sold.
+const sold = (await client.poshmark.sold({ query: "coach bag", department: "Women", category: "Bags" })) as any;
+console.log(sold.data.count, sold.data.total, sold.data.items.slice(0, 3).map((i: any) => [i.title, i.price.amount, i.price.currency, i.sold_at]));
+
+// Active listings in Canada with price drops, and one listing in full.
+const res = (await client.poshmark.search({ query: "lululemon align", country: "ca", sort: "price_drop" })) as any;
+console.log(res.data.items.slice(0, 3).map((i: any) => [i.price, i.original_price, i.first_price]));
+const listing = (await client.poshmark.product({ listing_id: "6ad80f0dce5b0ace7ee9abd7" })) as any;
+console.log(listing.data.price, listing.data.shipping, listing.data.seller.items_sold);
+
+// A closet's stats, sold listings and latest Love Notes.
+const closet = (await client.poshmark.closet({ username: "thriftedbyher" })) as any;
+const closetSold = (await client.poshmark.closetListings({ username: "thriftedbyher", availability: "sold" })) as any;
+const notes = (await client.poshmark.loveNotes({ username: "thriftedbyher" })) as any;
+console.log(closet.data.items_sold, closet.data.love_notes, closetSold.data.total, notes.data.count, notes.data.total);
+
+// Category slugs feed category(), search and sold.
+const tree = (await client.poshmark.categories()) as any;
+const bags = (await client.poshmark.category({ department: "Women", category: "Bags", availability: "sold" })) as any;
+```
+
+Every call raises the request timeout to `POSHMARK_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls are not charged, a not-found is
 charged.
 

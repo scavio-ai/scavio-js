@@ -84,6 +84,7 @@ import { MercariNamespace } from "./namespaces/mercari.js";
 import { BolcomNamespace } from "./namespaces/bolcom.js";
 import { UniqloNamespace } from "./namespaces/uniqlo.js";
 import { DepopNamespace } from "./namespaces/depop.js";
+import { PoshmarkNamespace } from "./namespaces/poshmark.js";
 import { CompanyNamespace } from "./namespaces/company.js";
 import { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 import { ChatgptNamespace } from "./namespaces/chatgpt.js";
@@ -282,6 +283,7 @@ export class Scavio extends ScavioCore {
   readonly bolcom: BolcomNamespace;
   readonly uniqlo: UniqloNamespace;
   readonly depop: DepopNamespace;
+  readonly poshmark: PoshmarkNamespace;
   readonly company: CompanyNamespace;
   readonly trustpilot: TrustpilotNamespace;
   readonly chatgpt: ChatgptNamespace;
@@ -397,6 +399,7 @@ export class Scavio extends ScavioCore {
     this.bolcom = new BolcomNamespace(this);
     this.uniqlo = new UniqloNamespace(this);
     this.depop = new DepopNamespace(this);
+    this.poshmark = new PoshmarkNamespace(this);
     this.company = new CompanyNamespace(this);
     this.trustpilot = new TrustpilotNamespace(this);
     this.chatgpt = new ChatgptNamespace(this);

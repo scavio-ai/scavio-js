@@ -324,6 +324,30 @@ export type {
   DepopBrandsOptions,
   DepopSimilarOptions,
 } from "./namespaces/depop.js";
+export { PoshmarkNamespace, POSHMARK_TIMEOUT } from "./namespaces/poshmark.js";
+export type {
+  PoshmarkCountry,
+  PoshmarkSort,
+  PoshmarkCondition,
+  PoshmarkDepartment,
+  PoshmarkColor,
+  PoshmarkAvailability,
+  PoshmarkPartyStatus,
+  PoshmarkFilterOptions,
+  PoshmarkSearchOptions,
+  PoshmarkSoldOptions,
+  PoshmarkProductOptions,
+  PoshmarkCategoryOptions,
+  PoshmarkBrandOptions,
+  PoshmarkClosetOptions,
+  PoshmarkClosetListingsOptions,
+  PoshmarkClosetsSearchOptions,
+  PoshmarkMarketOptions,
+  PoshmarkSuggestionsOptions,
+  PoshmarkPartiesOptions,
+  PoshmarkPartyListingsOptions,
+  PoshmarkSimilarOptions,
+} from "./namespaces/poshmark.js";
 export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";
