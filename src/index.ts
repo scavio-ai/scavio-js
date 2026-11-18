@@ -348,6 +348,29 @@ export type {
   PoshmarkPartyListingsOptions,
   PoshmarkSimilarOptions,
 } from "./namespaces/poshmark.js";
+export { ThredupNamespace, THREDUP_TIMEOUT } from "./namespaces/thredup.js";
+export type {
+  ThredupDepartment,
+  ThredupAssortment,
+  ThredupSort,
+  ThredupCondition,
+  ThredupSellerType,
+  ThredupCollection,
+  ThredupColor,
+  ThredupMaterial,
+  ThredupPattern,
+  ThredupFilterOptions,
+  ThredupSearchOptions,
+  ThredupSoldOptions,
+  ThredupItemOptions,
+  ThredupCategoryOptions,
+  ThredupBrandOptions,
+  ThredupDealsOptions,
+  ThredupDepartmentOptions,
+  ThredupBrandsOptions,
+  ThredupTrendingOptions,
+  ThredupSuggestionsOptions,
+} from "./namespaces/thredup.js";
 export { CompanyNamespace, COMPANY_ENRICH_TIMEOUT } from "./namespaces/company.js";
 export { TrustpilotNamespace } from "./namespaces/trustpilot.js";
 export { ChatgptNamespace, AI_PROMPT_TIMEOUT } from "./namespaces/chatgpt.js";

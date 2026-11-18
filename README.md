@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 89 platforms on one API key, plus `extract()` to read
+data across 90 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -12,7 +12,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
-- **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OLX (7 OLX Europe sites)
+- **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House, Company Enrich (contacts and owner from a website or a Google Maps place)
@@ -1562,6 +1562,62 @@ const bags = (await client.poshmark.category({ department: "Women", category: "B
 Every call raises the request timeout to `POSHMARK_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls are not charged, a not-found is
 charged.
+
+### [thredUP](https://scavio.dev/docs/thredup-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+thredUP prices on thredUP's US store (thredup.com, English, USD; thredUP
+ships to the US and Canada from it), so there is no `country` option. Twelve
+endpoints on `client.thredup` (new in 0.71.0), 1 credit each: `search`,
+`sold`, `product`, `category`, `brand`, `deals`, `rescueBoxes`,
+`categories`, `brands`, `suggestions`, `trending` and `similar`.
+
+- `estimated_retail` is the estimated original retail: thredUP's own
+  estimate on items thredUP prices, entered by the seller on Direct Listing
+  items. `percent_off` is computed from the price and the estimated retail
+  (`round((1 - price / estimated_retail) * 100)`), null when the estimated
+  retail is missing or not above the price.
+- `seller_type` says who priced the item: `thredup`, `direct_listing` (peer
+  sellers) or `dropship` (partner listings). `status`: `available`,
+  `reserved`, `sold`. Conditions: `new_with_tags`, `excellent`, `very_good`,
+  `good`, `flawed`.
+- List endpoints answer 119 items per page, pages 1 to 21 (about 2,500 items
+  per query and filter combination); `total` caps at 10,000 (`total_capped`
+  true means 10,000+). Free text is matched loosely (semantic): use `brand`
+  for one brand. `size` takes sizing ids from `categories`, not labels. The
+  price filter is approximate (thredUP matches a base price). Every answer
+  reports the `sort` applied.
+- Sold listings take filters only (brand and / or category, no query), with
+  the price the item last listed at; thredUP shows no sold date.
+- Departments: `women` (default), `girls`, `boys`, `handbags`, `shoes`,
+  `designer`, `plus`, `juniors`, `maternity`, `accessories`; thredUP has no
+  men's department.
+- Not available: product reviews (thredUP shows none), seller shops, sold
+  dates, men's clothing, price history. No seller or consignor names or ids
+  are returned.
+
+```typescript
+// Prices: the price, the estimated original retail, % off, condition and who priced it.
+const res = (await client.thredup.search({ query: "denim jacket", seller_type: "thredup" })) as any;
+console.log(res.data.sort, res.data.total, res.data.total_capped);
+console.log(res.data.items.slice(0, 3).map((i: any) => [i.title, i.price, i.estimated_retail, i.percent_off, i.seller_type, i.condition]));
+
+// One item in full: the flaws thredUP noted, measurements and materials.
+const item = (await client.thredup.product({ item_number: 241601590 })) as any;
+console.log(item.data.price, item.data.estimated_retail, item.data.condition_notes, item.data.measurements, item.data.materials);
+
+// Sold listings by brand: the price the item last listed at, no sold date.
+const sold = (await client.thredup.sold({ brand: "Coach", department: "handbags" })) as any;
+console.log(sold.data.items.slice(0, 3).map((i: any) => [i.title, i.price, i.estimated_retail, i.status]));
+
+// Deals and Rescue boxes.
+const clearance = (await client.thredup.deals({ collection: "clearance" })) as any;
+const boxes = (await client.thredup.rescueBoxes()) as any;
+console.log(clearance.data.count, boxes.data.available_count);
+```
+
+Every call raises the request timeout to `THREDUP_TIMEOUT` (240s; list calls
+take 15 to 45 seconds) and never lowers a longer client timeout; failed calls
+are not charged, a not-found is charged.
 
 ### [Macy's](https://scavio.dev/docs/macys-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
