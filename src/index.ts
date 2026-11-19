@@ -232,6 +232,25 @@ export type {
   AsosNewArrivalsOptions,
   AsosMarketsOptions,
 } from "./namespaces/asos.js";
+export { FashionnovaNamespace, FASHIONNOVA_TIMEOUT } from "./namespaces/fashionnova.js";
+export type {
+  FashionnovaCountry,
+  FashionnovaLanguage,
+  FashionnovaSort,
+  FashionnovaReviewSort,
+  FashionnovaDivision,
+  FashionnovaNavDivision,
+  FashionnovaMarketOptions,
+  FashionnovaListOptions,
+  FashionnovaSearchOptions,
+  FashionnovaCollectionOptions,
+  FashionnovaProductRef,
+  FashionnovaProductOptions,
+  FashionnovaReviewsOptions,
+  FashionnovaSimilarOptions,
+  FashionnovaCategoriesOptions,
+  FashionnovaSuggestionsOptions,
+} from "./namespaces/fashionnova.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,

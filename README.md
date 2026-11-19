@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 90 platforms on one API key, plus `extract()` to read
+data across 91 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -1305,6 +1305,70 @@ console.log(sale.data.total);
 Every call raises the request timeout to `ASOS_TIMEOUT` (120s) and never
 lowers a longer client timeout; failed calls are not charged, a not-found is
 charged.
+
+### [Fashion Nova](https://scavio.dev/docs/fashionnova-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Fashion Nova sale prices in 104 countries. Seven endpoints on
+`client.fashionnova` (new in 0.72.0), 1 credit each: `search`, `product`,
+`collection`, `categories`, `suggestions`, `reviews` and `similar`.
+
+- Markets (`country`, default `us`): the 104 countries in Fashion Nova's own
+  country selector, each in its own currency (37 currencies: us USD, ca CAD,
+  gb GBP, au AUD, mx MXN, jp JPY, ae AED, the euro countries EUR ...; `zz` is
+  the site's International storefront in USD). `language` is `en` (default)
+  or `es` (Spanish titles, descriptions and attributes, in 67 countries; not
+  the US store). A country or language Fashion Nova does not run answers 400
+  before anything is charged. `categories` and `suggestions` are the same in
+  every storefront, `reviews` is one English pool shared by every market (no
+  `country`), and `similar` answers from the US store in USD.
+- Prices are numbers in the storefront's currency, never converted: `price`
+  (the lowest size price), `compare_at` (the site's struck-through price),
+  `percent_off` (computed by Scavio: `round((1 - price / compare_at) * 100)`),
+  `on_sale`, `price_with_code` (the price with the site's current promo code,
+  when it shows one) and `final_sale`. In the 27 EEA countries (at, be, cy,
+  cz, de, dk, ee, es, fi, fr, gr, hu, ie, is, it, lt, lu, lv, mt, nl, no, pl,
+  pt, ro, se, si, sk) Fashion Nova shows VAT-inclusive prices and no
+  compare-at price, so `compare_at` and `percent_off` are null there. The
+  same jeans read on 2026-11-19: us 18 USD (compare-at 34.99, 49% off), ca 27
+  CAD (51), gb 17 GBP (32), au 31 AUD (60), mx 338 MXN (656), fr 20.95 EUR
+  (no compare-at).
+- `sizes[].quantity` is the stock Fashion Nova's page shows per size, not a
+  guaranteed inventory count.
+- `search` is semantic and matched loosely: its `total` moves between calls,
+  a later page can repeat a few items, and it shows its first 18 pages of 60
+  (6 under a sort other than `featured`); narrow with filters. `collection`
+  pages through fully (pages 1 to 200). A facet the list does not offer
+  matches nothing and is listed in `unrecognized_filters` (present only
+  then).
+- `reviews`: 10 per page, pages 1 to 8, sorted `highest_rated` (default),
+  `most_recent`, `most_helpful` or `lowest_rated`, `star` 1-5, totals as
+  returned; reviewer names are never returned. `product` carries
+  `site_ai_review_summary`, Fashion Nova's own AI summary of its reviews.
+- Not available: stores (Fashion Nova lists none), a brand directory
+  (everything is Fashion Nova), price history (poll and store the answers),
+  gift cards, new-arrival dates.
+
+```typescript
+// Sale prices: price, compare-at price, percent off, final sale and sizes in stock.
+const res = (await client.fashionnova.search({ query: "bodycon dress", sort: "best_selling" })) as any;
+console.log(res.data.currency, res.data.total, res.data.total_pages);
+console.log(res.data.items.slice(0, 3).map((i: any) => [i.title, i.price, i.compare_at, i.percent_off, i.final_sale, i.sizes_in_stock]));
+
+// One style in one colour on the UK store: every size with its SKU, price and quantity.
+const p = (await client.fashionnova.product({ handle: "san-diego-sculpting-stretch-flare-jeans", color: "black-wash", country: "gb" })) as any;
+console.log(p.data.currency, p.data.price, p.data.compare_at, p.data.percent_off);
+console.log(p.data.sizes.map((s: any) => [s.size, s.sku, s.quantity, s.low_stock]));
+
+// The sale collection, page through to the end; reviews, newest first.
+const sale = (await client.fashionnova.collection({ handle: "sale", country: "ca" })) as any;
+console.log(sale.data.total, sale.data.total_pages, sale.data.has_more);
+const rv = (await client.fashionnova.reviews({ handle: "san-diego-sculpting-stretch-flare-jeans", sort: "most_recent" })) as any;
+console.log(rv.data.total, rv.data.reviews.map((r: any) => [r.rating, r.fit, r.size_purchased]));
+```
+
+Every call raises the request timeout to `FASHIONNOVA_TIMEOUT` (240s; review
+calls take 20 to 60 seconds) and never lowers a longer client timeout; failed
+calls are not charged, a not-found is charged.
 
 ### [Vinted](https://scavio.dev/docs/vinted-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
