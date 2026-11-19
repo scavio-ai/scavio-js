@@ -28,7 +28,7 @@ const ENDPOINTS: Row[] = [
   ["product", { handle: JEANS, color: "black-wash", country: "fr" }, "/api/v1/fashionnova/product"],
   ["product", { url: `https://www.fashionnova.com/products/${JEANS}?color=black-wash` }, "/api/v1/fashionnova/product"],
   ["collection", { handle: "sale" }, "/api/v1/fashionnova/collection"],
-  ["collection", { handle: "sale", country: "gb", sort: "best_selling", page: 200 }, "/api/v1/fashionnova/collection"],
+  ["collection", { handle: "sale", country: "gb", sort: "best_selling", page: 166 }, "/api/v1/fashionnova/collection"],
   ["categories", { division: "men" }, "/api/v1/fashionnova/categories"],
   ["suggestions", { query: "dress", division: "curve" }, "/api/v1/fashionnova/suggestions"],
   ["reviews", { handle: JEANS, color: "black-wash", sort: "most_recent", star: 5, page: 8 }, "/api/v1/fashionnova/reviews"],

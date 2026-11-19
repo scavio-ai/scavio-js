@@ -1319,13 +1319,16 @@ Fashion Nova sale prices in 104 countries. Seven endpoints on
   or `es` (Spanish titles, descriptions and attributes, in 67 countries; not
   the US store). A country or language Fashion Nova does not run answers 400
   before anything is charged. `categories` and `suggestions` are the same in
-  every storefront, `reviews` is one English pool shared by every market (no
-  `country`), and `similar` answers from the US store in USD.
+  every storefront, `reviews` is one pool per style (not per colour) shared by
+  every market and mostly English (no `country`; `language` per review says
+  which), and `similar` answers from the US store in USD.
 - Prices are numbers in the storefront's currency, never converted: `price`
   (the lowest size price), `compare_at` (the site's struck-through price),
   `percent_off` (computed by Scavio: `round((1 - price / compare_at) * 100)`),
-  `on_sale`, `price_with_code` (the price with the site's current promo code,
-  when it shows one) and `final_sale`. In the 27 EEA countries (at, be, cy,
+  `on_sale`, `price_with_code` (the price with Fashion Nova's current code as
+  the page computes it, 40% off the compare-at price), `code_lowers_price`
+  (`false` when that code price is not below `price`: the code does not lower
+  it) and `final_sale`. In the 27 EEA countries (at, be, cy,
   cz, de, dk, ee, es, fi, fr, gr, hu, ie, is, it, lt, lu, lv, mt, nl, no, pl,
   pt, ro, se, si, sk) Fashion Nova shows VAT-inclusive prices and no
   compare-at price, so `compare_at` and `percent_off` are null there. The
@@ -1337,15 +1340,17 @@ Fashion Nova sale prices in 104 countries. Seven endpoints on
 - `search` is semantic and matched loosely: its `total` moves between calls,
   a later page can repeat a few items, and it shows its first 18 pages of 60
   (6 under a sort other than `featured`); narrow with filters. `collection`
-  pages through fully (pages 1 to 200). A facet the list does not offer
+  lists up to about 10,000 products (pages 1 to 166; dedupe by `product_id` +
+  `color` across pages). A facet the list does not offer
   matches nothing and is listed in `unrecognized_filters` (present only
   then).
 - `reviews`: 10 per page, pages 1 to 8, sorted `highest_rated` (default),
   `most_recent`, `most_helpful` or `lowest_rated`, `star` 1-5, totals as
   returned; reviewer names are never returned. `product` carries
   `site_ai_review_summary`, Fashion Nova's own AI summary of its reviews.
-- Not available: stores (Fashion Nova lists none), a brand directory
-  (everything is Fashion Nova), price history (poll and store the answers),
+- Not available: stores (Fashion Nova lists none), a brand directory or brand
+  filter (`brand` is the store's vendor field; collab and licensed brand names
+  appear in titles), price history (poll and store the answers),
   gift cards, new-arrival dates.
 
 ```typescript
