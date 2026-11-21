@@ -2205,10 +2205,12 @@ closed in 2023).
   (`collect_now`, `collect_today`, `collect_tomorrow`, `collect_later`,
   `out_of_stock`, `not_available`) with `available_from` and the site's
   message, plus delivery to a postcode (`same_day` with Fast Track,
-  `next_day`, `later`, `out_of_stock`, `not_available`). `postcode` is where
+  `next_day`, `later` = Argos's "Delivery within N days" with `days`,
+  `out_of_stock`, `not_available`; quote delivery from `state` and `message`). `postcode` is where
   stores are searched; `delivery_postcode` (default `postcode`) is where
-  delivery is checked. Store types: `argos_store`, `inside_sainsburys`,
-  `collection_point`. Trusted Seller items are never stocked in stores (400).
+  delivery is checked. Store types: `argos_store` (a standalone Argos
+  store), `inside_sainsburys` (an Argos counter inside a Sainsbury's store),
+  `collection_point` (a collect-only point, no shop). Trusted Seller items are never stocked in stores (400).
 - Prices are numbers in GBP as Argos shows them: `price`, `was_price` (the
   site's was price), `save` (computed by Scavio as `was_price - price`),
   `offer_text` (the site's own words, e.g. Half Price) and `badges` as given
@@ -2216,7 +2218,8 @@ closed in 2023).
   `trusted_seller` (Argos's marketplace; `seller_name` is null there, the
   page names no seller).
 - `search`, `category` and `deals` return 24 per page, pages 1 to 200
-  (`total_pages` says how deep the list goes; `top_100` is 2 pages of 60).
+  (`total_pages` says how deep the list goes; `top_100` is 2 pages of 60;
+  Argos stops counting at 10,000, flagged by `total_capped`).
   Tu Clothing items are left out and counted in `tu_clothing_excluded`.
 - `reviews`: up to 100 per page with every review reachable, sorted `newest`
   (default), `oldest`, `most_helpful`, `highest_rating` or `lowest_rating`,

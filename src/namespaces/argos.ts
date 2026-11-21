@@ -10,8 +10,12 @@ import type { Scavio } from "../client.js";
 // 50 miles), a collection state per store and product (collect_now,
 // collect_today, collect_tomorrow, collect_later, out_of_stock, not_available)
 // with available_from and the site's message, plus delivery to a postcode
-// (same_day with Fast Track, next_day, later, out_of_stock, not_available).
-// postcode is where stores are searched; delivery_postcode (default postcode)
+// (same_day with Fast Track, next_day, later = Argos's "Delivery within N
+// days" with days = N, out_of_stock, not_available; quote delivery from state
+// and message: available_from is the date Argos returns, as given). Store
+// types: argos_store (a standalone Argos store), inside_sainsburys (an Argos
+// counter inside a Sainsbury's store), collection_point (a collect-only point,
+// no shop). postcode is where stores are searched; delivery_postcode (default postcode)
 // is where delivery is checked. Trusted Seller items are never stocked in
 // stores (400).
 //
@@ -20,7 +24,8 @@ import type { Scavio } from "../client.js";
 // site's own words, e.g. Half Price) and badges as given (e.g. Black_Friday,
 // price_guarantee). seller is argos or trusted_seller (Argos's marketplace;
 // seller_name is null there, the page names no seller). search(), category()
-// and deals() return 24 per page, pages 1 to 200 (top_100 is 2 pages of 60);
+// and deals() return 24 per page, pages 1 to 200 (top_100 is 2 pages of 60;
+// Argos stops counting at 10,000, flagged by total_capped);
 // Tu Clothing items are left out and counted in tu_clothing_excluded.
 // reviews(): up to 100 per page, every review reachable, 5 sorts and a star
 // filter, syndicated reviews flagged with their source, and Argos's own
@@ -189,7 +194,7 @@ export class ArgosNamespace {
 
   /**
    * Search Argos, 24 per page up to page 200: sort, filters, page, total,
-   * total_pages, has_more, count, tu_clothing_excluded, items (product_id, url,
+   * total_capped (Argos stops counting at 10,000), total_pages, has_more, count, tu_clothing_excluded, items (product_id, url,
    * name, brand, price, was_price, save, offer_text, clearance, badges, rating,
    * review_count, seller, deliverable, reservable, free_delivery,
    * delivery_cost, argos_pay, image), facets.
@@ -202,7 +207,8 @@ export class ArgosNamespace {
 
   /**
    * One product by product_id or link: template (argos or trusted_seller),
-   * ean, price, was_price, save, offer_text, badges with start and end dates,
+   * ean, price, was_price, save, offer_text, badges with start and end dates
+   * (one entry per badge code), rating (null without reviews),
    * features, variants, special_offers, nectar_points, care_plans,
    * payment_options, bundles, breadcrumb, rating_distribution, question and
    * answer counts, the first 10 reviews. A withdrawn or unknown product is a
@@ -219,9 +225,10 @@ export class ArgosNamespace {
    * stores near a UK postcode (nearest first) and delivered to a postcode:
    * stores {store_id, name, store, type, distance_miles, address, hours,
    * products {product_id, state, available_from, message}}, delivery
-   * {postcode, products {product_id, state, available_from, fast_track}},
+   * {postcode, products {product_id, state, available_from, days, fast_track}},
    * products {product_id, known, collectable, deliverable,
-   * globally_out_of_stock}. States, not unit counts.
+   * globally_out_of_stock}. States, not unit counts. A postcode that does not
+   * exist gets no answer from Argos: an unbilled 502 after about 50 seconds.
    *
    * Costs 2 credits.
    */
@@ -297,7 +304,7 @@ export class ArgosNamespace {
 
   /**
    * Search suggestions for a partial query: suggestions {text, weight
-   * (Argos's popularity weight)}.
+   * (Argos's popularity weight)}, in Argos's order (not sorted by weight).
    *
    * Costs 2 credits.
    */
