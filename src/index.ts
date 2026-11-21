@@ -251,6 +251,27 @@ export type {
   FashionnovaCategoriesOptions,
   FashionnovaSuggestionsOptions,
 } from "./namespaces/fashionnova.js";
+export { ArgosNamespace, ARGOS_TIMEOUT } from "./namespaces/argos.js";
+export type {
+  ArgosSort,
+  ArgosSeller,
+  ArgosOffer,
+  ArgosCollection,
+  ArgosReviewSort,
+  ArgosQuestionSort,
+  ArgosProductId,
+  ArgosListOptions,
+  ArgosSearchOptions,
+  ArgosCategoryOptions,
+  ArgosDealsOptions,
+  ArgosProductRef,
+  ArgosProductOptions,
+  ArgosStoreStockOptions,
+  ArgosStoresOptions,
+  ArgosReviewsOptions,
+  ArgosQuestionsOptions,
+  ArgosSuggestionsOptions,
+} from "./namespaces/argos.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,

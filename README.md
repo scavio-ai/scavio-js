@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 91 platforms on one API key, plus `extract()` to read
+data across 92 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2190,6 +2190,68 @@ Every call raises the request timeout to `FANATICS_TIMEOUT` (120s) and
 never lowers a longer client timeout; `reviews` raises it to
 `FANATICS_REVIEWS_TIMEOUT` (300s), and failed calls are not charged.
 Unknown products are a charged 404.
+
+### [Argos](https://scavio.dev/docs/argos-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Argos store stock, prices and reviews (argos.co.uk, UK, GBP). Ten endpoints
+on `client.argos` (new in 0.73.0), 2 credits each: `search`, `product`,
+`storeStock`, `stores`, `reviews`, `questions`, `categories`, `category`,
+`deals` and `suggestions`. One store, so there is no `country` (Argos Ireland
+closed in 2023).
+
+- Store stock is availability, not unit counts: `storeStock` answers, for 1
+  to 10 products at the Argos stores near a UK postcode (up to 10 stores
+  within 50 miles), a collection state per store and product
+  (`collect_now`, `collect_today`, `collect_tomorrow`, `collect_later`,
+  `out_of_stock`, `not_available`) with `available_from` and the site's
+  message, plus delivery to a postcode (`same_day` with Fast Track,
+  `next_day`, `later`, `out_of_stock`, `not_available`). `postcode` is where
+  stores are searched; `delivery_postcode` (default `postcode`) is where
+  delivery is checked. Store types: `argos_store`, `inside_sainsburys`,
+  `collection_point`. Trusted Seller items are never stocked in stores (400).
+- Prices are numbers in GBP as Argos shows them: `price`, `was_price` (the
+  site's was price), `save` (computed by Scavio as `was_price - price`),
+  `offer_text` (the site's own words, e.g. Half Price) and `badges` as given
+  (e.g. `Black_Friday`, `price_guarantee`). `seller` is `argos` or
+  `trusted_seller` (Argos's marketplace; `seller_name` is null there, the
+  page names no seller).
+- `search`, `category` and `deals` return 24 per page, pages 1 to 200
+  (`total_pages` says how deep the list goes; `top_100` is 2 pages of 60).
+  Tu Clothing items are left out and counted in `tu_clothing_excluded`.
+- `reviews`: up to 100 per page with every review reachable, sorted `newest`
+  (default), `oldest`, `most_helpful`, `highest_rating` or `lowest_rating`,
+  `rating` star filter; syndicated reviews are flagged with their source and
+  `summary` is Argos's own AI-generated summary, labelled as such. Reviewer
+  names, locations, ages and genders are never returned.
+- Not available: unit counts, price history (poll and store the answers), a
+  brand directory (brand is a filter), Argos Ireland, card or checkout
+  prices, Argos Pay terms.
+
+```typescript
+// Store stock: which Argos stores near a UK postcode can hand over each product, and when.
+const st = (await client.argos.storeStock({ product_ids: ["8377058", "7163184"], postcode: "SW1A 1AA" })) as any;
+for (const s of st.data.stores.slice(0, 3)) {
+  console.log(s.name, s.type, s.distance_miles, s.products.map((p: any) => [p.product_id, p.state, p.available_from]));
+}
+console.log(st.data.delivery.products.map((p: any) => [p.product_id, p.state, p.fast_track]));
+
+// Prices: price, was price, save (computed), the site's offer text and badges.
+const res = (await client.argos.search({ query: "air fryer", seller: "argos", sort: "price_low" })) as any;
+console.log(res.data.total, res.data.total_pages, res.data.page_size);
+console.log(res.data.items.slice(0, 3).map((i: any) => [i.name, i.price, i.was_price, i.save, i.offer_text, i.badges]));
+
+// Reviews, 100 per page, low stars first; Argos's own AI summary.
+const rv = (await client.argos.reviews({ product_id: "7163184", rating: [1, 2], limit: 100 })) as any;
+console.log(rv.data.total, rv.data.summary_source, rv.data.reviews.map((r: any) => [r.rating, r.syndicated, r.syndication_source]));
+
+// Black Friday deals, 24 per page.
+const bf = (await client.argos.deals({ collection: "black_friday" })) as any;
+console.log(bf.data.total, bf.data.items.length);
+```
+
+Every call raises the request timeout to `ARGOS_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls are not charged, a not-found is
+charged.
 
 ### [Carrefour](https://scavio.dev/docs/carrefour-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

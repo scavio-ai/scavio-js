@@ -81,6 +81,7 @@ import { HmNamespace } from "./namespaces/hm.js";
 import { ZaraNamespace } from "./namespaces/zara.js";
 import { AsosNamespace } from "./namespaces/asos.js";
 import { FashionnovaNamespace } from "./namespaces/fashionnova.js";
+import { ArgosNamespace } from "./namespaces/argos.js";
 import { MercariNamespace } from "./namespaces/mercari.js";
 import { BolcomNamespace } from "./namespaces/bolcom.js";
 import { UniqloNamespace } from "./namespaces/uniqlo.js";
@@ -282,6 +283,7 @@ export class Scavio extends ScavioCore {
   readonly zara: ZaraNamespace;
   readonly asos: AsosNamespace;
   readonly fashionnova: FashionnovaNamespace;
+  readonly argos: ArgosNamespace;
   readonly mercari: MercariNamespace;
   readonly bolcom: BolcomNamespace;
   readonly uniqlo: UniqloNamespace;
@@ -400,6 +402,7 @@ export class Scavio extends ScavioCore {
     this.zara = new ZaraNamespace(this);
     this.asos = new AsosNamespace(this);
     this.fashionnova = new FashionnovaNamespace(this);
+    this.argos = new ArgosNamespace(this);
     this.mercari = new MercariNamespace(this);
     this.bolcom = new BolcomNamespace(this);
     this.uniqlo = new UniqloNamespace(this);
