@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 92 platforms on one API key, plus `extract()` to read
+data across 93 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2255,6 +2255,80 @@ console.log(bf.data.total, bf.data.items.length);
 Every call raises the request timeout to `ARGOS_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls are not charged, a not-found is
 charged.
+
+### [Media Expert](https://scavio.dev/docs/mediaexpert-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Media Expert Black Week prices, the Omnibus 30-day low and store stock
+(mediaexpert.pl, Poland, PLN). Thirteen endpoints on `client.mediaexpert`
+(new in 0.74.0): `search`, `product`, `storeStock`, `stores`, `reviews`,
+`category`, `categories`, `brands`, `brand`, `promotions`, `outlet`, `seller`
+and `suggestions`. One store, so there is no `country`; names,
+specifications, labels and reviews come back in Polish, as Media Expert
+writes them.
+
+- Billed on actual cost, 1 to 3 credits per call (`credits_used` reports
+  each one): `product`, `stores`, `brands`, `reviews` and `suggestions` 1;
+  `storeStock` and `categories` 2; `search` 3 for a search page (Media Expert
+  loads search lists lazily, so the rest of the page takes one more lookup)
+  or 1 when Media Expert answers the term with a full category page;
+  `category`, `brand`, `outlet`, `seller` and a promotion list's products 1
+  unsorted and 3 with a sort or a lazily loaded list (the promotion lists
+  themselves and the outlet's groups cost 1).
+- Prices are numbers in PLN: `price`, `old_price` (Media Expert's
+  struck-through price), `omnibus_lowest_30d` (the lowest price of the last
+  30 days that Media Expert shows next to a promotion, under the EU Omnibus
+  Directive), `code_price` `{price, code, valid_from, valid_to}` (the price
+  with a discount code), `discount_shown` (Media Expert's own figure) and
+  `discount_percent` (computed by Scavio).
+- Store stock is Media Expert's stock indicator, a bucket (seen: 0, 2, 9,
+  20), not a unit count, at the up to 40 stores nearest a Polish city, town
+  or postcode, with `collect_in_1h` (Odbierz za godzinę) and
+  `order_to_store_day` when the item is not on the shelf. Send `product_id`,
+  not `offer_id`; marketplace items (sold and shipped by a marketplace
+  seller) are never stocked in stores (a charged 400).
+- Lists return 30 per page by default (`limit` 5, 10, 15, 20, 30 or 50), up
+  to 100 pages, and stop counting at 5,000 (`total_capped`). Price sorts are
+  Media Expert's own order, which follows promotional and code prices, so
+  re-sort a page for a strict order. There is no price filter; `filters`
+  takes `facets[].values[].filter`.
+- `reviews`: Media Expert's own reviews by `sku`, `product_id` or `url`, up
+  to 100 per page with every review reachable, 6 sorts, `rating_min` /
+  `rating_max` and `verified`; `verified_purchase` and `incentivized` (a
+  review from a Media Expert promotional campaign) flags; no reviewer
+  identity.
+- Not available: Q&A (Media Expert has none), leaflets, price history (poll
+  and store the answers), unit counts, checkout prices, other countries or
+  languages.
+
+```typescript
+// Prices: price, old price, the Omnibus 30-day low Media Expert shows, the code price.
+const p = (await client.mediaexpert.product({ product_id: "8128227" })) as any;
+console.log(p.data.name, p.data.price, p.data.old_price, p.data.omnibus_lowest_30d, p.data.code_price);
+
+// Store stock: Media Expert's stock indicator at the 40 stores nearest a city or postcode.
+const st = (await client.mediaexpert.storeStock({ product_id: "8128227", location: "Warszawa" })) as any;
+console.log(st.data.in_stock_count, st.data.collect_in_1h_count);
+for (const s of st.data.stores.slice(0, 3)) {
+  console.log(s.name, s.distance_km, s.stock_level, s.collect_in_1h, s.order_to_store_day);
+}
+
+// Search: 30 per page; many single words redirect to a category page.
+const res = (await client.mediaexpert.search({ query: "telewizor" })) as any;
+console.log(res.data.redirected_to, res.data.total, res.data.total_capped);
+
+// Black Weeks promotion lists, then one list's products.
+const lists = (await client.mediaexpert.promotions({ black_weeks: true })) as any;
+const bw = (await client.mediaexpert.promotions({ list: lists.data.lists[0].list })) as any;
+console.log(bw.data.total, bw.data.items.length);
+
+// Reviews by sku, 100 per page, verified purchases only.
+const rv = (await client.mediaexpert.reviews({ sku: "709727", verified: true, limit: 100 })) as any;
+console.log(rv.data.total, rv.data.reviews.map((r: any) => [r.rating, r.verified_purchase, r.incentivized]));
+```
+
+Every call raises the request timeout to `MEDIAEXPERT_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls are not charged, a
+not-found is charged.
 
 ### [Carrefour](https://scavio.dev/docs/carrefour-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

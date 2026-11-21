@@ -272,6 +272,27 @@ export type {
   ArgosQuestionsOptions,
   ArgosSuggestionsOptions,
 } from "./namespaces/argos.js";
+export { MediaExpertNamespace, MEDIAEXPERT_TIMEOUT } from "./namespaces/mediaexpert.js";
+export type {
+  MediaExpertSort,
+  MediaExpertReviewSort,
+  MediaExpertLimit,
+  MediaExpertProductId,
+  MediaExpertListOptions,
+  MediaExpertSearchOptions,
+  MediaExpertProductOptions,
+  MediaExpertStoreStockOptions,
+  MediaExpertStoresOptions,
+  MediaExpertReviewsOptions,
+  MediaExpertCategoryOptions,
+  MediaExpertCategoriesOptions,
+  MediaExpertBrandsOptions,
+  MediaExpertBrandOptions,
+  MediaExpertPromotionsOptions,
+  MediaExpertOutletOptions,
+  MediaExpertSellerOptions,
+  MediaExpertSuggestionsOptions,
+} from "./namespaces/mediaexpert.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
