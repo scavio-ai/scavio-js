@@ -347,6 +347,27 @@ export type {
   HemaStoreOptions,
   HemaReviewsOptions,
 } from "./namespaces/hema.js";
+export { AutozoneNamespace, AUTOZONE_TIMEOUT } from "./namespaces/autozone.js";
+export type {
+  AutozoneCountry,
+  AutozonePriceCountry,
+  AutozoneSort,
+  AutozoneReviewSort,
+  AutozoneVehicleLevel,
+  AutozoneId,
+  AutozoneVehicle,
+  AutozoneListOptions,
+  AutozoneSearchOptions,
+  AutozoneProductOptions,
+  AutozoneCategoryOptions,
+  AutozoneBrandOptions,
+  AutozoneVehiclesOptions,
+  AutozoneReviewsOptions,
+  AutozoneStoresOptions,
+  AutozoneStoreOptions,
+  AutozoneCategoriesOptions,
+  AutozoneStoreStockOptions,
+} from "./namespaces/autozone.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,

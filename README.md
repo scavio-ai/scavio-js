@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 95 platforms on one API key, plus `extract()` to read
+data across 96 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2446,6 +2446,78 @@ console.log(res.data.total, res.data.items[0]?.price);
 ```
 
 Every call raises the request timeout to `HEMA_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [AutoZone](https://scavio.dev/docs/autozone-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+AutoZone (autozone.com), the US auto parts retailer: AutoZone parts prices by
+vehicle, the parts that fit a year / make / model in a part type, with price,
+was price, deal price, core charge, warranty and pickup availability for the
+store AutoZone prices the request for, plus part-number cross-reference,
+reviews, the store directory, clearance and mail-in rebates. Twelve endpoints
+on `client.autozone` (new in 0.77.0): `search`, `product`, `category`,
+`brand`, `vehicles`, `reviews`, `stores`, `store`, `categories`, `clearance`,
+`rebates` and `storeStock`. 1 credit per call; 2 on br `search`, br `product`
+and `storeStock`.
+
+- Markets: `country` us (default, autozone.com, USD) on every endpoint; br
+  (autozone.com.br, Portuguese text, BRL) on `search`, `product`,
+  `storeStock`, `vehicles`, `stores`, `store` and `categories`; mx
+  (autozone.com.mx) on `vehicles`, `stores`, `store` and `categories` only.
+  `category`, `brand`, `reviews`, `clearance` and `rebates` are us only.
+- Prices: every price is AutoZone's price for the store AutoZone assigns to
+  the request, named in `priced_for` (store number, address, city, state,
+  ZIP). AutoZone prices differ by store, core charges too, so two calls can be
+  priced for different stores; there is no store or ZIP input on us.
+  `core_charge` is the refundable deposit AutoZone adds on parts like
+  batteries until the old part is returned (0 when none).
+- Lists (`search`, `category`, `brand`, `clearance`): the first 24 results with
+  AutoZone's `total`, no paging; narrow with one facet filter, `min_price` /
+  `max_price` or `sort` (relevance, price_asc, price_desc). List items carry
+  no rating (`product` does).
+- `search`: keywords, AutoZone part numbers and other brands' part numbers
+  (cross-reference). AutoZone runs ranking tests (`ranking_variant`), so
+  totals and order can differ between two identical calls.
+- `category` with `vehicle` {year, make, model} (names as `vehicles` lists
+  them): the parts that fit at year / make / model level; items AutoZone ties
+  to an engine read `fitment.vehicle_fit` NEEDS_BASE_VEHICLE.
+- `reviews` (us): 10 a page, full depth, sorts, a star filter, AutoZone's
+  review summary on page 1, the reviewer's vehicle as written; no reviewer
+  identity. `stores` walks states, cities and a city's stores; `store` reads
+  one by slug; there is no stores-near-a-ZIP search.
+- `storeStock`: Brazil only, one product at a Brazilian store you choose with
+  its in-store quantity. Brazil `search` and `product` are priced for store
+  7602 Sao Paulo (Interlagos).
+- Not available: results past the first 24, stores near a ZIP, stock at a
+  chosen US or Mexican store, search suggestions, VIN lookup, engine-level
+  fitment, repair guides, AutoZonePro / commercial pricing, Mexico prices,
+  price history (poll and store the answers), checkout.
+
+```typescript
+// Parts that fit one vehicle: brake pads for a 2018 Ford F-150, with core charge and warranty.
+const fit = (await client.autozone.category({
+  category: "/brakes-and-traction-control/brake-pads",
+  vehicle: { year: 2018, make: "Ford", model: "F-150" },
+})) as any;
+console.log(fit.data.total, fit.data.priced_for);
+for (const it of fit.data.items.slice(0, 3))
+  console.log(it.part_number, it.price, it.core_charge, it.warranty, it.fitment.vehicle_fit);
+
+// Another brand's part number finds the parts AutoZone matches to it.
+const xref = (await client.autozone.search({ query: "PH3614" })) as any;
+console.log(xref.data.total, xref.data.oem_part_number, xref.data.oem_brand);
+
+// One product: price, deal, core charge, warranty, pickup and rating.
+const p = (await client.autozone.product({ id: "1399158" })) as any;
+console.log(p.data.price, p.data.deal_price, p.data.core_charge, p.data.warranty, p.data.availability.store_pickup);
+
+// Brazil: one product at a Brazilian store you choose.
+const st = (await client.autozone.storeStock({ id: "100112748", store_number: "9403" })) as any;
+console.log(st.data.priced_for, st.data.price, st.data.in_store);
+```
+
+Every call raises the request timeout to `AUTOZONE_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 

@@ -55,6 +55,7 @@ import { WalgreensNamespace } from "./namespaces/walgreens.js";
 import { CvsNamespace } from "./namespaces/cvs.js";
 import { WholeFoodsNamespace } from "./namespaces/whole-foods.js";
 import { HarborFreightNamespace } from "./namespaces/harbor-freight.js";
+import { AutozoneNamespace } from "./namespaces/autozone.js";
 import { PetsmartNamespace } from "./namespaces/petsmart.js";
 import { PetcoNamespace } from "./namespaces/petco.js";
 import { IherbNamespace } from "./namespaces/iherb.js";
@@ -260,6 +261,7 @@ export class Scavio extends ScavioCore {
   readonly cvs: CvsNamespace;
   readonly wholeFoods: WholeFoodsNamespace;
   readonly harborFreight: HarborFreightNamespace;
+  readonly autozone: AutozoneNamespace;
   readonly petsmart: PetsmartNamespace;
   readonly petco: PetcoNamespace;
   readonly iherb: IherbNamespace;
@@ -382,6 +384,7 @@ export class Scavio extends ScavioCore {
     this.cvs = new CvsNamespace(this);
     this.wholeFoods = new WholeFoodsNamespace(this);
     this.harborFreight = new HarborFreightNamespace(this);
+    this.autozone = new AutozoneNamespace(this);
     this.petsmart = new PetsmartNamespace(this);
     this.petco = new PetcoNamespace(this);
     this.iherb = new IherbNamespace(this);
