@@ -321,6 +321,32 @@ export type {
   ActionWebshopSearchOptions,
   ActionWebshopProductOptions,
 } from "./namespaces/action.js";
+export { HemaNamespace, HEMA_TIMEOUT } from "./namespaces/hema.js";
+export type {
+  HemaCountry,
+  HemaStoreCountry,
+  HemaLanguage,
+  HemaSort,
+  HemaReviewSort,
+  HemaSku,
+  HemaMarketOptions,
+  HemaListOptions,
+  HemaLocationOptions,
+  HemaSearchOptions,
+  HemaProductOptions,
+  HemaCategoryOptions,
+  HemaCategoriesOptions,
+  HemaNewArrivalsOptions,
+  HemaSaleOptions,
+  HemaOffersOptions,
+  HemaCampaignOptions,
+  HemaSuggestionsOptions,
+  HemaStoreMarketOptions,
+  HemaStoreStockOptions,
+  HemaStoresOptions,
+  HemaStoreOptions,
+  HemaReviewsOptions,
+} from "./namespaces/hema.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,

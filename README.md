@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 94 platforms on one API key, plus `extract()` to read
+data across 95 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2386,6 +2386,66 @@ console.log(web.data.stock_level, web.data.order_limit, web.data.shipping_cost);
 ```
 
 Every call raises the request timeout to `ACTION_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [HEMA](https://scavio.dev/docs/hema-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+HEMA (hema.com), the Dutch variety store: HEMA store stock (the sellable
+units HEMA's store service reports per store, with the stock level, for up to
+12 articles near a city or postcode), each article's dated price schedule with
+upcoming promotions, and the same article number priced per market. Thirteen
+endpoints on `client.hema` (new in 0.76.0): `search`, `product`, `category`,
+`categories`, `newArrivals`, `sale`, `offers`, `campaign`, `suggestions`,
+`storeStock`, `stores`, `store` and `reviews`. 1 credit per call.
+
+- Markets: `country` nl (default, www.hema.nl), be (plus `language` nl or fr),
+  fr, de; lu and at only on `storeStock`, `stores` and `store` (elsewhere a
+  400, not charged). Prices are numbers in EUR; names, labels and promotion
+  texts come back in the market's language, as HEMA writes them (Dutch on the
+  default nl market). HEMA notes that online prices can differ from store
+  prices.
+- Article numbers (`sku`) are the same in every market and prices are set
+  per market: one `product` call per country compares an article.
+- `storeStock`: per store `sellable_units` and `stock_level` (full, regular or
+  limited), shelf locations, hours, address and distance; stock as HEMA's
+  store service reports it, not a promise that the shelf has it.
+- `product`: EAN, colour / size variants, `price_schedule` (dated prices,
+  upcoming promotions such as 2+1 gratis included), online stock,
+  `sellable_in_store`, `order_limit`.
+- `offers` (nl, be): HEMA's validity label as shown, the ISO `valid_to`, the
+  week and the promotion cards (no products on that page). `campaign`:
+  `christmas` (all markets) or `sinterklaas` (nl, be). `sale`: nl, be, de.
+- `reviews`: HEMA's own reviews, pages 1 to 5 (8, then 30 more a page); nl, fr
+  and de read the Dutch pool, be its own; no reviewer identity.
+- No brands endpoint (HEMA sells its own brand). Not available: price history
+  (poll and store the answers), checkout or ordering, the photo service and
+  cake ordering, other countries (no UK or Spain).
+
+```typescript
+// HEMA store stock: sellable units per store near a city or postcode.
+const st = (await client.hema.storeStock({ skus: ["15300147", "10860090"], query: "Utrecht" })) as any;
+for (const s of st.data.stores.slice(0, 3))
+  console.log(s.name, s.distance_km, s.stock.map((x: any) => [x.sku, x.sellable_units, x.stock_level]));
+
+// One article: the dated price schedule with upcoming promotions.
+const p = (await client.hema.product({ sku: "15300147" })) as any;
+for (const row of p.data.price_schedule) console.log(row.valid_from, row.valid_to, row.price, row.promotion);
+
+// The same article number priced per market.
+for (const country of ["nl", "be", "fr", "de"] as const) {
+  const r = (await client.hema.product({ sku: "15300147", country })) as any;
+  console.log(country, r.data.price);
+}
+
+// Weekly offers, then a search on the French-language Belgian webshop.
+const offers = (await client.hema.offers()) as any;
+console.log(offers.data.label, offers.data.valid_to, offers.data.week);
+const res = (await client.hema.search({ query: "bougie", country: "be", language: "fr" })) as any;
+console.log(res.data.total, res.data.items[0]?.price);
+```
+
+Every call raises the request timeout to `HEMA_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 
