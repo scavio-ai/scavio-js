@@ -293,6 +293,34 @@ export type {
   MediaExpertSellerOptions,
   MediaExpertSuggestionsOptions,
 } from "./namespaces/mediaexpert.js";
+export { ActionNamespace, ACTION_TIMEOUT } from "./namespaces/action.js";
+export type {
+  ActionCountry,
+  ActionLanguage,
+  ActionSort,
+  ActionReviewSort,
+  ActionReviewScope,
+  ActionProductCode,
+  ActionMarketOptions,
+  ActionListOptions,
+  ActionSearchOptions,
+  ActionProductOptions,
+  ActionProductsOptions,
+  ActionCategoryOptions,
+  ActionCategoriesOptions,
+  ActionBrandOptions,
+  ActionBrandsOptions,
+  ActionNewArrivalsOptions,
+  ActionWeeklyDealsOptions,
+  ActionCollectionOptions,
+  ActionSuggestionsOptions,
+  ActionStoresOptions,
+  ActionStoreOptions,
+  ActionReviewsOptions,
+  ActionWebshopMarketOptions,
+  ActionWebshopSearchOptions,
+  ActionWebshopProductOptions,
+} from "./namespaces/action.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,

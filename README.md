@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 93 platforms on one API key, plus `extract()` to read
+data across 94 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2329,6 +2329,65 @@ console.log(rv.data.total, rv.data.reviews.map((r: any) => [r.rating, r.verified
 Every call raises the request timeout to `MEDIAEXPERT_TIMEOUT` (240s) and
 never lowers a longer client timeout; failed calls are not charged, a
 not-found is charged.
+
+### [Action](https://scavio.dev/docs/action-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Action (action.com), the European non-food discount store: this week's
+Action deals with their validity dates and week id, the same article's price
+on each of the 19 Action storefronts, and the stores near a city or postcode
+with opening hours. Sixteen endpoints on `client.action` (new in 0.75.0):
+`search`, `product`, `products`, `category`, `categories`, `brand`, `brands`,
+`newArrivals`, `weeklyDeals`, `collection`, `suggestions`, `stores`, `store`,
+`reviews`, `webshopSearch` and `webshopProduct`. 1 credit per call.
+
+- Markets: `country` nl (default), be, fr, lu, de, at, ch, it, es, pt, pl,
+  cz, sk, ro, hr, si, plus `language` for be (nl or fr) and ch (de, fr or
+  it). Prices are numbers in the market's currency (EUR; CHF, PLN, CZK, RON),
+  never converted; titles and labels come back in the storefront's language,
+  as Action writes them (Dutch on the default nl storefront).
+- Article numbers (`product_code`) are the same in every market and prices
+  are set per market: `products` prices up to 60 codes on one market per
+  call, so one call per country compares an article across markets.
+- `weeklyDeals`: `week_id` (e.g. Promo2026Week47), Action's `label` and ISO
+  `valid_from` / `valid_to` dates; a deal week runs Wednesday to Tuesday and
+  the assortment changes weekly; Belgium adds Action Plus `loyalty_deals`.
+- `stores`: the 20 stores nearest a city, postcode or `lat` / `lng` (they may
+  cross a border: `country_code` per store), with 7 dated days of opening
+  hours. Action does not publish store stock.
+- `reviews`: nl, de, fr and pl only (other countries answer 400, not
+  charged), scope `local` (default, that storefront's language),
+  `international` or `all`; no reviewer identity.
+- `webshopSearch` / `webshopProduct`: shop.action.com (nl-nl, nl-be, fr-be),
+  with EAN, online `stock_level` (not store stock), `order_limit` and
+  `shipping_cost`. EANs come only from the webshop.
+- Not available: store stock, price history (poll and store the answers),
+  leaflets, checkout, other countries.
+
+```typescript
+// This week's deals: Action's week id and validity dates (Wednesday to Tuesday).
+const wk = (await client.action.weeklyDeals()) as any;
+console.log(wk.data.week_id, wk.data.valid_from, wk.data.valid_to, wk.data.total);
+
+// One article number everywhere, priced per market: one call per country.
+for (const country of ["nl", "de", "pl"] as const) {
+  const r = (await client.action.products({ product_codes: ["3225277", "3011615"], country })) as any;
+  console.log(country, r.data.currency, r.data.items.map((i: any) => [i.product_code, i.price]));
+}
+
+// The 20 stores nearest a city or postcode, with opening hours.
+const st = (await client.action.stores({ query: "Amsterdam" })) as any;
+for (const s of st.data.stores.slice(0, 3)) console.log(s.name, s.country_code, s.hours[0]);
+
+// Search on the French-language Belgian storefront, then the webshop by EAN.
+const res = (await client.action.search({ query: "noel", country: "be", language: "fr" })) as any;
+console.log(res.data.total, res.data.items[0]?.price);
+const web = (await client.action.webshopProduct({ ean: "8718969571098" })) as any;
+console.log(web.data.stock_level, web.data.order_limit, web.data.shipping_cost);
+```
+
+Every call raises the request timeout to `ACTION_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
 
 ### [Carrefour](https://scavio.dev/docs/carrefour-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
