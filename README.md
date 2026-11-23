@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 96 platforms on one API key, plus `extract()` to read
+data across 97 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2518,6 +2518,75 @@ console.log(st.data.priced_for, st.data.price, st.data.in_store);
 ```
 
 Every call raises the request timeout to `AUTOZONE_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Instacart](https://scavio.dev/docs/instacart-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Instacart (instacart.com), the US and Canada grocery delivery and pickup
+marketplace: Instacart prices by store at a ZIP. Every store delivering to a
+ZIP with its pricing label, one product priced at every one of those stores,
+one query across up to 10 stores, and delivery, pickup or in-store prices
+side by side. Eleven endpoints on `client.instacart` (new in 0.78.0):
+`retailers`, `search`, `crossSearch`, `product`, `priceCompare`,
+`categories`, `category`, `deals`, `stores`, `suggestions` and `reviews`. 1
+credit per call; `search` 3 (2 when the page fits in Instacart's first
+answer); `crossSearch` 3 for up to 5 stores, 4 for 6 to 10.
+
+- Markets: `country` us (default, instacart.com, USD) on every endpoint; ca
+  (instacart.ca, CAD, `zip` a Canadian postal code) on every endpoint except
+  `crossSearch` and `reviews` (a 400, not charged). `language` fr (Canada)
+  returns French names, aisles and price text as Instacart shows them in
+  Quebec; `suggestions` are English only. Every endpoint but `reviews` takes a
+  `zip`; a ZIP with no Instacart service area answers an empty list and a
+  note.
+- Prices: every price is Instacart's price for that store, ZIP and service
+  type, named in `priced_for` with the retailer's `pricing_label` as Instacart
+  shows it (e.g. Costco "Prices are higher than your local warehouse.").
+  Retailers set their Instacart prices, which can be above their in-store
+  prices, so an Instacart delivery price is not the store's shelf price;
+  `service_type` instore returns Instacart's in-store prices where it shows
+  them. `retailers` marks `no_markups` (Instacart's "No markups" label) and
+  EBT per store.
+- `product_id` is the same at every store, so a search result feeds
+  `product`, `priceCompare` and `reviews` directly. `priceCompare` returns
+  Instacart delivery prices sorted low to high, with no unit price or stock
+  (`product` gives them per store).
+- `product`: ingredients, warnings / allergens as given, the key nutrients
+  Instacart lists (not a full nutrition panel), images, the store's price
+  block and the rating summary. `deals`: the store's Sales collection (sale
+  and regular price, multi-buy offers; no coupons). `stores`: pickup
+  locations nearest first, 7 days of hours for the 5 nearest. `reviews` (us):
+  15 a page, syndication `source`, `incentivized` flag; no reviewer identity.
+- Not available: delivery and service fees or order minimums as numbers
+  (Instacart shows them at checkout), coupons, Instacart+ member prices,
+  account, order or cart data, price history (poll and store the answers).
+  For direct shelf prices see the Kroger, Costco, ALDI, Publix and Whole
+  Foods namespaces.
+
+```typescript
+// Every store serving a ZIP: the slug is the retailer input of the other endpoints.
+const r = (await client.instacart.retailers({ zip: "10001" })) as any;
+console.log(r.data.count, r.data.no_markups_count);
+for (const s of r.data.retailers.slice(0, 5)) console.log(s.slug, s.name, s.delivery_eta, s.no_markups);
+
+// One product priced at every store delivering to the ZIP, low to high.
+const cmp = (await client.instacart.priceCompare({ product_id: "16408559", zip: "10001" })) as any;
+for (const p of cmp.data.prices.slice(0, 5)) console.log(p.retailer_name, p.price, p.was_price, p.no_markups);
+
+// One store's search, then the same product's delivery and in-store price.
+const res = (await client.instacart.search({ query: "yogurt", retailer: "jewel-osco", zip: "60540", limit: 10 })) as any;
+console.log(res.data.priced_for.pricing_label, res.data.total);
+const del = (await client.instacart.product({ product_id: "16408559", retailer: "wegmans", zip: "10001" })) as any;
+const ins = (await client.instacart.product({ product_id: "16408559", retailer: "wegmans", zip: "10001", service_type: "instore" })) as any;
+console.log(del.data.item?.price, ins.data.item?.price, del.data.item?.unit_price);
+
+// Canada in French: CAD prices and French names at a Montreal store.
+const fr = (await client.instacart.search({ query: "lait", retailer: "metro", zip: "H2X1Y4", country: "ca", language: "fr" })) as any;
+console.log(fr.data.currency, fr.data.items[0]?.price_text);
+```
+
+Every call raises the request timeout to `INSTACART_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 

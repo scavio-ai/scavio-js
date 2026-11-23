@@ -50,6 +50,7 @@ import { DollarGeneralNamespace } from "./namespaces/dollar-general.js";
 import { SephoraNamespace } from "./namespaces/sephora.js";
 import { UltaNamespace } from "./namespaces/ulta.js";
 import { AldiNamespace } from "./namespaces/aldi.js";
+import { InstacartNamespace } from "./namespaces/instacart.js";
 import { MicroCenterNamespace } from "./namespaces/micro-center.js";
 import { WalgreensNamespace } from "./namespaces/walgreens.js";
 import { CvsNamespace } from "./namespaces/cvs.js";
@@ -256,6 +257,7 @@ export class Scavio extends ScavioCore {
   readonly sephora: SephoraNamespace;
   readonly ulta: UltaNamespace;
   readonly aldi: AldiNamespace;
+  readonly instacart: InstacartNamespace;
   readonly microCenter: MicroCenterNamespace;
   readonly walgreens: WalgreensNamespace;
   readonly cvs: CvsNamespace;
@@ -379,6 +381,7 @@ export class Scavio extends ScavioCore {
     this.sephora = new SephoraNamespace(this);
     this.ulta = new UltaNamespace(this);
     this.aldi = new AldiNamespace(this);
+    this.instacart = new InstacartNamespace(this);
     this.microCenter = new MicroCenterNamespace(this);
     this.walgreens = new WalgreensNamespace(this);
     this.cvs = new CvsNamespace(this);

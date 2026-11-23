@@ -368,6 +368,27 @@ export type {
   AutozoneCategoriesOptions,
   AutozoneStoreStockOptions,
 } from "./namespaces/autozone.js";
+export { InstacartNamespace, INSTACART_TIMEOUT } from "./namespaces/instacart.js";
+export type {
+  InstacartCountry,
+  InstacartLanguage,
+  InstacartServiceType,
+  InstacartSort,
+  InstacartZip,
+  InstacartRetailer,
+  InstacartProductId,
+  InstacartRetailersOptions,
+  InstacartSearchOptions,
+  InstacartCrossSearchOptions,
+  InstacartProductOptions,
+  InstacartPriceCompareOptions,
+  InstacartCategoriesOptions,
+  InstacartCategoryOptions,
+  InstacartDealsOptions,
+  InstacartStoresOptions,
+  InstacartSuggestionsOptions,
+  InstacartReviewsOptions,
+} from "./namespaces/instacart.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
