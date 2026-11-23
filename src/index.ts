@@ -368,6 +368,27 @@ export type {
   AutozoneCategoriesOptions,
   AutozoneStoreStockOptions,
 } from "./namespaces/autozone.js";
+export { OreillyNamespace, OREILLY_TIMEOUT } from "./namespaces/oreilly.js";
+export type {
+  OreillyCountry,
+  OreillySort,
+  OreillyAvailability,
+  OreillyVehicleLevel,
+  OreillyVehicle,
+  OreillyListOptions,
+  OreillySearchOptions,
+  OreillyCrossReferenceOptions,
+  OreillyProductOptions,
+  OreillyVehiclesOptions,
+  OreillyCompatibilityOptions,
+  OreillyCategoryOptions,
+  OreillyCategoriesOptions,
+  OreillyBrandOptions,
+  OreillyStoreStockOptions,
+  OreillyStoresOptions,
+  OreillyStoreOptions,
+  OreillySuggestionsOptions,
+} from "./namespaces/oreilly.js";
 export { InstacartNamespace, INSTACART_TIMEOUT } from "./namespaces/instacart.js";
 export type {
   InstacartCountry,

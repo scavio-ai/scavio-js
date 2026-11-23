@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 97 platforms on one API key, plus `extract()` to read
+data across 98 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2587,6 +2587,82 @@ console.log(fr.data.currency, fr.data.items[0]?.price_text);
 ```
 
 Every call raises the request timeout to `INSTACART_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [O'Reilly Auto Parts](https://scavio.dev/docs/oreilly-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+O'Reilly Auto Parts (oreillyauto.com), the US auto parts retailer: O'Reilly
+part-number cross-reference with prices. Another brand's, AutoZone's or an OE
+part number in, O'Reilly's matching parts out with price, core charge,
+rebates and pickup near a ZIP; plus the parts that fit a vehicle, VIN decode,
+store stock near a ZIP and the store directory (US and Mexico). Fourteen
+endpoints on `client.oreilly` (new in 0.79.0): `search`, `crossReference`,
+`product`, `vehicles`, `compatibility`, `category`, `categories`, `brand`,
+`storeStock`, `stores`, `store`, `suggestions`, `rebates` and `deals`. 2
+credits per call; `product` by `line_code` + `part_number` 4 (by link 2);
+`crossReference` 2 with `part_type_id` + `manufacturer`, 4 with one of them or
+when several manufacturers use the number, 6 with neither when one
+manufacturer matches; `brand` index (no brand) 4; `storeStock` and `stores` by
+`zip` 4 (by `latitude` + `longitude`, or the directory, 2); `deals` 4. Pair it
+with `client.autozone` for a two-store parts price check on the same part.
+
+- Markets: `country` us (default, oreillyauto.com, USD) on every endpoint; mx
+  on `stores` and `store` only (O'Reilly's Mexican store directory, in
+  Spanish; Mexico shows no prices, so mx elsewhere is a 400, not charged).
+- Prices: every price is O'Reilly's price for the store O'Reilly assigns to
+  the request, named in `priced_for` (store id, address, city, state, ZIP).
+  O'Reilly prices differ by store, so two calls can be priced for different
+  stores; there is no store or ZIP input for prices. `core_charge` is the
+  refundable deposit O'Reilly adds on parts like batteries until the old part
+  is returned (0 when none).
+- Lists (`search`, `category`, `brand`, `crossReference`): 24 a page, `page`
+  1-20 (O'Reilly serves 20 pages; above 20 is a 400, not charged); sorts
+  `relevance`, `price_desc`, `price_asc`, `best_selling`, `brand`; filters
+  `brand`, `availability` (`store_pickup`, `home_delivery`) and up to 4
+  attribute facets. List items carry no rating (`product` does).
+- Fitment: `vehicle` takes `{ base_vehicle_id }` from
+  `vehicles({ level: "resolve" })`; O'Reilly pins year, make and model with it
+  and submodel and engine show in `fit_notes`. `vehicles({ level: "vin" })`
+  decodes a 17-character VIN. On `product`, `vehicle_fit.fits` is true or null,
+  never false: check fit with a vehicle `search` / `category` or
+  `compatibility`.
+- `crossReference`: another brand's or an OE part number to O'Reilly's parts
+  (it can return 0 matches); when several manufacturers use the number and
+  none is sent, the answer is the lists to choose from with no items.
+- `product`: UPC, specifications, documents, deals, rebates, rating and the 10
+  most recent reviews (no paging, sort or star filter; no reviewer identity).
+  `storeStock`: stores within 50 miles that can hand over the part, as
+  availability states (in store now, store pickup, pickup time), not unit
+  counts. `stores`: the 25 nearest within 50 miles with hours and services, or
+  the directory by state (+ city).
+- Not available: unit counts in store stock, a chosen store for prices,
+  reviews past the 10 most recent, Q&A, Mexico prices or catalog, Canada,
+  license-plate lookup, the weekly ad, repair guides or trouble codes,
+  O'Reilly Pro / First Call Online commercial pricing, price history (poll and
+  store the answers), checkout.
+
+```typescript
+// Another brand's part number in, O'Reilly's matching parts out, priced.
+const xref = (await client.oreilly.crossReference({ part_number: "PH3614", part_type_id: "02269", manufacturer: "FRAM" })) as any;
+console.log(xref.data.total, xref.data.replacing_brands, xref.data.priced_for);
+for (const it of xref.data.items.slice(0, 3)) console.log(it.line_code, it.part_number, it.name, it.price, it.core_charge);
+
+// Parts that fit one vehicle: resolve the base_vehicle_id, then search with it.
+const v = (await client.oreilly.vehicles({ level: "resolve", year: 2015, make_id: 23076, model_id: 31549 })) as any;
+const fit = (await client.oreilly.search({ query: "brake pads", vehicle: { base_vehicle_id: v.data.vehicle.base_vehicle_id } })) as any;
+console.log(fit.data.total, fit.data.vehicle);
+
+// One product: price, core charge, deals, rebates, rating and the 10 most recent reviews.
+const p = (await client.oreilly.product({ line_code: "BB", part_number: "SC1001" })) as any;
+console.log(p.data.priced_for, p.data.price, p.data.core_charge, p.data.rating, p.data.reviews.length);
+
+// Which stores near a ZIP can hand over the part (states, not unit counts).
+const stock = (await client.oreilly.storeStock({ line_code: "SSB", part_number: "48PLT", zip: "60540" })) as any;
+for (const s of stock.data.stores.slice(0, 3)) console.log(s.store_id, s.distance_miles, s.availability);
+```
+
+Every call raises the request timeout to `OREILLY_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 
