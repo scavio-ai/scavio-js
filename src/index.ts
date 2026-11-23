@@ -973,6 +973,25 @@ export type {
   LowesStoresOptions,
   LowesReviewsOptions,
 } from "./namespaces/lowes.js";
+export { AcehardwareNamespace, ACEHARDWARE_TIMEOUT } from "./namespaces/acehardware.js";
+export type {
+  AcehardwareStore,
+  AcehardwareSort,
+  AcehardwareOffer,
+  AcehardwarePageSize,
+  AcehardwareListOptions,
+  AcehardwareSearchOptions,
+  AcehardwareProductOptions,
+  AcehardwareStoreStockOptions,
+  AcehardwareStoreOptions,
+  AcehardwareStoresOptions,
+  AcehardwareCategoryOptions,
+  AcehardwareCategoriesOptions,
+  AcehardwareBrandOptions,
+  AcehardwareDealsOptions,
+  AcehardwareWeeklyAdOptions,
+  AcehardwarePaintColorsOptions,
+} from "./namespaces/acehardware.js";
 export type {
   SamsClubSort,
   SamsClubReviewSort,

@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 98 platforms on one API key, plus `extract()` to read
+data across 99 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2664,6 +2664,80 @@ for (const s of stock.data.stores.slice(0, 3)) console.log(s.store_id, s.distanc
 
 Every call raises the request timeout to `OREILLY_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Ace Hardware](https://scavio.dev/docs/acehardware-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Ace Hardware (acehardware.com), the US hardware cooperative: Ace Hardware
+prices by store. An item's price at the Ace store you pick (named in
+`priced_for`), exact units on hand at that store and its 25 nearest, and that
+store's weekly ad; plus search, categories, brands, deals with promo codes,
+store details and Ace's paint colours. Eleven endpoints on
+`client.acehardware` (new in 0.80.0): `search`, `product`, `storeStock`,
+`store`, `stores`, `category`, `categories`, `brand`, `deals`, `weeklyAd` and
+`paintColors`. 1 credit per call; `search` 2 (3 when Ace redirects the search
+to a category and the list options are applied to it); `product` 2 (with or
+without `store`); `storeStock` 1 per 5 stores (1 store 1, 25 stores 5,
+`nearby` 6); `stores` with `details` 1 lookup per store (25 stores 6). An
+occasional call costs 2 instead of 1; `credits_used` in the response is what
+was charged. Pair it with `client.homeDepot` and `client.lowes` for a local
+hardware price check on the same item (brand + model).
+
+- Market: US only (acehardware.com, USD); no method takes `country`.
+- Prices: Ace stores are independently owned and operated, and the same item
+  can be priced differently at different stores (Ace's terms: pricing varies
+  by location). `product` with `store` (a 5-digit Ace store number, as a
+  string to keep leading zeros, e.g. `"03085"`) returns the price as Ace shows
+  it for that store, with `priced_for` {store_id, price_list}; without a store,
+  `priced_for` names the price list Ace used (`CORP` is Ace's online price).
+  `msrp` is reported as Ace gives it and can be below a store's price.
+  Captured 2026-11-23: item 72779 (Ace ice melt, 40 lb) at $35.99 for store
+  10665 (New York), $21.99 for 18250 (Chicago), $18.99 for 03085 (Kalona,
+  Iowa).
+- Lists (`search`, `category`, `brand`, `deals`): the price Ace shows in its
+  listing (`price_list` per item), not a store's price; 15, 30 (default), 50,
+  100 or 200 a page; sorts `relevance`, `price_asc`, `price_desc`, `name_asc`,
+  `name_desc`, `newest`, `oldest`; filters `brand`, `offer` (`sale`,
+  `ace_rewards`, `buy_and_get`, `buy_more_save`), `on_sale` and facet
+  `filters`. `deals` adds Ace's site-wide promotions with codes and dates.
+- Stores: no store search by ZIP or city. Store numbers are in every Ace store
+  page link (acehardware.com/store-details/<number>); `stores` lists the 25
+  stores Ace names as nearest to one store. `storeStock` returns exact units on
+  hand (`units_in_stock`, `soft_units`, shelf `location_code`, regional
+  distribution centre units); Ace answers 0 for a store number or product it
+  does not know, exactly as for one out of stock. `weeklyAd` returns one
+  store's circular with `valid_from` / `valid_to` and the ad's own price text.
+- Not available: review or Q&A text (rating and count only), search
+  suggestions, ZIP or city store search, pickup or delivery dates, price
+  history (poll and store the answers), Ace Rewards member prices, Ace
+  Handyman, rentals, Ace-licensed stores outside the US, checkout.
+
+```typescript
+// The same item priced for three Ace stores.
+for (const store of ["10665", "18250", "03085"]) {
+  const p = (await client.acehardware.product({ product_code: "72779", store })) as any;
+  console.log(store, p.data.priced_for, p.data.price, p.data.msrp);
+}
+
+// Exact units on hand at chosen stores, or at one store and its 25 nearest (6 credits).
+const stock = (await client.acehardware.storeStock({ product_code: "72779", stores: ["18250", "17309"] })) as any;
+for (const s of stock.data.stores) console.log(s.store_id, s.units_in_stock, s.location_code);
+const nearby = (await client.acehardware.storeStock({ product_code: "72779", store: "18250", nearby: true })) as any;
+console.log(nearby.data.count, nearby.data.in_stock_count, nearby.data.total_units);
+
+// One store's weekly ad, and the stores nearest a store.
+const ad = (await client.acehardware.weeklyAd({ store: "18250" })) as any;
+console.log(ad.data.title, ad.data.valid_from, ad.data.valid_to, ad.data.total_pages);
+const near = (await client.acehardware.stores({ store: "03085", details: true, limit: 4 })) as any;
+
+// Lists carry Ace's listing price, not a store's price.
+const hits = (await client.acehardware.search({ query: "brass hose nozzle" })) as any;
+const deals = (await client.acehardware.deals({ offer: "sale" })) as any;
+console.log(hits.data.total, deals.data.promotions.map((p: any) => p.code));
+```
+
+Every call raises the request timeout to `ACEHARDWARE_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 
 ### [Carrefour](https://scavio.dev/docs/carrefour-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
