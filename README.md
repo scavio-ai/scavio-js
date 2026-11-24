@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 101 platforms on one API key, plus `extract()` to read
+data across 102 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2881,6 +2881,74 @@ console.log(ca.data.price, ca.data.was_price_text, hits.data.total, xmas.data.to
 ```
 
 Every call raises the request timeout to `MICHAELS_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Nike](https://scavio.dev/docs/nike-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Nike (nike.com, including Jordan Brand): Nike's sale price next to its own
+full price and discount percent as Nike gives them, every size with its GTIN,
+and Nike's launch calendar with price, release start, method and a per-size
+level for each launch item; the same style code priced on 62 storefronts in 42
+countries, each in its own currency. Eight endpoints on `client.nike` (new in
+0.83.0): `search`, `product`, `category`, `brand`, `deals`, `releases`,
+`release` and `reviews`. 1 credit per call; `credits_used` in the response is
+what was charged. Nike has no public API for catalog, prices or launches. Pair
+it with `client.footlocker`, `client.dicks`, `client.amazon` and `client.ebay`
+for a price check on the same style code.
+
+- Markets: `country` is a two-letter storefront code (default `"us"`,
+  www.nike.com; `"cn"` is www.nike.com.cn) and `language` picks the storefront
+  language where a country has several (`ch`: de, en, fr, it; `be`: nl, de,
+  en, fr; `ca`: en, fr; `us`: en, es; `jp`: ja, en). `releases` and `release`
+  are not offered on `vn`, `cn` or `jp` in English; `reviews` is not offered
+  on `cn`.
+- Prices: per storefront, and they differ between markets, also inside the
+  euro zone. `price`, `full_price` and `discount_percent` are as Nike gives
+  them; `promotions` carry Nike's offer text with its dates. Captured
+  2026-11-24: the Nike Dunk Low (style color DD1503-103) at $78.97 next to a
+  $120 full price (34%) on www.nike.com, £54.99 next to £109.99 (50%) on
+  nike.com/gb, €59.99 next to €119.99 (50%) on nike.com/fr and ¥17,050 on
+  nike.com/jp.
+- Lists (`search`, `category`, `brand`, `deals`): Nike's first page only (the
+  24 product groups Nike's page shows first; `total` and `total_pages` as Nike
+  gives them); sorts `featured`, `newest`, `price_high`, `price_low`; `filter`
+  takes facet tokens from an earlier answer (one on `search`, up to 6 on the
+  others). Keywords go in `q`.
+- Sizes and launches: `product` lists every size with its GTIN and Nike's
+  status (sizes, not stock levels). Launch items carry `method` (LINE or DRAW,
+  as Nike labels it) and a per-size `level` (HIGH, MEDIUM, LOW or OOS as Nike
+  gives it); before a launch Nike can show LOW on every size. Read-only data:
+  no entry or purchase.
+- Not available: store locator, in-store or pickup stock, stock levels for
+  regular products, review paging or Q&A (`reviews` is the summary and the 3
+  newest reviews), search suggestions, pages past the first, member prices,
+  gift cards, Nike Factory store prices, Converse, checkout.
+
+```typescript
+// Price next to Nike's full price, every size with its GTIN, colorways.
+const p = (await client.nike.product({ style_color: "DD1503-103" })) as any;
+console.log(p.data.price, p.data.full_price, p.data.discount_percent, p.data.currency);
+console.log(p.data.sizes.map((s: any) => [s.label, s.gtin, s.status]));
+
+// The same style color on other storefronts, each in its own currency.
+for (const country of ["gb", "fr", "jp"] as const) {
+  const r = (await client.nike.search({ q: "DD1503-103", country })) as any;
+  console.log(country, r.data.items[0]?.price, r.data.market.currency);
+}
+
+// The launch calendar: price, release start, method and per-size level.
+const cal = (await client.nike.releases()) as any;
+for (const l of cal.data.launches) console.log(l.style_color, l.name, l.release_start, l.method, l.sizes.map((s: any) => s.level));
+
+// Lists and a review summary.
+const jordan = (await client.nike.brand({ brand: "jordan", sort: "newest" })) as any;
+const sale = (await client.nike.deals({ gender: "women" })) as any;
+const r = (await client.nike.reviews({ style_color: "CW2288-111" })) as any;
+console.log(jordan.data.total, sale.data.total, r.data.total_reviews, r.data.average_rating, r.data.review_summary);
+```
+
+Every call raises the request timeout to `NIKE_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 

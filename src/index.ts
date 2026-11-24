@@ -1036,6 +1036,27 @@ export type {
   MichaelsDealsOptions,
   MichaelsSuggestionsOptions,
 } from "./namespaces/michaels.js";
+export { NikeNamespace, NIKE_TIMEOUT } from "./namespaces/nike.js";
+export type {
+  NikeCountry,
+  NikeLaunchCountry,
+  NikeReviewCountry,
+  NikeLanguage,
+  NikeSort,
+  NikeBrand,
+  NikeGender,
+  NikeReleaseView,
+  NikeMarket,
+  NikeListOptions,
+  NikeSearchOptions,
+  NikeProductOptions,
+  NikeCategoryOptions,
+  NikeBrandOptions,
+  NikeDealsOptions,
+  NikeReleasesOptions,
+  NikeReleaseOptions,
+  NikeReviewsOptions,
+} from "./namespaces/nike.js";
 export type {
   SamsClubSort,
   SamsClubReviewSort,
