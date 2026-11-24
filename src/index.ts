@@ -992,6 +992,26 @@ export type {
   AcehardwareWeeklyAdOptions,
   AcehardwarePaintColorsOptions,
 } from "./namespaces/acehardware.js";
+export { TractorsupplyNamespace, TRACTORSUPPLY_TIMEOUT } from "./namespaces/tractorsupply.js";
+export type {
+  TractorsupplyStore,
+  TractorsupplyItemNumber,
+  TractorsupplySort,
+  TractorsupplyPageSize,
+  TractorsupplyPricedFor,
+  TractorsupplyListOptions,
+  TractorsupplySearchOptions,
+  TractorsupplyProductOptions,
+  TractorsupplyMultiStoreOptions,
+  TractorsupplyFulfillmentOptions,
+  TractorsupplyStoresOptions,
+  TractorsupplyStoreOptions,
+  TractorsupplyCategoryOptions,
+  TractorsupplyCategoriesOptions,
+  TractorsupplyBrandOptions,
+  TractorsupplyDealsOptions,
+  TractorsupplyPromotionsOptions,
+} from "./namespaces/tractorsupply.js";
 export type {
   SamsClubSort,
   SamsClubReviewSort,

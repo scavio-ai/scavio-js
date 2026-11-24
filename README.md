@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 99 platforms on one API key, plus `extract()` to read
+data across 100 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2737,6 +2737,81 @@ console.log(hits.data.total, deals.data.promotions.map((p: any) => p.code));
 ```
 
 Every call raises the request timeout to `ACEHARDWARE_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Tractor Supply](https://scavio.dev/docs/tractorsupply-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Tractor Supply (tractorsupply.com), the US rural lifestyle retailer: an
+item's price at the store you pick (named in `priced_for` with the store's
+price zone), one item's price at up to 25 stores in one call, exact units per
+store with in-transit stock and its pickup date, and pickup and delivery
+options for a ZIP; plus search, categories, brands, deals, promotions with
+dates and store details. Twelve endpoints on `client.tractorsupply` (new in
+0.81.0): `search`, `product`, `storePrices`, `storeStock`, `fulfillment`,
+`stores`, `store`, `category`, `categories`, `brand`, `deals` and
+`promotions`. 1 credit per call; `product` 2 on the first call for a store not
+yet looked up; `storePrices` 1 per 5 lookups (each store's price, a store's
+details when not yet known, the item: 25 new stores cost 11). `credits_used`
+in the response is what was charged. Pair it with `client.acehardware`,
+`client.walmart` and `client.chewy` for a price check on the same item.
+
+- Market: US only (tractorsupply.com, USD); no method takes `country`.
+- Prices: Tractor Supply prices by store, so `search`, `product`, `category`,
+  `brand` and `deals` need `store` (a Tractor Supply store number, e.g.
+  `"1933"`) or `zip` (the nearest store Tractor Supply lists for it is used);
+  there is no default store. Every price answer carries `priced_for`
+  {store_id, zone, city, state, from, zip}. Tractor Supply's terms note that
+  prices may vary in different geographic markets, and the same item can be
+  priced differently at different stores. Captured 2026-11-24: Producer's
+  Pride 16% Layer Pellets, 50 lb (item 2340147) at $14.49 for store 1933
+  (Glendive, MT, zone 81) and $20.19 for store 1923 (Port Orchard, WA, zone
+  92). Some items carry a manufacturer's minimum advertised price (`mapp`) and
+  show one price everywhere.
+- Lists (`search`, `category`, `brand`, `deals`): 24 (default), 48, 96 or 200
+  a page, pages 1-100; sorts `popular`, `rating`, `name_asc`, `name_desc`,
+  `price_asc`, `price_desc`, `recent`, `new_arrivals`; filters `brand`,
+  `on_sale`, `new`, `pickup`, `rating` and facet `filters`. `deals` lists
+  products on sale (`type: "sale"`, default) or new arrivals (`type: "new"`).
+- Items and stores: item numbers are 7 digits (`items[].item_number`), the
+  input of `product`, `storePrices`, `storeStock`, `fulfillment` and
+  `promotions`. `storeStock` returns units as Tractor Supply reports them (not
+  a promise), status and in-transit units with the pickup date. `stores` lists
+  the stores nearest a ZIP with address, hours, price zone, services (propane,
+  trailer rental, PetVet, pet wash, ...) and dated store events.
+- Not available: review or Q&A text (rating and count only), search
+  suggestions, the weekly ad, a clearance list, price history (poll and store
+  the answers), Neighbor's Club member prices, live chick availability,
+  Petsense, checkout.
+
+```typescript
+// The same bag of feed priced for two stores (store or zip is required).
+for (const store of ["1933", "1923"]) {
+  const p = (await client.tractorsupply.product({ item_number: "2340147", store })) as any;
+  console.log(store, p.data.priced_for.zone, p.data.price, p.data.mapp);
+}
+
+// One item at up to 25 stores in one call.
+const sp = (await client.tractorsupply.storePrices({ item_number: "2340147", stores: ["1933", "1923"] })) as any;
+console.log(sp.data.price_range);
+for (const s of sp.data.stores) console.log(s.store_id, s.city, s.state, s.zone, s.price);
+
+// Exact units at the stores nearest a ZIP, with stock in transit.
+const stock = (await client.tractorsupply.storeStock({ item_number: "2340147", zip: "59301" })) as any;
+console.log(stock.data.count, stock.data.in_stock_count, stock.data.total_units, stock.data.in_transit_units);
+
+// Pickup and delivery options for one item at one store and a ZIP.
+const f = (await client.tractorsupply.fulfillment({ item_number: "2340147", store: "1933", zip: "59330" })) as any;
+console.log(f.data.pickup, f.data.delivery_options.map((o: any) => [o.type, o.delivery_date]));
+
+// Lists priced for one store, and an item's promotions with dates.
+const hits = (await client.tractorsupply.search({ query: "layer pellets", store: "1933" })) as any;
+const sale = (await client.tractorsupply.deals({ store: "1933" })) as any;
+const promos = (await client.tractorsupply.promotions({ item_number: "3609112" })) as any;
+console.log(hits.data.total, sale.data.total, promos.data.promotions.map((p: any) => [p.name, p.starts, p.ends]));
+```
+
+Every call raises the request timeout to `TRACTORSUPPLY_TIMEOUT` (240s) and
 never lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 
