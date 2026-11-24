@@ -14,7 +14,8 @@ import type { Scavio } from "../client.js";
 // from, zip}. Tractor Supply's terms note that prices may vary in different
 // geographic markets, and the same item can be priced differently at
 // different stores. Some items carry a manufacturer's minimum advertised price
-// (mapp) and show one price everywhere. Item numbers are 7 digits
+// (mapp), reported as given; flagged items can
+// still show different prices at different stores. Item numbers are 7 digits
 // (items[].item_number) and are the input of product(), storePrices(),
 // storeStock(), fulfillment() and promotions(). storeStock() returns units as
 // Tractor Supply reports them, with in-transit units and their pickup date.
