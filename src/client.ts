@@ -48,6 +48,7 @@ import { AcehardwareNamespace } from "./namespaces/acehardware.js";
 import { TractorsupplyNamespace } from "./namespaces/tractorsupply.js";
 import { MichaelsNamespace } from "./namespaces/michaels.js";
 import { NikeNamespace } from "./namespaces/nike.js";
+import { StaplesNamespace } from "./namespaces/staples.js";
 import { SamsClubNamespace } from "./namespaces/sams-club.js";
 import { CanadianTireNamespace } from "./namespaces/canadian-tire.js";
 import { DollarGeneralNamespace } from "./namespaces/dollar-general.js";
@@ -260,6 +261,7 @@ export class Scavio extends ScavioCore {
   readonly tractorsupply: TractorsupplyNamespace;
   readonly michaels: MichaelsNamespace;
   readonly nike: NikeNamespace;
+  readonly staples: StaplesNamespace;
   readonly samsClub: SamsClubNamespace;
   readonly canadianTire: CanadianTireNamespace;
   readonly dollarGeneral: DollarGeneralNamespace;
@@ -389,6 +391,7 @@ export class Scavio extends ScavioCore {
     this.tractorsupply = new TractorsupplyNamespace(this);
     this.michaels = new MichaelsNamespace(this);
     this.nike = new NikeNamespace(this);
+    this.staples = new StaplesNamespace(this);
     this.samsClub = new SamsClubNamespace(this);
     this.canadianTire = new CanadianTireNamespace(this);
     this.dollarGeneral = new DollarGeneralNamespace(this);

@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 102 platforms on one API key, plus `extract()` to read
+data across 103 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2949,6 +2949,91 @@ console.log(jordan.data.total, sale.data.total, r.data.total_reviews, r.data.ave
 ```
 
 Every call raises the request timeout to `NIKE_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Staples](https://scavio.dev/docs/staples-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Staples (staples.com, the US office supply retailer; Staples Canada at
+staples.ca): an ink cartridge's price next to Staples' own cost per page and
+the stated page yield, copy paper per ream, and the units of one item at the
+Staples stores near a ZIP exactly as Staples reports them. Twelve endpoints on
+`client.staples` (new in 0.84.0): `search`, `product`, `category`,
+`categories`, `deals`, `coupons`, `storeStock`, `stores`, `store`, `reviews`,
+`questions` and `trending`. 1 credit per call; `credits_used` in the response
+is what was charged. Staples has no public API for its catalog, prices or
+store stock (Staples Business Advantage connects contract buyers' purchasing
+systems). Pair it with `client.amazon`, `client.walmart`, `client.target` and
+`client.bestbuy` for a price check on the same item.
+
+- Markets: `country` is `"us"` (default, www.staples.com, USD) or `"ca"`
+  (www.staples.ca, Staples Canada, CAD) and `language` is `"en"` (default) or
+  `"fr"` (with `"ca"` only), on `search` and `product`; every other method is
+  US only. With `"ca"`, `search` returns Staples Canada's top matches (about
+  5; no paging, sort or filters) and `product` takes `item_id`, `handle` or a
+  staples.ca link.
+- Prices: national. The ZIP changes delivery availability and dates, the store
+  changes pickup units, neither changes the price. `price` and `was_price` are
+  as Staples shows them (`was_price` is Staples' Regular price, given only when
+  above the price); `discount_percent` is computed by Scavio from the two.
+  `price_per_unit_text` is Staples' own. Captured 2026-11-24: Hammermill Copy
+  Plus (item 122374, 10 reams) at $49.99 next to Staples' Regular $83.19, at
+  "$5.00/Ream", with "Offer Expires on 11/28/2026"; the HP 64XL Black High
+  Yield cartridge (item 2724258, "Prints Up to 600 Pages") at Staples' own
+  "$0.10 Cost Per Page".
+- Lists (`search`, `category`, `deals`): 40 a page to page 250; sorts
+  `best_match`, `price_low`, `price_high`, `rating`, `newest`; `brand` (up to
+  5), `filters` (facet values from an earlier answer, up to 10), `min_price`,
+  `max_price`, and the On Promotion / Clearance deal filters. An item number in
+  `q` answers with that product. Keywords go in `q`.
+- Store stock: `storeStock` lists only the stores near a US ZIP that have the
+  item for pickup, nearest first, with units as Staples reports them and the
+  pickup text ("Ready in 30 mins"). The same HP 64XL showed 7 stores near ZIP
+  60540 with 63 units in all (12 at store 1633, Naperville). An empty list
+  means no nearby store has it or it is not offered for store pickup. Staples
+  returns a `threshold` value beside the units; it is passed through as given.
+- Product extras: `page_yield`, `sheets_per_ream`, `promotions` and
+  `offer_expires` (Staples' own texts and expiry), `coupon_codes`, ream /
+  carton variants, delivery dates for a `zip` and pickup units at a `store`.
+  staples.com publishes no UPC (`model` is the manufacturer part number);
+  Staples Canada products carry a `barcode`.
+- Reviews and Q&A: `reviews` pages up to 100 a page with 6 sorts, star and
+  photo filters, verified and incentivized flags and Staples' own review
+  summary; `questions` returns 10 a page with their answers. No reviewer
+  names.
+- Not available: the weekly ad, search suggestions, print and tech service
+  prices, ink recycling rewards, Rewards member prices, price match requests,
+  Staples Business Advantage contract prices, price history (poll and store
+  the answers), checkout.
+
+```typescript
+// Search: 40 a page with Staples' own price per unit.
+const hits = (await client.staples.search({ q: "copy paper", sort: "price_low" })) as any;
+for (const it of hits.data.items.slice(0, 5)) console.log(it.item_id, it.name, it.price, it.was_price, it.price_per_unit_text);
+
+// One product: price per unit, page yield, promotions with expiry, delivery for a ZIP, pickup units at a store.
+const p = (await client.staples.product({ item_id: "122374", zip: "60540", store: "1633" })) as any;
+console.log(p.data.price, p.data.was_price, p.data.price_per_unit, p.data.price_per_unit_unit, p.data.offer_expires);
+console.log(p.data.availability.pickup, p.data.availability.options.map((o: any) => [o.mode, o.date_text]));
+
+// Units of one item at the stores near a ZIP that have it.
+const ss = (await client.staples.storeStock({ item_id: "2724258", zip: "60540" })) as any;
+console.log(ss.data.count, ss.data.total_units);
+for (const s of ss.data.stores) console.log(s.store_number, s.address.city, s.distance_miles, s.units, s.pickup_text);
+
+// Canada in English or French (CAD), with a barcode on the product.
+const ca = (await client.staples.search({ q: "hp 67", country: "ca" })) as any;
+const cp = (await client.staples.product({ handle: ca.data.items[0].handle, country: "ca" })) as any;
+console.log(cp.data.name, cp.data.price, cp.data.currency, cp.data.barcode);
+
+// Reviews (up to 100 a page), questions, coupons.
+const rv = (await client.staples.reviews({ item_id: "24430099", limit: 100, sort: "newest" })) as any;
+const qa = (await client.staples.questions({ item_id: "990119" })) as any;
+const coupons = (await client.staples.coupons()) as any;
+console.log(rv.data.total, rv.data.rating, qa.data.total, coupons.data.coupons.map((c: any) => [c.code, c.headline, c.ends]));
+```
+
+Every call raises the request timeout to `STAPLES_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 

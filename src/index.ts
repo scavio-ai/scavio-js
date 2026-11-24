@@ -1057,6 +1057,31 @@ export type {
   NikeReleaseOptions,
   NikeReviewsOptions,
 } from "./namespaces/nike.js";
+export { StaplesNamespace, STAPLES_TIMEOUT } from "./namespaces/staples.js";
+export type {
+  StaplesCountry,
+  StaplesLanguage,
+  StaplesItemId,
+  StaplesStore,
+  StaplesSort,
+  StaplesDealType,
+  StaplesReviewSort,
+  StaplesQuestionSort,
+  StaplesMarket,
+  StaplesListOptions,
+  StaplesSearchOptions,
+  StaplesProductOptions,
+  StaplesCategoryOptions,
+  StaplesCategoriesOptions,
+  StaplesDealsOptions,
+  StaplesCouponsOptions,
+  StaplesStoreStockOptions,
+  StaplesStoresOptions,
+  StaplesStoreOptions,
+  StaplesReviewsOptions,
+  StaplesQuestionsOptions,
+  StaplesTrendingOptions,
+} from "./namespaces/staples.js";
 export type {
   SamsClubSort,
   SamsClubReviewSort,
