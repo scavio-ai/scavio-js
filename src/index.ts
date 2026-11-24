@@ -1012,6 +1012,30 @@ export type {
   TractorsupplyDealsOptions,
   TractorsupplyPromotionsOptions,
 } from "./namespaces/tractorsupply.js";
+export { MichaelsNamespace, MICHAELS_TIMEOUT } from "./namespaces/michaels.js";
+export type {
+  MichaelsCountry,
+  MichaelsLanguage,
+  MichaelsSku,
+  MichaelsStore,
+  MichaelsSort,
+  MichaelsSeller,
+  MichaelsDealType,
+  MichaelsMarket,
+  MichaelsListOptions,
+  MichaelsDealFlags,
+  MichaelsSearchOptions,
+  MichaelsProductOptions,
+  MichaelsStoreStockOptions,
+  MichaelsStoreInventoryOptions,
+  MichaelsStoresOptions,
+  MichaelsStoreOptions,
+  MichaelsCategoryOptions,
+  MichaelsCategoriesOptions,
+  MichaelsBrandOptions,
+  MichaelsDealsOptions,
+  MichaelsSuggestionsOptions,
+} from "./namespaces/michaels.js";
 export type {
   SamsClubSort,
   SamsClubReviewSort,
