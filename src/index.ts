@@ -1082,6 +1082,26 @@ export type {
   StaplesQuestionsOptions,
   StaplesTrendingOptions,
 } from "./namespaces/staples.js";
+export { DollarTreeNamespace, DOLLARTREE_TIMEOUT, DOLLARTREE_SLOW_TIMEOUT } from "./namespaces/dollartree.js";
+export type {
+  DollarTreeItemId,
+  DollarTreeCategory,
+  DollarTreeSort,
+  DollarTreeDealType,
+  DollarTreeStoreCountry,
+  DollarTreeListOptions,
+  DollarTreeItemOptions,
+  DollarTreeSearchOptions,
+  DollarTreeProductOptions,
+  DollarTreeCategoryOptions,
+  DollarTreeCategoriesOptions,
+  DollarTreeBrandOptions,
+  DollarTreeDealsOptions,
+  DollarTreeStoreStockOptions,
+  DollarTreeStoresOptions,
+  DollarTreeStoreOptions,
+  DollarTreeReviewsOptions,
+} from "./namespaces/dollartree.js";
 export type {
   SamsClubSort,
   SamsClubReviewSort,

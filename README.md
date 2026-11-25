@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 103 platforms on one API key, plus `extract()` to read
+data across 104 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -3036,6 +3036,77 @@ console.log(rv.data.total, rv.data.rating, qa.data.total, coupons.data.coupons.m
 Every call raises the request timeout to `STAPLES_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
+
+### [Dollar Tree](https://scavio.dev/docs/dollartree-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Dollar Tree (dollartree.com, the US and Canada discount variety store chain):
+an item's online case price next to its unit price, case pack, minimum order
+and split-case rules exactly as Dollar Tree gives them, and the units of one
+item at a Dollar Tree store plus its nearby stores. Ten endpoints on
+`client.dollartree` (new in 0.85.0): `search`, `product`, `category`,
+`categories`, `brand`, `deals`, `storeStock`, `stores`, `store` and `reviews`.
+1 credit per call, `stores` 5; `credits_used` in the response is what was
+charged. Dollar Tree has no public API for its catalog, prices or store stock
+(suppliers work through its vendor portal and EDI). Pair it with
+`client.dollarGeneral`, `client.walmart`, `client.target` and
+`client.instacart` for a price check on the same item.
+
+- Markets: every method is US only (www.dollartree.com, USD) except `store`,
+  which also takes `country: "ca"` (Dollar Tree Canada store pages, English,
+  no prices). Dollar Tree Canada has no shopping site.
+- Prices: Dollar Tree's online unit prices from one national online price list
+  (the same at every store and ZIP measured); Dollar Tree notes that prices and
+  availability may vary between stores and online, and in-store shelf prices
+  are not published online. Online orders are by the case: captured 2026-11-24,
+  item 221159 (9-in. White Paper Plates, 40-ct. Packs) at $1.50 a unit,
+  `case_pack` 30, `case_price` $45.00, `minimum_quantity` 5. A case pack or
+  case price Dollar Tree gives as 0 is null, never computed; stores sell single
+  units.
+- Lists (`search`, `category`, `brand`, `deals`): 48 a page by default (up to
+  250) to page 200; sorts `relevance`, `price_low`, `price_high`, `newest`,
+  `rating`; `filters` (facet ids from an earlier answer, up to 10),
+  `price_point`, `rating`, `in_store_only`, `min_price`, `max_price`. An item
+  number in `q` answers with that item; UPCs are not matched. `deals` types:
+  `sale`, `clearance`, `new` (New Arrivals), `more_choices` (More Choices,
+  Dollar Tree's multi-price assortment). No validity dates, no weekly ad.
+- Store stock: `storeStock` needs a store number (from `stores`; a ZIP alone
+  does not pick a store) and returns the units at that store, up to about 63
+  nearby stores by store number, ship-to-home units with an ETA and the
+  ship-to-store ETA. Item 221159 showed 116 units at store 5126 (New York) and
+  63 nearby stores, 59 of them with stock.
+- Reviews: the newest English reviews, up to about 98 per call, with the
+  rating breakdown; many are syndicated from brand sites and flagged. No other
+  sort, no star filter, no Q&A, no reviewer names.
+- Slow: `storeStock`, `stores` and `reviews` usually take 10-35 s, up to about
+  2.5 minutes.
+- Not available: search suggestions, the weekly ad, deal validity dates, Quick
+  Order / bulk ordering, gift cards, Canada products and prices, price history
+  (poll and store the answers), checkout.
+
+```typescript
+// Search: unit price next to Dollar Tree's own case price and case pack.
+const hits = (await client.dollartree.search({ q: "paper plates", sort: "price_low" })) as any;
+for (const it of hits.data.items.slice(0, 5)) console.log(it.item_id, it.name, it.price, it.case_price, it.case_pack, it.minimum_quantity);
+
+// One item: case price, case pack, minimum quantity, split case, online stock.
+const p = (await client.dollartree.product({ item_id: "221159" })) as any;
+console.log(p.data.price, p.data.case_price, p.data.case_pack, p.data.minimum_quantity, p.data.split_case, p.data.online_stock);
+
+// Stores near a ZIP (5 credits), then units at one store and its nearby stores.
+const near = (await client.dollartree.stores({ zip: "60540" })) as any;
+const ss = (await client.dollartree.storeStock({ item_id: "221159", store: near.data.stores[0].store_number })) as any;
+console.log(ss.data.store.units, ss.data.nearby_in_stock, ss.data.nearby_stores.length, ss.data.ship_to_home.eta);
+
+// A Canada store page, and the newest reviews with syndication flags.
+const ca = (await client.dollartree.store({ slug: "on/toronto/2340-eglinton-ave-west", country: "ca" })) as any;
+const rv = (await client.dollartree.reviews({ item_id: "206652" })) as any;
+console.log(ca.data.hours, rv.data.rating, rv.data.reviews.map((r: any) => [r.rating, r.syndicated, r.syndication_source]));
+```
+
+Every call raises the request timeout to `DOLLARTREE_TIMEOUT` (240s), and
+`storeStock`, `stores` and `reviews` to `DOLLARTREE_SLOW_TIMEOUT` (300s); a
+longer client timeout is never lowered. Failed calls and refused inputs are
+not charged, a not-found is charged.
 
 ### [Carrefour](https://scavio.dev/docs/carrefour-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
