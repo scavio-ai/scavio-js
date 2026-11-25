@@ -802,6 +802,16 @@ export type {
   HomeDepotSearchOptions,
   HomeDepotProductOptions,
   HomeDepotReviewsOptions,
+  HomeDepotCountry,
+  HomeDepotCaLanguage,
+  HomeDepotCaDeal,
+  HomeDepotCaFilter,
+  HomeDepotCaListingOptions,
+  HomeDepotCategoryOptions,
+  HomeDepotCategoriesOptions,
+  HomeDepotStockOptions,
+  HomeDepotStoreOptions,
+  HomeDepotSuggestionsOptions,
 } from "./namespaces/home-depot.js";
 export type {
   ZillowSearchOptions,

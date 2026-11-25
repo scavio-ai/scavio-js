@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora, Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora, Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -4708,9 +4708,53 @@ await client.homeDepot.product({ item_id: "313159056" });
 await client.homeDepot.reviews({ item_id: "313159056", page: 2 });
 ```
 
-2 credits per call. Search page size is fixed at 12, so paging is the only way
-to read further; reviews are 30 per page and a page past `total_pages` is a 404.
-`product` carries only a 10-review preview — `reviews` is the paginated surface.
+US (homedepot.com, the default): 2 credits per call. Search page size is fixed
+at 12, so paging is the only way to read further; reviews are 30 per page and a
+page past `total_pages` is a 404. `product` carries only a 10-review preview —
+`reviews` is the paginated surface.
+
+#### Home Depot Canada
+
+Home Depot Canada (homedepot.ca, The Home Depot's Canadian store: 182 stores in
+10 provinces): pass `country: "ca"` to `search`, `product` and `reviews`;
+`category`, `categories`, `stock`, `store` and `suggestions` are Home Depot
+Canada only and need no country. 1 credit per call on every Canada call. Prices
+in CAD as Home Depot Canada gives them; `language: "fr"` returns French names
+and links with the same ids and prices. Home Depot Canada has no public API.
+See the [Home Depot API page](https://scavio.dev/homedepot-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+```typescript
+// Priced at one store: every product carries store_units and aisle / bay.
+await client.homeDepot.search({ query: "cordless drill", country: "ca", store_id: "7080" });
+// price = that store's price (price_source "store"), online_price beside it.
+await client.homeDepot.product({ item_id: "1000112108", country: "ca", store_id: "7128" });
+// Exact units at every store near a postal code or city, no prices.
+await client.homeDepot.stock({ item_id: "1001769719", location: "H3B 1A1" });
+await client.homeDepot.categories({ depth: 2 });
+await client.homeDepot.category({ category_id: "661103", store_id: "7128", sort_by: "price_low" });
+await client.homeDepot.store({ store_id: "7076" });
+await client.homeDepot.suggestions({ query: "christ" });
+```
+
+Captured 2026-11-25: the 2-inch x 4-inch x 8-ft SPF Premium Stud (1000112108)
+at store 7128 (ST-HENRI, QC) at 4.14 CAD with 2858 units in aisle 19, bay 001,
+next to an `online_price` of 6.58. Prices can differ by store (lumber does; the
+tools, Christmas tree and fridge sampled had one price everywhere), and the
+online price can differ from a store's price. Search takes `store_id` (default
+store 7274; `data.store` says which), `page_size` 1-40, the sorts
+`best_match`, `price_low`, `price_high` and `top_rated` (`top_sellers` is a 400
+for Canada), facet `filters` from `include_facets`, and `deals`
+(`special_buy`, `new_lower_price`, `savings`); with `category_id` or `deals`
+the query is optional. `reviews` returns the first 8 reviews per language and
+the first page of questions (page 2 is a 400; no reviewer names). When Home
+Depot Canada has no store record for an item that exists, `product` returns the
+online price with `store_price_returned: false` and `stock` answers an unbilled
+502. Not available for Canada: UPC or barcodes (Home Depot Canada shows none),
+structured sale end dates (the price badge and Home Depot's promotion text
+only), delivery quotes, the flyer, cart or checkout, price history (poll and
+store the answers). For the same item at other Canadian retailers use
+`client.canadianTire`, `client.walmart` (`domain: "ca"`) and `client.amazon`
+(`country: "ca"`); match on brand and model.
 
 ### Zillow
 
