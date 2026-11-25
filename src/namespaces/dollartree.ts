@@ -14,10 +14,17 @@ import type { Scavio } from "../client.js";
 // shelf prices are not published online. Online orders are by the case:
 // case_price is the price of case_pack units and minimum_quantity the order
 // minimum, as Dollar Tree gives them (null when Dollar Tree gives 0, never
-// computed); split_case carries the split-case rules; stores sell single
-// units. storeStock() needs a store number (a ZIP alone does not pick a
-// store): it returns the units at that store, up to about 63 nearby stores by
-// store number, ship-to-home units with an ETA and the ship-to-store ETA.
+// computed); split_case {available, multiple}: available is computed by
+// Scavio as minimum_quantity < case_pack, multiple is Dollar Tree's own.
+// product() adds split_case_fee (Dollar Tree's raw field as given; its meaning
+// is not published, so it is not a fee) and banner_code (DT or FD, not a
+// store-brand flag). Stores sell single units. storeStock() needs a store
+// number (a ZIP alone does not pick a store): it returns the units at that
+// store (status can be null), up to about 63 nearby stores by store number
+// (none at some rural stores), ship_to_home {available, dc_number, cases,
+// case_size, max_order_units, eta, express_eta, back_order} where
+// max_order_units is the most units orderable for delivery (the same at every
+// store, not cases x case_size), and ship_to_store with its dc_number.
 // search() matches item numbers, not UPCs. reviews() returns the newest
 // English reviews (up to about 98 per call; no other sort, no star filter, no
 // Q&A, no reviewer names), many syndicated from brand sites and flagged. Not
@@ -175,7 +182,7 @@ export class DollarTreeNamespace {
     return this.post("search", options);
   }
 
-  /** One item in full: unit price, case price, case pack, minimum quantity, split case, UPCs as given, online stock, specifications. 1 credit. */
+  /** One item in full: unit price, case price, case pack, minimum quantity, split case, banner code, UPCs as given, online stock, specifications. 1 credit. */
   async product(options: DollarTreeProductOptions): Promise<Record<string, unknown>> {
     return this.post("product", options);
   }
@@ -200,7 +207,7 @@ export class DollarTreeNamespace {
     return this.post("deals", options);
   }
 
-  /** Units of one item at a store plus up to about 63 nearby stores, ship-to-home and ship-to-store. Slow. 1 credit. */
+  /** Units of one item at a store plus up to about 63 nearby stores, ship-to-home (max_order_units) and ship-to-store. Slow. 1 credit. */
   async storeStock(options: DollarTreeStoreStockOptions): Promise<Record<string, unknown>> {
     return this.post("store-stock", options, DOLLARTREE_SLOW_TIMEOUT);
   }

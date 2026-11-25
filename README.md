@@ -3041,7 +3041,7 @@ charged, a not-found is charged.
 
 Dollar Tree (dollartree.com, the US and Canada discount variety store chain):
 an item's online case price next to its unit price, case pack, minimum order
-and split-case rules exactly as Dollar Tree gives them, and the units of one
+and split-case multiple as Dollar Tree gives them, and the units of one
 item at a Dollar Tree store plus its nearby stores. Ten endpoints on
 `client.dollartree` (new in 0.85.0): `search`, `product`, `category`,
 `categories`, `brand`, `deals`, `storeStock`, `stores`, `store` and `reviews`.
@@ -3061,7 +3061,11 @@ charged. Dollar Tree has no public API for its catalog, prices or store stock
   item 221159 (9-in. White Paper Plates, 40-ct. Packs) at $1.50 a unit,
   `case_pack` 30, `case_price` $45.00, `minimum_quantity` 5. A case pack or
   case price Dollar Tree gives as 0 is null, never computed; stores sell single
-  units.
+  units. `split_case` is `{available, multiple}`: `available` is computed by
+  Scavio as `minimum_quantity < case_pack` (item 221159: true, multiple 5).
+  `product` adds `split_case_fee`, Dollar Tree's raw field as given (its
+  meaning is not published, so it is not a fee), and `banner_code` (DT or FD),
+  not a store-brand flag.
 - Lists (`search`, `category`, `brand`, `deals`): 48 a page by default (up to
   250) to page 200; sorts `relevance`, `price_low`, `price_high`, `newest`,
   `rating`; `filters` (facet ids from an earlier answer, up to 10),
@@ -3070,10 +3074,19 @@ charged. Dollar Tree has no public API for its catalog, prices or store stock
   `sale`, `clearance`, `new` (New Arrivals), `more_choices` (More Choices,
   Dollar Tree's multi-price assortment). No validity dates, no weekly ad.
 - Store stock: `storeStock` needs a store number (from `stores`; a ZIP alone
-  does not pick a store) and returns the units at that store, up to about 63
-  nearby stores by store number, ship-to-home units with an ETA and the
-  ship-to-store ETA. Item 221159 showed 116 units at store 5126 (New York) and
-  63 nearby stores, 59 of them with stock.
+  does not pick a store) and returns the units at that store (`store.status`
+  can be null), up to about 63 nearby stores by store number (none at some
+  rural stores), `ship_to_home {available, dc_number, cases, case_size,
+  max_order_units, eta, express_eta, back_order}` and `ship_to_store` with its
+  `dc_number`. `max_order_units` is the most units orderable for delivery, the
+  same at every store, not `cases x case_size`. Item 221159 showed 116 units at
+  store 5126 (New York) and 63 nearby stores, 59 of them with stock;
+  `ship_to_home` came from distribution centre 99006 with 2,374 cases of 30 and
+  `max_order_units` 75,570.
+- Changed in 0.85.1: `split_case.fee` and `store_brand` removed,
+  `split_case_fee` and `banner_code` added on `product`, `ship_to_home.units`
+  replaced by `max_order_units`, `dc_number` added to `ship_to_home` and
+  `ship_to_store`.
 - Reviews: the newest English reviews, up to about 98 per call, with the
   rating breakdown; many are syndicated from brand sites and flagged. No other
   sort, no star filter, no Q&A, no reviewer names.
@@ -3095,7 +3108,7 @@ console.log(p.data.price, p.data.case_price, p.data.case_pack, p.data.minimum_qu
 // Stores near a ZIP (5 credits), then units at one store and its nearby stores.
 const near = (await client.dollartree.stores({ zip: "60540" })) as any;
 const ss = (await client.dollartree.storeStock({ item_id: "221159", store: near.data.stores[0].store_number })) as any;
-console.log(ss.data.store.units, ss.data.nearby_in_stock, ss.data.nearby_stores.length, ss.data.ship_to_home.eta);
+console.log(ss.data.store.units, ss.data.nearby_in_stock, ss.data.nearby_stores.length, ss.data.ship_to_home.max_order_units, ss.data.ship_to_home.eta);
 
 // A Canada store page, and the newest reviews with syndication flags.
 const ca = (await client.dollartree.store({ slug: "on/toronto/2340-eglinton-ave-west", country: "ca" })) as any;
