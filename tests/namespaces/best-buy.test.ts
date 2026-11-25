@@ -31,6 +31,25 @@ const ENDPOINTS: Row[] = [
   ["suggestions", { query: "ps5 con" }, "/api/v1/bestbuy/suggestions"],
   ["prices", { skus: ["6607832", "6673112", "6679316"] }, "/api/v1/bestbuy/prices"],
   ["prices", { skus: "6607832,6673112" }, "/api/v1/bestbuy/prices"],
+  // Best Buy Canada: country "ca" and its fields pass through verbatim.
+  [
+    "search",
+    { query: "4k tv", country: "ca", page_size: 48, sort: "price_low", province: "QC", language: "fr", filters: { sold_by: "best_buy", rating: 4 } },
+    "/api/v1/bestbuy/search",
+  ],
+  ["product", { sku: "19791103", country: "ca", province: "BC" }, "/api/v1/bestbuy/product"],
+  ["reviews", { sku: "19296507", country: "ca", page_size: 50, verified_only: true, with_photos: true }, "/api/v1/bestbuy/reviews"],
+  ["category", { category_id: "21344", country: "ca", sort: "best_match" }, "/api/v1/bestbuy/category"],
+  ["deals", { country: "ca", collection: "black_friday" }, "/api/v1/bestbuy/deals"],
+  ["deals", { country: "ca", collection: "clearance", page: 2, page_size: 48, sort: "price_low" }, "/api/v1/bestbuy/deals"],
+  ["stores", { country: "ca", postal_code: "M5V 3L9", radius_km: 10, limit: 5 }, "/api/v1/bestbuy/stores"],
+  ["stores", { country: "ca", city: "Winnipeg" }, "/api/v1/bestbuy/stores"],
+  ["availability", { skus: ["19791103", "19296507"], country: "ca", postal_code: "H3B 4W8", max_stores: 5 }, "/api/v1/bestbuy/availability"],
+  ["availability", { sku: "19791103", country: "ca", store_ids: ["651", "705"] }, "/api/v1/bestbuy/availability"],
+  ["suggestions", { query: "nintendo sw", country: "ca", language: "en" }, "/api/v1/bestbuy/suggestions"],
+  ["prices", { skus: ["19791103", "19296507"], country: "ca", province: "ON" }, "/api/v1/bestbuy/prices"],
+  ["questions", { sku: "19296507" }, "/api/v1/bestbuy/questions"],
+  ["questions", { sku: "19296507", sort: "newest", page: 2, page_size: 20, language: "fr" }, "/api/v1/bestbuy/questions"],
 ];
 
 type Ns = Record<string, (opts?: Record<string, unknown>) => Promise<unknown>>;
@@ -83,6 +102,7 @@ describe("bestBuy namespace", () => {
     ["availability", { sku: "6607832", zip: "94103" }],
     ["suggestions", { query: "ps5 con" }],
     ["prices", { skus: ["6607832"] }],
+    ["questions", { sku: "19296507" }],
   ] as const)("bestBuy.%s raises the request timeout, never lowers it", async (method, args) => {
     const spy = vi.spyOn(globalThis, "setTimeout");
     const delays = () => spy.mock.calls.map((c) => c[1]);

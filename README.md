@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora, Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora, Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -854,9 +854,11 @@ longer client timeout.
 
 ### [Best Buy](https://scavio.dev/docs/bestbuy-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
-Nine endpoints, new in 0.40.0, bestbuy.com (US site only), on
+Nine endpoints, new in 0.40.0, bestbuy.com (US, the default), on
 `client.bestBuy`: `search`, `product`, `reviews`, `category`, `deals`,
-`stores`, `availability`, `suggestions`, `prices`. Credits: `search`,
+`stores`, `availability`, `suggestions`, `prices`; with `country: "ca"` the
+same nine read Best Buy Canada, plus the Canada-only `questions` (0.93.0, see
+[Best Buy Canada](#best-buy-canada) below). US credits: `search`,
 `product`, `reviews` and `prices` 2 each (`prices` is per call, up to 15
 SKUs); `category` 2 for an `abcat` id and 3 for a `pcmcat` page; `deals` 3;
 `stores` and `suggestions` 1; `availability` 2 flat for up to 8 stores.
@@ -898,6 +900,58 @@ const terms = await client.bestBuy.suggestions({ query: "ps5 con" });
 Every call raises the request timeout to `BEST_BUY_TIMEOUT` (120s) and never
 lowers a longer client timeout; `availability` typically takes 5-20s. An
 unknown SKU or category is a 404.
+
+#### Best Buy Canada
+
+Best Buy Canada (bestbuy.ca, Best Buy's Canadian store: 142 stores across
+Canada per Best Buy's FY2026 10-K, plus a marketplace of third-party sellers):
+pass `country: "ca"` to any of the nine methods; `questions` is Best Buy Canada
+only and needs no country. 1 credit per call on every Canada call (US credits
+are unchanged). Prices in CAD as Best Buy Canada gives them; `language: "fr"`
+returns French names, specs and links with the same SKUs and prices. Best Buy's
+developer API (developer.bestbuy.com) covers bestbuy.com only. See the
+[Best Buy API page](https://scavio.dev/bestbuy-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+```ts
+// CAD price, regular price, savings, sale_ends_at and the ehf for province.
+await client.bestBuy.search({ query: "4k tv", country: "ca", sort: "price_low", province: "QC" });
+// UPC, sale start / end (UTC), ehf_by_province, open-box and refurbished SKUs.
+await client.bestBuy.product({ sku: "19791103", country: "ca" });
+// Exact units per store near a postal code (no prices: they are national).
+const stock = (await client.bestBuy.availability({ sku: "19791103", country: "ca", postal_code: "H3B 4W8", max_stores: 5 })) as any;
+for (const s of stock.data.products[0].stores) console.log(s.store_id, s.name, s.city, s.units, s.status);
+await client.bestBuy.deals({ country: "ca", collection: "black_friday" });
+await client.bestBuy.stores({ country: "ca", postal_code: "M5V 3L9" });
+await client.bestBuy.prices({ skus: ["19791103", "19296507"], country: "ca" });
+await client.bestBuy.questions({ sku: "19296507", sort: "most_answered" });
+```
+
+Captured 2026-11-25: the Apple MacBook Air 13.6" (2026, M5, 16GB / 512GB, SKU
+19791103) at 1589.99 CAD (regular 1789.99, `sale_ends_at`
+2026-12-03T07:00:00Z), with 35 units in the Centreville store in Montreal
+(store 651). The price is national (the same in every province and store); only
+the environmental handling fee varies by province (`province`, default `ON`;
+`ehf_by_province` on product and prices). A store with no stock record for the
+SKU comes back `status: "unknown"` with `units: null`, never out of stock.
+Listings take `page_size` 1-100 (default 24), the sorts `best_match`,
+`price_low`, `price_high` and `rating` (`best_selling`, `best_discount` and
+`newest` are a 400 for Canada) and the extra filters `rating`, `sold_by`,
+`seller`, `in_stock_online` and `facets`; results are capped at the first 2,000
+of a query (`results_capped`). Marketplace sellers come back named as Best Buy
+Canada lists them. Product `rating` and `review_count` are null (read them from
+`reviews` or `prices`). `deals` takes a `collection` (`black_friday`,
+`top_deals`, `clearance`, `open_box`, `refurbished`); `dates_text` carries the
+collection's own dates when its page states them ("Sale kicking off November 19
+and running until December 3" on the Black Friday collection). `availability`
+takes 1-20 `skus` and exactly one of `postal_code` (`max_stores` 1-50) or up to
+50 `store_ids`; `stores` takes a `postal_code`, a `city` or `latitude` +
+`longitude`. Not available for Canada: per-store prices (the price is
+national), a Deal of the Day (Best Buy Canada has none), results past 2,000 per
+query, review photos hosted off Best Buy, cart or checkout, price history (poll
+and store the answers). For the same model at other Canadian retailers use
+`client.amazon` (`country: "ca"`), `client.walmart` (`domain: "ca"`),
+`client.costco` (`country: "ca"`) and `client.canadianTire`; match on brand and
+model.
 
 ### [TCGplayer](https://scavio.dev/docs/tcgplayer-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
@@ -3106,7 +3160,7 @@ Staples stores near a ZIP exactly as Staples reports them. Twelve endpoints on
 is what was charged. Staples has no public API for its catalog, prices or
 store stock (Staples Business Advantage connects contract buyers' purchasing
 systems). Pair it with `client.amazon`, `client.walmart`, `client.target` and
-`client.bestbuy` for a price check on the same item.
+`client.bestBuy` for a price check on the same item.
 
 - Markets: `country` is `"us"` (default, www.staples.com, USD) or `"ca"`
   (www.staples.ca, Staples Canada, CAD) and `language` is `"en"` (default) or

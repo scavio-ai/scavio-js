@@ -1411,6 +1411,14 @@ export type {
   BestBuyAvailabilityOptions,
   BestBuySuggestionsOptions,
   BestBuyPricesOptions,
+  BestBuyCountry,
+  BestBuyCaLanguage,
+  BestBuyCaProvince,
+  BestBuyCaSort,
+  BestBuyCaCollection,
+  BestBuyCaListingOptions,
+  BestBuyDealsOptions,
+  BestBuyQuestionsOptions,
 } from "./namespaces/best-buy.js";
 export type {
   TcgplayerSearchSort,
