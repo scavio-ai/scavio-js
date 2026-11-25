@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 108 platforms on one API key, plus `extract()` to read
+data across 109 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -12,7 +12,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora, Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
-- **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
+- **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
 - **Liquidation auctions** — Nellis Auction (open lots in 6 US shopping locations with the current bid and Nellis's own Estimated Retail Price, a sold lot's final price by id, bid history without bidder names)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
@@ -1632,6 +1632,74 @@ const bags = (await client.poshmark.category({ department: "Women", category: "B
 Every call raises the request timeout to `POSHMARK_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls are not charged, a not-found is
 charged.
+
+### [OfferUp](https://scavio.dev/docs/offerup-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+OfferUp (offerup.com, the US local marketplace for buying and selling used
+items, cars and trucks): asking prices around any US ZIP code, so the same
+item's asking prices in different US metros, with the area OfferUp resolved
+the ZIP to; cars and trucks filtered by dealer or private seller, make, model
+year and mileage; one listing in full with condition, posted date and vehicle
+details (no VIN); the category tree; and a seller's public profile numbers.
+Five endpoints on `client.offerup` (new in 0.90.0): `search`, `listing`,
+`category`, `categories` and `seller`. 1 credit per call; `listing` is 1, or
+2 when the listing needs a second, costlier fetch; `credits_used` in the
+response is what was charged. OfferUp has no public API for reading listings;
+OfferUp for Business (OfferUp Motors, Storefronts) is seller-side tooling
+that syncs a dealer's own inventory into OfferUp. Pair a listing with
+`client.amazon` and `client.walmart` for the same item's new price and with
+`client.mercari` sold search for sold prices (match on model and title). See
+the [OfferUp API page](https://scavio.dev/offerup-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- US only (no `country`), prices in USD. `zip` is required on `search` and
+  `category`; `location.resolved` is the area OfferUp named for the ZIP and
+  `location.radius_miles` the radius it applied (captured 2026-11-25: 98101
+  resolved to Seattle, 60601 to Chicago, both 30 miles).
+- Sorts: best match (search default), newest (category default), distance,
+  price low or high; vehicles also newest model year and lowest mileage.
+  Category feeds have no best match order.
+- `filters_not_applied` lists any filter OfferUp did not apply to the feed.
+  `seller_type` applies in Cars & Trucks only: on `search` it limits the
+  results to category 5.1. Captured 2026-11-25: "toyota tacoma" around 75201
+  (Dallas, 80 miles), dealers, from 2018, at most 100,000 miles, lowest
+  mileage first, listed a 2025 Toyota Tacoma 2WD at 35495 USD with 10017 miles.
+- About 48 listings a page up to page 50, no total count (`has_more`).
+  Promoted OfferUp listings are marked `sponsored`. Search tiles carry no
+  posted date or condition (`listing` does).
+- Prices are asking prices, not sold prices. Private sellers: no seller
+  names (a dealer or business account's name only), usernames, avatars,
+  phone numbers, emails, street addresses, coordinates or VINs; phone
+  numbers, emails and VIN-like codes in titles and descriptions read
+  `[removed]`.
+- Not available: sold listings or sold prices (OfferUp does not show them
+  publicly), shipping (OfferUp ended nationwide shipping in 2025; listings
+  are local pickup), search suggestions, a total result count, a seller's
+  listings past the first 20, messaging or offers.
+
+```typescript
+// The same keyword in two US metros: asking prices around each ZIP.
+for (const zip of ["98101", "60601"]) {
+  const feed = (await client.offerup.search({ q: "iphone 15", zip })) as any;
+  console.log(feed.data.location.resolved, feed.data.count, feed.data.has_more);
+  for (const it of feed.data.items.slice(0, 5)) console.log(it.title, it.price, it.city, it.state, it.sponsored);
+}
+
+// Cars and trucks: dealer listings, model year, mileage.
+const trucks = (await client.offerup.search({ q: "toyota tacoma", zip: "75201", seller_type: "dealer", year_min: 2018, max_mileage: 100_000, sort: "lowest_mileage" })) as any;
+
+// One listing: condition, posted date, vehicle details (no VIN), seller numbers.
+const li = (await client.offerup.listing({ listing_id: "7a392126-fb9d-34c2-a6d8-1b94698428df" })) as any;
+console.log(li.data.price, li.data.condition, li.data.posted_at, li.data.vehicle, li.data.seller.seller_type);
+
+// A category around a ZIP, the category tree and a seller's public profile.
+const furniture = (await client.offerup.category({ category: "furniture", zip: "90012" })) as any;
+const tree = (await client.offerup.categories()) as any;
+const dealer = (await client.offerup.seller({ seller_id: "8668343" })) as any;
+```
+
+Every call raises the request timeout to `OFFERUP_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found (an unknown listing, category or seller) is charged.
 
 ### [thredUP](https://scavio.dev/docs/thredup-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

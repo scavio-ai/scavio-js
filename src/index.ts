@@ -526,6 +526,19 @@ export type {
   PoshmarkPartyListingsOptions,
   PoshmarkSimilarOptions,
 } from "./namespaces/poshmark.js";
+export { OfferupNamespace, OFFERUP_TIMEOUT } from "./namespaces/offerup.js";
+export type {
+  OfferupSort,
+  OfferupCategorySort,
+  OfferupCondition,
+  OfferupRadius,
+  OfferupMileage,
+  OfferupFeedFilters,
+  OfferupSearchOptions,
+  OfferupCategoryOptions,
+  OfferupListingOptions,
+  OfferupSellerOptions,
+} from "./namespaces/offerup.js";
 export { ThredupNamespace, THREDUP_TIMEOUT } from "./namespaces/thredup.js";
 export type {
   ThredupDepartment,
