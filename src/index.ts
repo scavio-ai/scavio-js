@@ -1136,6 +1136,31 @@ export type {
   DiscountTireSuggestionsOptions,
   DiscountTireAppointmentsOptions,
 } from "./namespaces/discounttire.js";
+export { VevorNamespace, VEVOR_TIMEOUT } from "./namespaces/vevor.js";
+export type {
+  VevorCountry,
+  VevorLanguage,
+  VevorSort,
+  VevorRating,
+  VevorReviewSort,
+  VevorCollectionType,
+  VevorDealType,
+  VevorCategory,
+  VevorMarket,
+  VevorListOptions,
+  VevorFilters,
+  VevorSearchOptions,
+  VevorProductOptions,
+  VevorShippingOptions,
+  VevorReviewsOptions,
+  VevorQuestionsOptions,
+  VevorSuggestionsOptions,
+  VevorCategoriesOptions,
+  VevorCategoryOptions,
+  VevorCollectionsOptions,
+  VevorDealsOptions,
+  VevorPricesOptions,
+} from "./namespaces/vevor.js";
 export type {
   SamsClubSort,
   SamsClubReviewSort,

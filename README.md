@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 105 platforms on one API key, plus `extract()` to read
+data across 106 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -3200,6 +3200,83 @@ console.log(cal.data.days.map((d: any) => [d.date, d.bookable, d.slot_count]));
 
 Every call raises the request timeout to `DISCOUNTTIRE_TIMEOUT` (240s) and
 never lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Vevor](https://scavio.dev/docs/vevor-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+VEVOR (vevor.com, the tools and equipment seller with storefronts in 13
+countries): VEVOR's price on each storefront in its own currency, the was
+price only while a VEVOR deal is active (with VEVOR's deal start and end),
+every variant with its own price and stock, the shipping fee and delivery date
+by US state or Canadian province, and the same SKU on all 13 storefronts in one
+call. Eleven endpoints on `client.vevor` (new in 0.87.0): `search`, `product`,
+`shipping`, `reviews`, `questions`, `suggestions`, `categories`, `category`,
+`collections`, `deals` and `prices`. 1 credit per call, `prices` 3;
+`credits_used` in the response is what was charged. VEVOR has no public
+product API (it runs an affiliate programme through Awin and other networks;
+the Pro Member, Dealer & Distributor and dropshipping programmes are sign-up
+forms, not APIs). VEVOR also sells on other marketplaces: pair it with
+`client.amazon`, `client.walmart`, `client.homeDepot`, `client.tractorsupply`,
+`client.tiktokShop` and `client.ebay` for the same item (match on model or SKU
+evidence), and with `client.harborFreight` as an alternative store, not the
+same item. See the
+[Vevor API page](https://scavio.dev/vevor-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Storefronts (`country`, default `us`, and `language`, default the first
+  listed): `us` (www.vevor.com, USD; en, es), `ca` (www.vevor.ca, CAD; en,
+  fr), `gb` (www.vevor.co.uk, GBP), `au` (www.vevor.com.au, AUD), `de`, `fr`,
+  `es`, `it`, `nl` (EUR, each in its own language), `pl` (PLN), `mx` (MXN,
+  es), `no` (www.vevor.co.no, EUR) and `eu` (eur.vevor.com, VEVOR's storefront
+  for the other European countries, EUR; en, sv, da, fi, no, pt, cs, el, sk,
+  hu, ro). Each storefront language has its own search index: send the search
+  term in that language. `prices` takes `sku` only and asks every storefront.
+- Price per storefront: measured 2026-11-25, one SKU (GYQXJBMQJQYPKEO1LV0) was
+  195.01 USD on www.vevor.com, 233.90 CAD on www.vevor.ca, 175.90 GBP on
+  www.vevor.co.uk, 170.90 EUR on www.vevor.de, 261.99 EUR on www.vevor.co.no
+  and 721.90 PLN on www.vevor.pl.
+- Price and stock do not change by ZIP; the shipping fee and delivery date
+  change by US state (`state`, required for `us`) or Canadian province
+  (`province`, required for `ca`): a welder to Alaska (AK 99501) had a $130
+  fee, contiguous states were measured free.
+- `was_price` is given only while a VEVOR deal is active (`deal.starts` /
+  `deal.ends` as VEVOR gives them) or when VEVOR's page shows its own
+  strikethrough price, otherwise null: never compute a discount from it.
+- Lists: 60 items a page; totals are exact up to 100, then "100+"
+  (`total_is_lower_bound`).
+- Reviews: one pool shared across storefronts and a product's variants, so
+  they come in many languages; up to 100 a page, sorts, star and photo
+  filters; no reviewer names.
+- Not available: coupon codes (VEVOR shows them only after a claim), the
+  pickup store, Pro or bulk prices, financing, the ships-from warehouse,
+  VEVOR's listings on other marketplaces, price history (poll and store the
+  answers), checkout.
+
+```typescript
+// Search in the storefront language: price, was price during a deal, deal end, stock units.
+const hits = (await client.vevor.search({ q: "welder" })) as any;
+for (const it of hits.data.items.slice(0, 5)) console.log(it.sku, it.name, it.price, it.was_price, it.currency, it.deal_ends, it.stock_units);
+const de = (await client.vevor.search({ q: "schweissgeraet", country: "de", sort: "price_low", in_stock: true })) as any;
+
+// One product: deal window, variants with their own price and stock.
+const p = (await client.vevor.product({ sku: "DHJMIGMMAMIGLL6WNV5" })) as any;
+console.log(p.data.price, p.data.was_price, p.data.deal, p.data.variants.map((v: any) => [v.sku, v.price, v.stock_units]));
+
+// Shipping: the state drives the fee and delivery date in the US.
+const ship = (await client.vevor.shipping({ sku: "DHJMIGMMAMIGLL6WNV5", state: "AK", zip: "99501" })) as any;
+console.log(ship.data.fee, ship.data.currency, ship.data.delivery);
+
+// The same SKU on all 13 storefronts, each in its own currency (3 credits).
+const pr = (await client.vevor.prices({ sku: "GYQXJBMQJQYPKEO1LV0" })) as any;
+for (const s of pr.data.storefronts) console.log(s.country, s.status, s.price, s.currency, s.stock_units);
+
+// Reviews in many languages, a category, Daily Deals.
+const rv = (await client.vevor.reviews({ sku: "CKKMJ3300LBSAPPKZV1", page_size: 100, sort: "newest" })) as any;
+const ice = (await client.vevor.category({ category: "40035" })) as any;
+const daily = (await client.vevor.deals({ type: "daily_deals" })) as any;
+```
+
+Every call raises the request timeout to `VEVOR_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 
 ### [Carrefour](https://scavio.dev/docs/carrefour-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
