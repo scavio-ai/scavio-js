@@ -4706,9 +4706,12 @@ listings name a vendor.
 await client.homeDepot.search({ query: "cordless drill", page: 2 });
 await client.homeDepot.product({ item_id: "313159056" });
 await client.homeDepot.reviews({ item_id: "313159056", page: 2 });
+await client.homeDepot.stores({ query: "98101", limit: 5 });
+await client.homeDepot.availability({ item_id: "313159056", store_id: "4702", zip: "98101" });
+await client.homeDepot.shipping({ item_id: "313159056", zip: "98101", quantity: 2 });
 ```
 
-US (homedepot.com, the default): 2 credits per call. Search page size is fixed
+US (homedepot.com, the default): 2 credits per call, `shipping` 4. Search page size is fixed
 at 12, so paging is the only way to read further; reviews are 30 per page and a
 page past `total_pages` is a 404. `product` carries only a 10-review preview —
 `reviews` is the paginated surface.
@@ -4716,9 +4719,10 @@ page past `total_pages` is a 404. `product` carries only a 10-review preview —
 #### Home Depot Canada
 
 Home Depot Canada (homedepot.ca, The Home Depot's Canadian store: 182 stores in
-10 provinces): pass `country: "ca"` to `search`, `product` and `reviews`;
-`category`, `categories`, `stock`, `store` and `suggestions` are Home Depot
-Canada only and need no country. 1 credit per call on every Canada call. Prices
+10 provinces): pass `country: "ca"` to `search`, `product`, `reviews`, `stores`
+and `availability`; `category`, `categories`, `stock`, `store` and
+`suggestions` are Home Depot Canada only and need no country. `shipping` is US
+only (`country: "ca"` is a 400, not charged). 1 credit per call on every Canada call. Prices
 in CAD as Home Depot Canada gives them; `language: "fr"` returns French names
 and links with the same ids and prices. Home Depot Canada has no public API.
 See the [Home Depot API page](https://scavio.dev/homedepot-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
@@ -4728,6 +4732,9 @@ See the [Home Depot API page](https://scavio.dev/homedepot-api?utm_source=npm-sc
 await client.homeDepot.search({ query: "cordless drill", country: "ca", store_id: "7080" });
 // price = that store's price (price_source "store"), online_price beside it.
 await client.homeDepot.product({ item_id: "1000112108", country: "ca", store_id: "7128" });
+// One item at one store: the store's price, exact units, aisle and bay.
+await client.homeDepot.availability({ item_id: "1001769719", store_id: "7076", country: "ca" });
+await client.homeDepot.stores({ query: "M5V 2T6", country: "ca" });
 // Exact units at every store near a postal code or city, no prices.
 await client.homeDepot.stock({ item_id: "1001769719", location: "H3B 1A1" });
 await client.homeDepot.categories({ depth: 2 });
@@ -4748,8 +4755,8 @@ for Canada), facet `filters` from `include_facets`, and `deals`
 the query is optional. `reviews` returns the first 8 reviews per language and
 the first page of questions (page 2 is a 400; no reviewer names). When Home
 Depot Canada has no store record for an item that exists, `product` returns the
-online price with `store_price_returned: false` and `stock` answers an unbilled
-502. Not available for Canada: UPC or barcodes (Home Depot Canada shows none),
+online price with `store_price_returned: false`, and `availability` and `stock`
+answer an unbilled 502. Not available for Canada: UPC or barcodes (Home Depot Canada shows none),
 structured sale end dates (the price badge and Home Depot's promotion text
 only), delivery quotes, the flyer, cart or checkout, price history (poll and
 store the answers). For the same item at other Canadian retailers use

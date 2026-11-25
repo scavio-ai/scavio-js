@@ -1,8 +1,8 @@
 import type { Scavio } from "../client.js";
 
-// Home Depot (US, homedepot.com) is 2 credits flat on search, product and
-// reviews - it is a premium-priced platform, so it is the priciest of the
-// retail namespaces. Home Depot Canada (country "ca", homedepot.ca) is 1
+// Home Depot (US, homedepot.com) is 2 credits on search, product, reviews,
+// stores and availability, and 4 on shipping (US only) - it is a
+// premium-priced platform, so it is the priciest of the retail namespaces. Home Depot Canada (country "ca", homedepot.ca) is 1
 // credit per call on every endpoint, including the five Canada-only ones.
 //
 // `country` is optional and never sent unless set, so a US call posts exactly
@@ -107,6 +107,53 @@ export interface HomeDepotReviewsOptions {
   country?: HomeDepotCountry;
   /** Home Depot Canada only: "en" or "fr" (a different review set). */
   language?: HomeDepotCaLanguage;
+  [key: string]: unknown;
+}
+
+export interface HomeDepotStoresOptions {
+  /**
+   * A ZIP code, city or address to find stores near, e.g. "98101". Required
+   * for the US; for "ca" a postal code or city (e.g. "M5V 2T6"), or pass
+   * latitude + longitude instead.
+   */
+  query?: string;
+  /** Stores to return, nearest first. US 1-20 (default 20); "ca" 1-50 (default 10). */
+  limit?: number;
+  country?: HomeDepotCountry;
+  /** Home Depot Canada only: with longitude, instead of query. */
+  latitude?: number;
+  /** Home Depot Canada only: with latitude, instead of query. */
+  longitude?: number;
+  /** Home Depot Canada only: page, 1-based. */
+  page?: number;
+  language?: HomeDepotCaLanguage;
+  [key: string]: unknown;
+}
+
+export interface HomeDepotAvailabilityOptions {
+  /** Home Depot item id or URL (for "ca", a Home Depot Canada id or link). */
+  item_id: string;
+  /**
+   * Store number from stores(), for pickup stock and the store's price.
+   * Required for "ca".
+   */
+  store_id?: string;
+  /** US only: 5-digit ZIP to quote delivery to. Pass store_id, zip, or both. */
+  zip?: string;
+  country?: HomeDepotCountry;
+  language?: HomeDepotCaLanguage;
+  [key: string]: unknown;
+}
+
+export interface HomeDepotShippingOptions {
+  /** Home Depot item id, or a full homedepot.com/p/... URL. */
+  item_id: string;
+  /** 5-digit US ZIP code. */
+  zip: string;
+  /** Units to quote delivery for, 1-999. Default 1. */
+  quantity?: number;
+  /** Optional store number from stores(). */
+  store_id?: string;
   [key: string]: unknown;
 }
 
@@ -220,6 +267,54 @@ export class HomeDepotNamespace {
     options: HomeDepotReviewsOptions,
   ): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/homedepot/reviews", options);
+  }
+
+  /**
+   * Find Home Depot stores near a ZIP code, city or address: store number,
+   * address, coordinates, distance, phone numbers, opening hours and in-store
+   * services. Use the store number with availability() and shipping().
+   *
+   * Home Depot Canada (`country: "ca"`): stores near a postal code or city, or
+   * latitude + longitude, with 7 dated days of hours.
+   *
+   * Costs 2 credits in the US; 1 credit with country "ca".
+   */
+  async stores(
+    options: HomeDepotStoresOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/homedepot/stores", options);
+  }
+
+  /**
+   * One item's price, promotions and pickup stock at a store, and delivery
+   * options, dates and charges to a ZIP. Store and ZIP are independent; pass
+   * either or both.
+   *
+   * Home Depot Canada (`country: "ca"`): `store_id` required, `zip` is a 400
+   * (no delivery quotes for Canada). Returns the store's price, exact
+   * `store_units`, aisle and bay. When Home Depot Canada has no store record
+   * for an item that exists, the answer is an unbilled 502.
+   *
+   * Costs 2 credits in the US; 1 credit with country "ca".
+   */
+  async availability(
+    options: HomeDepotAvailabilityOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/homedepot/availability", options);
+  }
+
+  /**
+   * US only: every delivery option Home Depot quotes for an item to a ZIP,
+   * for a given quantity: charge, free-shipping status, delivery dates, the
+   * delivery level on bulky items, and states it will not ship to. Not
+   * available for Home Depot Canada (country "ca" is a 400, not charged).
+   *
+   * Costs 4 credits.
+   */
+  async shipping(
+    options: HomeDepotShippingOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.client._post("/api/v1/homedepot/shipping", options);
   }
 
   /**
