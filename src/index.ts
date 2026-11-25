@@ -1161,6 +1161,18 @@ export type {
   VevorDealsOptions,
   VevorPricesOptions,
 } from "./namespaces/vevor.js";
+export { NellisNamespace, NELLIS_TIMEOUT } from "./namespaces/nellis.js";
+export type {
+  NellisLocation,
+  NellisSort,
+  NellisPageSize,
+  NellisConditionRating,
+  NellisNames,
+  NellisSearchOptions,
+  NellisItemOptions,
+  NellisLocationsOptions,
+  NellisCategoriesOptions,
+} from "./namespaces/nellis.js";
 export type {
   SamsClubSort,
   SamsClubReviewSort,

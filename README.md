@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 106 platforms on one API key, plus `extract()` to read
+data across 107 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -13,6 +13,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
+- **Liquidation auctions** — Nellis Auction (open lots in 6 US shopping locations with the current bid and Nellis's own Estimated Retail Price, a sold lot's final price by id, bid history without bidder names)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House, Company Enrich (contacts and owner from a website or a Google Maps place)
@@ -3278,6 +3279,62 @@ const daily = (await client.vevor.deals({ type: "daily_deals" })) as any;
 Every call raises the request timeout to `VEVOR_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
+
+### [Nellis Auction](https://scavio.dev/docs/nellis-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Nellis Auction (nellisauction.com, the liquidation auction marketplace with
+pickup warehouses in Las Vegas, Phoenix, Houston, Philadelphia, Denver and
+Dallas): a lot's current bid and bid count next to Nellis's own Estimated
+Retail Price, the buyer's premium percent, open and close times, Nellis's
+condition grade, the pickup warehouse, the bid history without bidder names
+and a sold lot's final price by id. Four endpoints on `client.nellis` (new in
+0.88.0): `search`, `item`, `locations` and `categories`. 1 credit per call;
+`credits_used` in the response is what was charged. Nellis Auction has no
+public API. Pair a lot with `client.amazon` and `client.walmart` for the same
+item's new price and with `client.ebay` for sold prices (match on title and
+brand: Nellis shows no UPC). See the
+[Nellis Auction API page](https://scavio.dev/nellis-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Shopping locations (`location`, default `las-vegas`): `las-vegas`,
+  `phoenix`, `houston`, `philadelphia` (pickup in Delran, NJ), `denver` and
+  `dallas` (run by Lots Of Auctions), with 13 pickup warehouses in all.
+- Search lists open auctions only, as Nellis's own search does: 48, 120 or
+  240 a page, 9 sorts, filters by category, brand, pickup warehouse,
+  condition stars, estimated retail range, auction event, color and size,
+  with Nellis's counts (`facets`).
+- A closed or sold lot is read by id with `item`; a sold lot's `final_price`
+  is the winning bid before Nellis's buyer's premium and tax. Captured
+  2026-11-25: a sold lot (id 141100004, Estimated Retail Price 9.99) closed at
+  a final price of 6 after 5 bids.
+- `retail_price` is Nellis's own "Estimated Retail Price", as Nellis labels
+  it, not an MSRP. The buyer's premium is, in Nellis's words, "typically 15%
+  but may vary based on the auction event" (`buyer_premium_percent` per lot).
+- Bids move live: `current_bid`, `bid_count` and `closes` are as of the fetch.
+  `bid_history` gives time, amount and Winning or Outbid, with no bidder names.
+- Not available: closed or sold lots in search, search suggestions, shipping
+  (pickup only), UPC or model numbers, buy-now, reserve prices, live bid
+  updates, bidding, watchlists, checkout.
+
+```typescript
+// Open auctions in one shopping location: current bid, bids, Estimated Retail Price, close time.
+const hits = (await client.nellis.search({ q: "robot vacuum" })) as any;
+for (const it of hits.data.items.slice(0, 5)) console.log(it.id, it.title, it.current_bid, it.bid_count, it.retail_price, it.closes);
+const phx = (await client.nellis.search({ q: "vacuum", location: "phoenix", sort: "bids_high", page_size: 48 })) as any;
+
+// One lot, open or sold: final price of a sold lot (before the premium), bid history.
+const lot = (await client.nellis.item({ id: "141100004" })) as any;
+console.log(lot.data.market_status, lot.data.final_price, lot.data.retail_price, lot.data.buyer_premium_percent);
+for (const b of lot.data.bid_history) console.log(b.time, b.amount, b.status);
+
+// Pickup warehouses with hours, and live category counts.
+const wh = (await client.nellis.locations({ location: "las-vegas" })) as any;
+const cats = (await client.nellis.categories({ location: "houston", category: "Electronics" })) as any;
+```
+
+Every call raises the request timeout to `NELLIS_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found (an unknown id, or a category with no open lots) is
+charged.
 
 ### [Carrefour](https://scavio.dev/docs/carrefour-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

@@ -55,6 +55,7 @@ import { DollarGeneralNamespace } from "./namespaces/dollar-general.js";
 import { DollarTreeNamespace } from "./namespaces/dollartree.js";
 import { DiscountTireNamespace } from "./namespaces/discounttire.js";
 import { VevorNamespace } from "./namespaces/vevor.js";
+import { NellisNamespace } from "./namespaces/nellis.js";
 import { SephoraNamespace } from "./namespaces/sephora.js";
 import { UltaNamespace } from "./namespaces/ulta.js";
 import { AldiNamespace } from "./namespaces/aldi.js";
@@ -271,6 +272,7 @@ export class Scavio extends ScavioCore {
   readonly dollartree: DollarTreeNamespace;
   readonly discounttire: DiscountTireNamespace;
   readonly vevor: VevorNamespace;
+  readonly nellis: NellisNamespace;
   readonly sephora: SephoraNamespace;
   readonly ulta: UltaNamespace;
   readonly aldi: AldiNamespace;
@@ -404,6 +406,7 @@ export class Scavio extends ScavioCore {
     this.dollartree = new DollarTreeNamespace(this);
     this.discounttire = new DiscountTireNamespace(this);
     this.vevor = new VevorNamespace(this);
+    this.nellis = new NellisNamespace(this);
     this.sephora = new SephoraNamespace(this);
     this.ulta = new UltaNamespace(this);
     this.aldi = new AldiNamespace(this);
