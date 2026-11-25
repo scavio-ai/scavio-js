@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 104 platforms on one API key, plus `extract()` to read
+data across 105 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -3120,6 +3120,87 @@ Every call raises the request timeout to `DOLLARTREE_TIMEOUT` (240s), and
 `storeStock`, `stores` and `reviews` to `DOLLARTREE_SLOW_TIMEOUT` (300s); a
 longer client timeout is never lowered. Failed calls and refused inputs are
 not charged, a not-found is charged.
+
+### [Discount Tire](https://scavio.dev/docs/discounttire-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Discount Tire (discounttire.com, the US tire and wheel retailer, America's
+Tire in parts of CA, PA, NJ and NY): the price of a tire at a named store, the
+same tire at other Discount Tire and America's Tire stores, the tires that fit
+a vehicle with the original-equipment tire flagged and staggered front / rear
+sets, and the exact units at the stores near a ZIP. Fifteen endpoints on
+`client.discounttire` (new in 0.86.0): `search`, `vehicle`, `vehicleTires`,
+`product`, `model`, `storeStock`, `stores`, `store`, `reviews`,
+`storeReviews`, `wheels`, `browse`, `categories`, `suggestions` and
+`appointments`. 1 credit per call; `credits_used` in the response is what was
+charged. Discount Tire has no public product API (it runs an affiliate
+programme through CJ, and fleet customers use an account portal). Pair it with
+`client.walmart`, `client.samsClub` and `client.amazon` for the same tire
+(match on manufacturer part number or GTIN), and with `client.autozone` and
+`client.oreilly` for parts. See the
+[Discount Tire API page](https://scavio.dev/discounttire-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Market: US only (www.discounttire.com, USD); Discount Tire and America's
+  Tire are one catalog. No method takes a country.
+- Prices are per store: `search`, `vehicleTires`, `product`, `model`, `wheels`
+  and `browse` take `store` (a store code from `stores`) or `zip` (the nearest
+  store is used), and every answer names the store used in `store`. Price can
+  differ between stores and is not different at every store: measured
+  2026-11-25, Michelin Defender 2 225/65R17 (item 108547) was $206 a tire at 9
+  stores in 8 states and $205 at an America's Tire store in New Jersey; across
+  45 tires, the stores measured in Texas, Florida and Washington showed no
+  differences, a California store 1, a Michigan store 3 and the New Jersey
+  store 13 of 32.
+- `price` is per tire or wheel: Discount Tire publishes no set-of-four price
+  (4 x price is arithmetic, not a Discount Tire price). Promotions are
+  Discount Tire's own title and text with its end date (`ends`, ISO 8601 UTC,
+  and `ends_text` as given); no start date.
+- Vehicle fitment: `vehicle` is one step per call (years, makes, models with
+  `vehicle_id`, trims with `trim_id`, size options with `assembly_id`, then the
+  fitment with front / rear size, staggered, wheel diameters and optional
+  sizes). The 2022 Ford F-150 XLT Crew Cab 2WD is `vehicle_id` 17361,
+  `trim_id` 52455, `assembly_id` 0000E28B (245/70R17). `vehicleTires` and
+  `wheels` take the same three ids; staggered vehicles (the 2022 Corvette
+  Stingray: 245/35R19 front, 305/30R20 rear) come back as front / rear sets,
+  each tire with its own per-tire price (a set is 2 front + 2 rear).
+  `ranking: "treadwell"` adds Discount Tire's Treadwell ranking fields,
+  Discount Tire's own estimates, as given.
+- Store stock: `storeStock` gives the exact units of 1-4 items at the stores
+  near a ZIP (5 stores per page, 10-150 miles); a store with 0 units can still
+  say "Available as soon as <date>".
+- Reviews: Discount Tire's own tire and store reviews, sorts, star filter and
+  full paging; no reviewer names.
+- Appointments: read only (Scavio never books); slot `start` and `end` are the
+  store's local time (YYYY-MM-DDTHH:MM, no time zone).
+- Not available: the deals page text, road hazard and certificate prices,
+  financing, installation and fee amounts, the Treadwell chat, fleet accounts,
+  Tire Rack, price history (poll and store the answers), checkout and booking.
+
+```typescript
+// Tires in one size at one store: price per tire, promotions, units there.
+const hits = (await client.discounttire.search({ size: "225/65R17", store: "1009", sort: "price_low" })) as any;
+for (const it of hits.data.items.slice(0, 5)) console.log(it.item_number, it.name, it.price, it.stock?.units, it.promotions);
+console.log("4 tires (arithmetic):", 4 * hits.data.items[0].price);
+
+// The same tire at the store nearest a ZIP (echoed in store).
+const p = (await client.discounttire.product({ item_number: "108547", zip: "85251" })) as any;
+console.log(p.data.store.store_code, p.data.store.brand, p.data.price, p.data.gtin, p.data.manufacturer_part_number);
+
+// Vehicle fitment, one step per call, then the tires that fit at one store.
+const fit = (await client.discounttire.vehicle({ vehicle_id: "17361", trim_id: "52455", assembly_id: "0000E28B" })) as any;
+console.log(fit.data.fitment.front_size, fit.data.fitment.staggered);
+const vt = (await client.discounttire.vehicleTires({ vehicle_id: "17361", trim_id: "52455", assembly_id: "0000E28B", store: "1009" })) as any;
+console.log(vt.data.total, vt.data.items.filter((i: any) => i.original_equipment).map((i: any) => i.name));
+
+// Exact units at the stores near a ZIP, and one store's appointment calendar (read only).
+const ss = (await client.discounttire.storeStock({ item_number: "108547", zip: "85251" })) as any;
+for (const s of ss.data.stores) console.log(s.store_code, s.distance_miles, s.stock[0].units, s.stock[0].message);
+const cal = (await client.discounttire.appointments({ store_code: "1009" })) as any;
+console.log(cal.data.days.map((d: any) => [d.date, d.bookable, d.slot_count]));
+```
+
+Every call raises the request timeout to `DISCOUNTTIRE_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
 
 ### [Carrefour](https://scavio.dev/docs/carrefour-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
