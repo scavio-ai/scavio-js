@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 109 platforms on one API key, plus `extract()` to read
+data across 111 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora, Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora, Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2188,6 +2188,79 @@ Every call raises the request timeout to `FOOTLOCKER_TIMEOUT` (120s) and
 never lowers a longer client timeout; `reviews` and `questions` raise it to
 `FOOTLOCKER_REVIEWS_TIMEOUT` (240s), and failed calls are not charged.
 Unknown SKUs, categories and brands are a charged 404.
+
+### [SportChek](https://scavio.dev/docs/sportchek-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) and [Mark's](https://scavio.dev/docs/marks-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+SportChek (sportchek.ca, Canada's sporting goods retailer, a Canadian Tire
+Corporation banner) and Mark's (marks.com, the Canadian workwear, casual
+clothing and footwear retailer, a Canadian Tire Corporation banner;
+L'Equipeur in French). Eight endpoints each (new in 0.91.0):
+`client.sportchek` has `search`, `list`, `product`, `reviews`,
+`suggestions`, `store`, `brands` and `categories`; `client.marks` has the
+same with `questions` in place of `reviews`. 1 credit per call on every
+endpoint; `credits_used` in the response is what was charged. Canada only,
+prices in CAD. Neither banner has a public API. Pair a product with
+`client.amazon` and `client.walmart` for the same model at Amazon.ca and
+Walmart.ca (match on brand, model, colour and size). See the
+[SportChek API page](https://scavio.dev/sportchek-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) and the
+[Mark's API page](https://scavio.dev/marks-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Answers take about 10-90 seconds: allow up to 2 minutes per call.
+- `was_price` is the site's was price as given, only where the site shows
+  one; `footnote` is the site's own sentence on it ("Was price reflects the
+  last national regular price this product was sold for.", English pages). A
+  percent off is not returned: compute it from `price` and `was_price` and
+  label it computed. `sale_ends` is the sale end date the site shows, as
+  given; `price_message` is the site's promotion text.
+- `units_at_store` are the units at the store the site assigns to the
+  request's region (`assigned_store`); a caller cannot choose a store. In our
+  checks prices were the same at every store sampled.
+- Search and list pages are 24 products (12 on Mark's category pages),
+  `page_size` says. Filters come from `facets` (`include_facets: true`); list
+  paths come from `categories`; `deals` on a deals page is a 400 (the page
+  already is one).
+- Mark's takes `language: "fr"` on `search`, `list`, `product`, `brands` and
+  `categories` to read L'Equipeur (lequipeur.com): the same product codes and
+  CAD prices, French titles. SportChek is English only.
+- SportChek reviews: page 1 is the first 8, pages 2-4 the next 30 each (up to
+  98 per sort and star filter), no reviewer names. Mark's questions: the
+  newest 10 with answers, no asker names.
+- Captured 2026-11-25: SportChek's Columbia Women's Amaze Puff Down Jacket
+  (84166659F) at 206.24 CAD with the promotion "25% Off* - Discount Applied.
+  See details." and `sale_ends` December 1, 2026; Mark's Dakota WorkPro
+  Series 6114 work boots (75983776F) at 124.99 CAD with a was price of 199.99,
+  the same price and code on L'Equipeur with a French title.
+- Not available: choosing a store for price or stock, stores near a postal
+  code, Mark's reviews, SportChek questions, the flyer, Triangle Rewards or
+  CT Money prices, price history (poll and store the answers), UPC or
+  barcodes (the site shows none), cart or checkout.
+
+```typescript
+// Search: price, was price, sale label and end date, and the site's own footnote.
+const res = (await client.sportchek.search({ q: "winter jacket", include_facets: true })) as any;
+console.log(res.data.total, res.data.footnote);
+for (const it of res.data.items.slice(0, 5)) console.log(it.code, it.name, it.price, it.was_price, it.sale_ends);
+
+// Filters come from facets; deals pages and categories are list() paths.
+const women = (await client.sportchek.search({ q: "winter jacket", filters: [{ facet: "sku_gender_attr", value: "Female" }], deals: "sale" })) as any;
+const clearance = (await client.sportchek.list({ path: "/en/sale-clearance/clearance.html", sort: "price_low" })) as any;
+
+// One product: each variant's price, was price, sale_ends and units.
+const p = (await client.sportchek.product({ code: "84166659F" })) as any;
+console.log(p.data.assigned_store, p.data.variants[0].units_at_store, p.data.variants[0].units_online);
+const reviews = (await client.sportchek.reviews({ code: "84166659F", sort: "newest" })) as any;
+
+// Mark's in English and in French (L'Equipeur), its questions and one store.
+const en = (await client.marks.product({ code: "75983776F" })) as any;
+const fr = (await client.marks.product({ code: "75983776F", language: "fr" })) as any;
+console.log(en.data.name, en.data.price, en.data.was_price, fr.data.name, fr.data.price);
+const qa = (await client.marks.questions({ code: "75984589F" })) as any;
+const store = (await client.marks.store({ store_id: "589" })) as any;
+```
+
+Every call raises the request timeout to `SPORTCHEK_TIMEOUT` /
+`MARKS_TIMEOUT` (240s) and never lowers a longer client timeout; failed calls
+and refused inputs are not charged, a not-found is charged.
 
 ### [Fanatics](https://scavio.dev/docs/fanatics-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

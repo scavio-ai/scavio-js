@@ -539,6 +539,43 @@ export type {
   OfferupListingOptions,
   OfferupSellerOptions,
 } from "./namespaces/offerup.js";
+export { CTC_TIMEOUT } from "./namespaces/ctc-banners.js";
+export type {
+  CtcSort,
+  CtcReviewSort,
+  CtcDeals,
+  CtcFilter,
+  CtcListFilters,
+  CtcSearchOptions,
+  CtcListOptions,
+  CtcProductTarget,
+  CtcSuggestionsOptions,
+  CtcStoreOptions,
+  CtcBrandsOptions,
+} from "./namespaces/ctc-banners.js";
+export { SportchekNamespace, SPORTCHEK_TIMEOUT } from "./namespaces/sportchek.js";
+export type {
+  SportchekSearchOptions,
+  SportchekListOptions,
+  SportchekProductOptions,
+  SportchekReviewsOptions,
+  SportchekSuggestionsOptions,
+  SportchekStoreOptions,
+  SportchekBrandsOptions,
+} from "./namespaces/sportchek.js";
+export { MarksNamespace, MARKS_TIMEOUT } from "./namespaces/marks.js";
+export type {
+  MarksLanguage,
+  MarksLanguageOption,
+  MarksSearchOptions,
+  MarksListOptions,
+  MarksProductOptions,
+  MarksQuestionsOptions,
+  MarksSuggestionsOptions,
+  MarksStoreOptions,
+  MarksBrandsOptions,
+  MarksCategoriesOptions,
+} from "./namespaces/marks.js";
 export { ThredupNamespace, THREDUP_TIMEOUT } from "./namespaces/thredup.js";
 export type {
   ThredupDepartment,
