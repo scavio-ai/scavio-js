@@ -58,6 +58,7 @@ import { VevorNamespace } from "./namespaces/vevor.js";
 import { NellisNamespace } from "./namespaces/nellis.js";
 import { SephoraNamespace } from "./namespaces/sephora.js";
 import { UltaNamespace } from "./namespaces/ulta.js";
+import { DermstoreNamespace } from "./namespaces/dermstore.js";
 import { AldiNamespace } from "./namespaces/aldi.js";
 import { InstacartNamespace } from "./namespaces/instacart.js";
 import { MicroCenterNamespace } from "./namespaces/micro-center.js";
@@ -275,6 +276,7 @@ export class Scavio extends ScavioCore {
   readonly nellis: NellisNamespace;
   readonly sephora: SephoraNamespace;
   readonly ulta: UltaNamespace;
+  readonly dermstore: DermstoreNamespace;
   readonly aldi: AldiNamespace;
   readonly instacart: InstacartNamespace;
   readonly microCenter: MicroCenterNamespace;
@@ -409,6 +411,7 @@ export class Scavio extends ScavioCore {
     this.nellis = new NellisNamespace(this);
     this.sephora = new SephoraNamespace(this);
     this.ulta = new UltaNamespace(this);
+    this.dermstore = new DermstoreNamespace(this);
     this.aldi = new AldiNamespace(this);
     this.instacart = new InstacartNamespace(this);
     this.microCenter = new MicroCenterNamespace(this);

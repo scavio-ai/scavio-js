@@ -1214,6 +1214,19 @@ export type {
   UltaProductOptions,
   UltaStoresOptions,
 } from "./namespaces/ulta.js";
+export { DermstoreNamespace, DERMSTORE_TIMEOUT } from "./namespaces/dermstore.js";
+export type {
+  DermstoreCountry,
+  DermstoreSort,
+  DermstoreValues,
+  DermstoreListFilters,
+  DermstoreSearchOptions,
+  DermstoreListOptions,
+  DermstoreProductOptions,
+  DermstoreSuggestionsOptions,
+  DermstoreMarketOptions,
+  DermstoreBrandsOptions,
+} from "./namespaces/dermstore.js";
 export type {
   AldiServiceType,
   AldiSort,

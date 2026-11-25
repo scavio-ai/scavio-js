@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 107 platforms on one API key, plus `extract()` to read
+data across 108 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora, Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot, TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -3335,6 +3335,67 @@ Every call raises the request timeout to `NELLIS_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found (an unknown id, or a category with no open lots) is
 charged.
+
+### [Dermstore](https://scavio.dev/docs/dermstore-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Dermstore (dermstore.com, the US skincare and beauty retailer, shipping to the
+US and Canada): price, RRP as Dermstore gives it and Dermstore's offer text
+per product and per brand, every shade, size or strength with its own price
+and stock, UPC, auto-replenish plans, the 10 latest reviews, the current
+offers with their end times, and US vs Canada prices for the same SKU. Seven
+endpoints on `client.dermstore` (new in 0.89.0): `search`, `list`, `product`,
+`suggestions`, `offers`, `brands` and `categories`. 1 credit per call;
+`credits_used` in the response is what was charged. Dermstore has no public
+API; its affiliate programme runs on Awin and offers product feeds to
+approved publishers. Pair a product with `client.sephora`, `client.ulta` and
+`client.amazon` for the same product and size elsewhere (match on UPC, or
+brand + name + size). See the
+[Dermstore API page](https://scavio.dev/dermstore-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Markets (`country`, default `us`): `us` (USD, shipping to the US) and `ca`
+  (Dermstore's own Canadian dollar prices, not converted).
+- Search by keywords or SKU, up to 200 a page, 7 sorts, filters by brand,
+  skin type, concern, SPF band, key ingredient, preference, gender, price,
+  rating and discount, facets on request. A mapped keyword (sunscreen,
+  retinol, eltamd) returns the page Dermstore sends it to, reported in
+  `resolved_from`.
+- `list` reads any Dermstore list page by path or link: a category, brand,
+  `/sale`, an offer page (`/shop/black-friday/30-off`), `/gift-sets` or an
+  ingredient page.
+- `rrp` is Dermstore's RRP as given; `discount_percent` is computed by Scavio
+  from price and RRP, only when the RRP is above the price. `offer` is
+  Dermstore's own promotion text, as given; code rates differ by brand.
+  Captured 2026-11-25: EltaMD UV Clear SPF 46 (1.7 fl. oz., SKU 11370303) at
+  46 USD and 65.78 CAD; Medik8 offered "30% Off With Code JOY + Gift", while
+  SkinCeuticals offered "Earn 10% Back + $25 Gift" (double points, as
+  Dermstore states it).
+- `offers` gives the end time Dermstore states (`ends`); Dermstore gives no
+  start date.
+- Not available: a full review feed or review paging (only the 10 latest via
+  `product`), Q&A, member (VIP) prices, cart or checkout prices, price
+  history, offer start dates.
+
+```typescript
+// Search: price, RRP, Dermstore's offer text per product; the same search in Canada.
+const hits = (await client.dermstore.search({ q: "uv clear spf 46" })) as any;
+for (const it of hits.data.items.slice(0, 5)) console.log(it.sku, it.name, it.price, it.rrp, it.discount_percent, it.offer);
+const ca = (await client.dermstore.search({ q: "uv clear spf 46", country: "ca" })) as any;
+
+// Any list page: a brand, /sale or an offer page.
+const brand = (await client.dermstore.list({ path: "/brands/eltamd", include_facets: true })) as any;
+
+// One product: variants with their own price and stock, UPC, offer banner, 10 latest reviews.
+const p = (await client.dermstore.product({ sku: "13806521" })) as any;
+for (const v of p.data.variants) console.log(v.sku, v.option, v.price, v.in_stock);
+
+// Current offers with their end times.
+const offers = (await client.dermstore.offers()) as any;
+for (const o of offers.data.offers) console.log(o.title, o.code, o.threshold, o.ends, o.list_path);
+```
+
+Every call raises the request timeout to `DERMSTORE_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found (an unknown SKU or list path) is charged.
 
 ### [Carrefour](https://scavio.dev/docs/carrefour-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
