@@ -582,6 +582,80 @@ export type {
   BringatrailerLocationOptions,
   BringatrailerSuggestionsOptions,
 } from "./namespaces/bringatrailer.js";
+export { RentcomNamespace, RENTCOM_TIMEOUT } from "./namespaces/rentcom.js";
+export type {
+  RentcomSearchOptions,
+  RentcomListingOptions,
+  RentcomBuildingOptions,
+  RentcomRentTrendsOptions,
+  RentcomSuggestionsOptions,
+  RentcomCitiesOptions,
+} from "./namespaces/rentcom.js";
+export { TruliaNamespace, TRULIA_TIMEOUT } from "./namespaces/trulia.js";
+export type {
+  TruliaNeighborhoodOptions,
+  TruliaSearchOptions,
+  TruliaPropertyOptions,
+  TruliaSchoolOptions,
+  TruliaSuggestionsOptions,
+} from "./namespaces/trulia.js";
+export { StreeteasyNamespace, STREETEASY_TIMEOUT } from "./namespaces/streeteasy.js";
+export type {
+  StreeteasySearchOptions,
+  StreeteasyListingOptions,
+  StreeteasyBuildingOptions,
+  StreeteasyBuildingsOptions,
+  StreeteasyMarketOptions,
+} from "./namespaces/streeteasy.js";
+export { RentcafeNamespace, RENTCAFE_TIMEOUT } from "./namespaces/rentcafe.js";
+export type {
+  RentcafeSearchOptions,
+  RentcafePropertyOptions,
+  RentcafeFloorplanUnitsOptions,
+  RentcafeReviewsOptions,
+  RentcafeSuggestionsOptions,
+  RentcafeRentTrendsOptions,
+} from "./namespaces/rentcafe.js";
+export { VrboNamespace, VRBO_TIMEOUT } from "./namespaces/vrbo.js";
+export type {
+  VrboSearchOptions,
+  VrboPropertyOptions,
+  VrboSuggestionsOptions,
+} from "./namespaces/vrbo.js";
+export { TruecarNamespace, TRUECAR_TIMEOUT } from "./namespaces/truecar.js";
+export type {
+  TruecarSearchOptions,
+  TruecarListingOptions,
+  TruecarModelOptions,
+  TruecarReviewsOptions,
+  TruecarDealerOptions,
+  TruecarDealerInventoryOptions,
+  TruecarSuggestionsOptions,
+  TruecarMakesOptions,
+  TruecarModelsOptions,
+} from "./namespaces/truecar.js";
+export { EdmundsNamespace, EDMUNDS_TIMEOUT } from "./namespaces/edmunds.js";
+export type {
+  EdmundsSearchOptions,
+  EdmundsListingOptions,
+  EdmundsReviewsOptions,
+  EdmundsDealerOptions,
+  EdmundsModelOptions,
+  EdmundsPriceOptions,
+  EdmundsAppraisalOptions,
+  EdmundsMakesOptions,
+} from "./namespaces/edmunds.js";
+export { KbbNamespace, KBB_TIMEOUT } from "./namespaces/kbb.js";
+export type {
+  KbbCarValueOptions,
+  KbbModelOptions,
+  KbbSearchOptions,
+  KbbListingOptions,
+  KbbReviewsOptions,
+  KbbDealersOptions,
+  KbbDealerOptions,
+  KbbMakesModelsOptions,
+} from "./namespaces/kbb.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,

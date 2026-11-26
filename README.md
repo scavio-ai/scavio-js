@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 127 platforms on one API key, plus `extract()` to read
+data across 135 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -13,10 +13,10 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
-- **Cars** — Cars.com, Autotrader (KBB fair price range), CarGurus (expected price and deal rating; US, Canada, UK), CarMax (no-haggle prices, recent offers per model year), Carvana (prices, KBB values, shipping costs)
+- **Cars** — Cars.com, Autotrader (KBB fair price range), CarGurus (expected price and deal rating; US, Canada, UK), CarMax (no-haggle prices, recent offers per model year), Carvana (prices, KBB values, shipping costs), TrueCar (price rating, dealer fees, national price stats), Edmunds (deal rating, Edmunds Suggested Price per trim, appraisal values), Kelley Blue Book (car values at a ZIP, 17 price types)
 - **Collector-car auctions** — Bring a Trailer (results, sale prices and model price history)
 - **Liquidation auctions** — Nellis Auction (open lots in 6 US shopping locations with the current bid and Nellis's own Estimated Retail Price, a sold lot's final price by id, bid history without bidder names)
-- **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Booking, Airbnb, Tripadvisor
+- **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Trulia (neighborhood survey and market snapshot), StreetEasy (NYC listings and market data), Rent.com and Apartment Guide, RentCafe (US and Canada), Booking, Airbnb, Vrbo, Tripadvisor
 - **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House, Company Enrich (contacts and owner from a website or a Google Maps place)
 - **Ads transparency** — Google Ads Transparency Center, Meta Ad Library
@@ -3208,6 +3208,94 @@ Every call raises the request timeout to `CARVANA_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 
+### [TrueCar](https://scavio.dev/docs/truecar-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+TrueCar (truecar.com, the US car-buying marketplace): new and used dealer
+inventory around a ZIP with the price, MSRP, TrueCar's price rating and the
+dealer, plus national price and trim stats; one listing by VIN or link with
+the price summary and dealer fees (the VIN is input only, never returned, so a
+search result cannot feed `listing`); a model overview with trims and starting
+prices; owner reviews; a dealer and its inventory; suggestions, makes and
+models. US only, prices in USD. 9 endpoints on `client.truecar` (new in
+0.98.0): `search`, `listing`, `model`, `reviews`, `dealer`, `dealerInventory`,
+`suggestions`, `makes`, `models`. TrueCar has no public API. See the [TrueCar
+API
+page](https://scavio.dev/truecar-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.truecar.search({ zip: "10001", make: "Toyota", model: "RAV4", condition: "used" })) as any;
+for (const it of res.data.items.slice(0, 5)) console.log(it.year, it.trim, it.price, it.price_rating, it.mileage, it.dealer.name);
+const model = (await client.truecar.model({ make: "Toyota", model: "RAV4" })) as any;
+for (const t of model.data.trims) console.log(t.trim, t.starting_msrp, t.starting_market_average);
+```
+
+Every call raises the request timeout to `TRUECAR_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Edmunds](https://scavio.dev/docs/edmunds-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Edmunds (edmunds.com, the US car research and shopping site): new, used and
+certified listings around a city and state with the price, Edmunds' deal
+rating (local and national) and estimated days to sell; one listing (VIN with
+make, model and year, input only); owner reviews of a model year; a dealer
+page; a model year's research page; MSRP, invoice and Edmunds Suggested Price
+per trim; used-car appraisal values per style and condition; and a make's
+models. The suggested price and appraisal name the place Edmunds priced for.
+US only, prices in USD; 2 credits per call. 8 endpoints on `client.edmunds`
+(new in 0.98.0): `search`, `listing`, `reviews`, `dealer`, `model`, `price`,
+`appraisal`, `makes`. Edmunds' own API is for partners and dealers only. See
+the [Edmunds API
+page](https://scavio.dev/edmunds-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 2 credits each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.edmunds.search({ city: "New York", state: "NY", make: "Toyota", model: "RAV4" })) as any;
+for (const it of res.data.items.slice(0, 5)) console.log(it.year, it.trim, it.price, it.mileage, it.deal_rating.local.rating);
+const price = (await client.edmunds.price({ make: "Toyota", model: "RAV4", year: 2025 })) as any;
+console.log(price.data.suggested_price_near.text);
+for (const t of price.data.trims) console.log(t.trim, t.msrp, t.invoice, t.edmunds_suggested);
+```
+
+Every call raises the request timeout to `EDMUNDS_TIMEOUT` (250s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Kelley Blue Book](https://scavio.dev/docs/kbb-car-value?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Kelley Blue Book (kbb.com, Cox Automotive's car value and research site): a
+car's KBB values by make, model, year and trim for buy_used, buy_new or
+trade_in_sell (every price type the page gives, 17 for a used car: Fair
+Purchase Price, private party, trade-in and auction values per condition),
+optionally at a ZIP (not for buy_new); a model year page with its trims; cars
+for sale near a ZIP with KBB's fair purchase price; one listing; owner
+reviews; dealers near a ZIP and one dealer; and the make and model directory.
+US only, prices in USD. 8 endpoints on `client.kbb` (new in 0.98.0):
+`carValue`, `model`, `search`, `listing`, `reviews`, `dealers`, `dealer`,
+`makesModels`. KBB's own data feed is a business contract, not a self-serve
+API. See the [Kelley Blue Book API
+page](https://scavio.dev/kbb-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each; `carValue` with a `zip` 2 (6 when a second way of
+reading the page is needed); `reviews` beyond page 1, with a sort other than
+recent or a star filter up to 5. `credits_used` in the response is what was
+charged.
+
+```typescript
+const val = (await client.kbb.carValue({ make: "Toyota", model: "rav4", year: 2021, trim: "le-sport-utility-4d", mileage: 40000, zip: "10001" })) as any;
+console.log(val.data.location.valid_text, val.data.headline.fair_purchase_price.value);
+for (const p of val.data.prices.slice(0, 5)) console.log(p.type, p.value, p.range_low, p.range_high);
+const cars = (await client.kbb.search({ zip: "10001", make: "Toyota", model: "RAV4" })) as any;
+for (const c of cars.data.listings.slice(0, 5)) console.log(c.title, c.price, c.deal_label, c.kbb_fair_purchase_price);
+```
+
+Every call raises the request timeout to `KBB_TIMEOUT` (250s) and never lowers
+a longer client timeout; failed calls and refused inputs are not charged, a
+not-found is charged.
+
 ### [Ace Hardware](https://scavio.dev/docs/acehardware-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
 Ace Hardware (acehardware.com), the US hardware cooperative: Ace Hardware
@@ -5508,6 +5596,115 @@ Wales only, not Scotland or Northern Ireland) and 50 agent pages per query. Live
 `soldProperty` for an address's past sales. An unknown or removed listing, sold
 id or branch is a billed 404.
 
+### [Rent.com](https://scavio.dev/docs/rentcom-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Rent.com (rent.com) and Apartment Guide (apartmentguide.com), the US rental
+listing sites run by Redfin: rental search by city and state, ZIP or
+neighborhood with the rent range per bed count, deals, price drops and the
+site's average rents; one rental with floor plans, fees, pet policies, office
+hours, schools and walk scores; one building's unit listings; a city's rent
+trends by bed count with year-on-year change and the rent spread; search-box
+suggestions; and a state's cities. `site` is rent (default) or apartmentguide
+(the same rentals). Rents are monthly, in USD. No agent or landlord personal
+data is returned. 6 endpoints on `client.rentcom` (new in 0.98.0): `search`,
+`listing`, `building`, `rentTrends`, `suggestions`, `cities`. See the
+[Rent.com API
+page](https://scavio.dev/rentcom-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.rentcom.search({ city: "Austin", state: "TX", beds: 2, price_max: 3000 })) as any;
+for (const it of res.data.listings.slice(0, 5)) console.log(it.id, it.name, it.price_text, it.bed_text, it.deals_text);
+const trends = (await client.rentcom.rentTrends({ city: "Austin", state: "TX" })) as any;
+console.log(trends.data.current.one_bedroom.average_rent, trends.data.listing_count);
+```
+
+Every call raises the request timeout to `RENTCOM_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Trulia](https://scavio.dev/docs/trulia-neighborhood?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Trulia (trulia.com, Zillow Group's home and neighborhood site): a neighborhood
+page with Trulia's local survey (what locals say, safety statements with the
+share of residents who agree), resident review counts by topic, amenities,
+schools and a market snapshot; homes for sale, for rent or recently sold by
+ZIP, city or neighborhood (40 a page, 7 sorts); one home by zpid or one rental
+building; one school; and place suggestions. US only, prices in USD;
+`language` es on rental searches, buildings and neighborhoods. Brokerage
+company names only: no agent names or reviewer names. 5 endpoints on
+`client.trulia` (new in 0.98.0): `neighborhood`, `search`, `property`,
+`school`, `suggestions`. See the [Trulia API
+page](https://scavio.dev/trulia-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const hood = (await client.trulia.neighborhood({ location_id: "85381" })) as any;
+for (const s of hood.data.what_locals_say.statements.slice(0, 5)) console.log(s.statement, s.percent);
+console.log(hood.data.market.snapshot.avg_sale_price.display, hood.data.reviews.total);
+const homes = (await client.trulia.search({ location: "Austin, TX", beds_min: 3, price_max: 600000 })) as any;
+for (const h of homes.data.listings.slice(0, 5)) console.log(h.zpid, h.address, h.price, h.beds, h.baths);
+```
+
+Every call raises the request timeout to `TRULIA_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [StreetEasy](https://scavio.dev/docs/streeteasy-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+StreetEasy (streeteasy.com, Zillow Group's New York City real estate site):
+sales, rentals and past sales in an NYC or North NJ area with the price, net
+effective rent and months free, beds, baths and the building type; one listing
+in full with its price history, monthly charges and open houses (by link, or
+by id with `listing_type`); one building and an area's building directory; and
+StreetEasy's published monthly market data for NYC (price and rental indexes,
+median asking rent, inventory, share of price cuts). Brokerage names only: no
+agent personal data. 5 endpoints on `client.streeteasy` (new in 0.98.0):
+`search`, `listing`, `building`, `buildings`, `market`. See the [StreetEasy
+API
+page](https://scavio.dev/streeteasy-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.streeteasy.search({ area: "Brooklyn", mode: "rent", price_max: 4000 })) as any;
+for (const it of res.data.listings.slice(0, 5)) console.log(it.id, it.address, it.unit, it.price, it.beds, it.net_effective_rent);
+const idx = (await client.streeteasy.market({ type: "rentals", metric: "rental_index" })) as any;
+for (const a of idx.data.areas) console.log(a.area, a.latest.month, a.latest.value);
+```
+
+Every call raises the request timeout to `STREETEASY_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [RentCafe](https://scavio.dev/docs/rentcafe-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+RentCafe (rentcafe.com, Yardi's US and Canada rental listing site): rental
+search by location, city or ZIP with the rent range, rating, review count and
+rent specials (25 a page; one of beds, rent specials, short-term, furnished,
+utilities included or an amenity per search, plus price and pet-friendly); one
+listing in full; every unit of a floor plan; resident reviews with RentCafe's
+own summary (no names); suggestions; and a US city's rent trends. `market` us
+or ca (USD or CAD), `language` en or fr. 6 endpoints on `client.rentcafe` (new
+in 0.98.0): `search`, `property`, `floorplanUnits`, `reviews`, `suggestions`,
+`rentTrends`. See the [RentCafe API
+page](https://scavio.dev/rentcafe-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.rentcafe.search({ location: "austin-tx", price_max: 2000 })) as any;
+for (const it of res.data.listings.slice(0, 5)) console.log(it.id, it.name, it.rent_min, it.rent_max, it.rating, it.rent_specials);
+const trends = (await client.rentcafe.rentTrends({ city: "Austin", state: "TX" })) as any;
+console.log(trends.data.average_rent, trends.data.yoy_change_pct, trends.data.last_updated);
+```
+
+Every call raises the request timeout to `RENTCAFE_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
 ### Booking
 
 ```typescript
@@ -5548,6 +5745,35 @@ nights and Airbnb A/Bs both the window and the prices, so the response flags it
 as `dates_are_defaulted`; send real dates for anything you intend to compare.
 The rating breakdown and review tags live on `listing`, while `reviews` returns
 the review bodies with `limit`/`offset` paging.
+
+### [Vrbo](https://scavio.dev/docs/vrbo-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Vrbo (vrbo.com, Expedia Group's vacation rental site): vacation rentals for a
+place or region id and dates with the nightly price, the stay total, deals,
+rating and review count as Vrbo shows them, sorted and filtered by property
+type, amenity, house rule, location type, Premier Host and bedrooms (the first
+50 results; `partial` flags a 3-result answer); one property in full with
+amenities, house rules and the site's default stay price (fetched without
+dates); and destination suggestions. 20 market-languages (`market`). No host
+names, reviews or calendar. 3 endpoints on `client.vrbo` (new in 0.98.0):
+`search`, `property`, `suggestions`. See the [Vrbo API
+page](https://scavio.dev/vrbo-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: billed on actual cost: `search` 2 credits per attempt, 2 to 8
+(typically 2 to 6); `property` and `suggestions` 2. `credits_used` in the
+response is what was charged.
+
+```typescript
+const res = (await client.vrbo.search({ destination: "Destin, Florida", check_in: "2027-01-15", check_out: "2027-01-18", adults: 2 })) as any;
+console.log(res.data.matched_total, res.data.count, res.data.partial);
+for (const p of res.data.properties.slice(0, 5)) console.log(p.property_id, p.price.nightly, p.price.total, p.rating.score);
+const home = (await client.vrbo.property({ id: "1046285" })) as any;
+console.log(home.data.property_type, home.data.space.bedrooms, home.data.default_price.price_display);
+```
+
+Every call raises the request timeout to `VRBO_TIMEOUT` (250s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
 
 ### Tripadvisor
 
