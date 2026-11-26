@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 112 platforms on one API key, plus `extract()` to read
+data across 113 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), RONA (Canada, store prices for up to 60 articles at one store with exact units, stores, stock near a store), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), RONA (Canada, store prices for up to 60 articles at one store with exact units, stores, stock near a store), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PC Express (Canada, the same product code priced at each Loblaw banner's default store: Real Canadian Superstore, No Frills, Loblaws, Maxi and 6 more; deal end dates, PC Optimum offers, pickup stores), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2910,6 +2910,70 @@ console.log(fr.data.currency, fr.data.items[0]?.price_text);
 Every call raises the request timeout to `INSTACART_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
+
+### [PC Express](https://scavio.dev/docs/pcexpress-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+PC Express (Loblaw's online grocery for Real Canadian Superstore, No Frills,
+Loblaws, Zehrs, Fortinos, Valu-mart, Your Independent Grocer, Wholesale Club,
+Provigo and Maxi; Loblaw operates 2,504 stores per its 2025 annual report):
+what each Loblaw banner charges for the same product code at its default store
+on one date, with the deal end date and the PC Optimum offer as shown. Seven
+endpoints on `client.pcexpress` (new in 0.96.0): `search`, `category`,
+`collection`, `product`, `stores`, `store` and `suggestions`. PC Express has no
+public API. Pair a national-brand item with `client.walmart` and `domain: "ca"`
+for Walmart.ca, and see `client.costco`, `client.instacart` and
+`client.amazon`. See the
+[PC Express API page](https://scavio.dev/pcexpress-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: `search`, `category`, `collection`, `stores` and `suggestions` 1;
+  `product` 5 (1 when it answers from the search listing, `source` "search");
+  `store` 5. `credits_used` in the response is what was charged.
+- Canada only, prices in CAD. `banner` (default `superstore`): `superstore`,
+  `nofrills`, `loblaw`, `zehrs`, `fortinos`, `valumart`, `independent`,
+  `wholesaleclub`, `provigo`, `maxi`. `language` is `en`, or `fr` on
+  `provigo` (French only) and `maxi` (French by default, English too).
+- Prices are each banner's default online store's; choosing a store is not
+  offered (a `store_id` on a priced method is a 400, not charged), and every
+  answer says which store priced it in `store` (`requested` false).
+- The same product code is priced per banner. Captured 2026-11-26: No Name
+  Large Size Eggs 12 Pack (20812144001_EA) was 3.93 CAD at Real Canadian
+  Superstore's default store 1033 and 4.17 at Maxi's default store 8976.
+- `deal` carries the end date PC Express shows (`expiry_date`), no start
+  date; `pc_optimum_points` is the PC Optimum offer as shown;
+  `member_only_price` is the price the site shows publicly on the item, not a
+  price behind a login.
+- `product` adds GTIN, ingredients, nutrition, comparison prices and stock
+  status as given; `stores` lists a banner's pickup stores; `store` gives 7
+  dated days of store, pharmacy, clinic and optical hours.
+- Not available: choosing a store, review text (rating and count only), the
+  printed flyer, Shoppers Drug Mart, Atlantic Superstore, City Market and
+  T&T, cart or checkout, PC Optimum prices behind a login, price history (poll
+  and store the answers).
+
+```typescript
+// The same product code on three banners (each banner's default store).
+for (const [banner, query, language] of [["superstore", "eggs", "en"], ["nofrills", "eggs", "en"], ["maxi", "oeufs", "fr"]] as const) {
+  const res = (await client.pcexpress.search({ query, banner, language })) as any;
+  const it = res.data.items.find((i: any) => i.code === "20812144001_EA");
+  console.log(banner, res.data.store.store_id, it?.name, it?.price, it?.unit_price);
+}
+
+// Deals with their end date and PC Optimum offer as shown.
+const deals = (await client.pcexpress.collection({ collection: "deals-centre", banner: "nofrills" })) as any;
+for (const it of deals.data.items.slice(0, 5)) console.log(it.name, it.price, it.was_price, it.deal, it.pc_optimum_points);
+
+// One product: GTIN, nutrition, comparison prices; pickup stores and one store's hours.
+const p = (await client.pcexpress.product({ code: "20812144001_EA" })) as any;
+console.log(p.data.source, p.data.gtin, p.data.price, p.data.comparison_prices);
+const stores = (await client.pcexpress.stores({ city: "Winnipeg" })) as any;
+const store = (await client.pcexpress.store({ store_id: "1517" })) as any;
+console.log(stores.data.matched, store.data.name, store.data.store_hours[0]);
+```
+
+Every call raises the request timeout to `PCEXPRESS_TIMEOUT` (240s) and never
+lowers a longer client timeout: allow up to 2 minutes for `product`, `store`,
+`stores` and `suggestions`. Failed calls and refused inputs are not charged; a
+not-found (an unknown code, category, collection or store) is charged.
 
 ### [O'Reilly Auto Parts](https://scavio.dev/docs/oreilly-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

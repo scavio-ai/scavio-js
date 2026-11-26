@@ -64,6 +64,7 @@ import { UltaNamespace } from "./namespaces/ulta.js";
 import { DermstoreNamespace } from "./namespaces/dermstore.js";
 import { AldiNamespace } from "./namespaces/aldi.js";
 import { InstacartNamespace } from "./namespaces/instacart.js";
+import { PcexpressNamespace } from "./namespaces/pcexpress.js";
 import { MicroCenterNamespace } from "./namespaces/micro-center.js";
 import { WalgreensNamespace } from "./namespaces/walgreens.js";
 import { CvsNamespace } from "./namespaces/cvs.js";
@@ -286,6 +287,7 @@ export class Scavio extends ScavioCore {
   readonly dermstore: DermstoreNamespace;
   readonly aldi: AldiNamespace;
   readonly instacart: InstacartNamespace;
+  readonly pcexpress: PcexpressNamespace;
   readonly microCenter: MicroCenterNamespace;
   readonly walgreens: WalgreensNamespace;
   readonly cvs: CvsNamespace;
@@ -425,6 +427,7 @@ export class Scavio extends ScavioCore {
     this.dermstore = new DermstoreNamespace(this);
     this.aldi = new AldiNamespace(this);
     this.instacart = new InstacartNamespace(this);
+    this.pcexpress = new PcexpressNamespace(this);
     this.microCenter = new MicroCenterNamespace(this);
     this.walgreens = new WalgreensNamespace(this);
     this.cvs = new CvsNamespace(this);

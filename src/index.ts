@@ -410,6 +410,22 @@ export type {
   InstacartSuggestionsOptions,
   InstacartReviewsOptions,
 } from "./namespaces/instacart.js";
+export { PcexpressNamespace, PCEXPRESS_TIMEOUT } from "./namespaces/pcexpress.js";
+export type {
+  PcexpressBanner,
+  PcexpressLanguage,
+  PcexpressSort,
+  PcexpressDeal,
+  PcexpressBannerOptions,
+  PcexpressListFilters,
+  PcexpressSearchOptions,
+  PcexpressCategoryOptions,
+  PcexpressCollectionOptions,
+  PcexpressProductOptions,
+  PcexpressStoresOptions,
+  PcexpressStoreOptions,
+  PcexpressSuggestionsOptions,
+} from "./namespaces/pcexpress.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
