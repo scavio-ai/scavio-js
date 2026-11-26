@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora, Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -597,9 +597,10 @@ General return a rating and review count but no review text.
 
 ### Sephora, Ulta Beauty, ALDI, Micro Center, Walgreens and CVS
 
-Six US retailers, new in 0.32.0. Where prices or stock are per store, pass the
-store number on the call (`aldi.stores`, `microCenter.stores`,
-`walgreens.stores`; CVS has no locator).
+Six US retailers, new in 0.32.0 (Sephora also reads Sephora Canada with
+`country: "ca"`, see [Sephora Canada](#sephora-canada) below). Where prices or
+stock are per store, pass the store number on the call (`aldi.stores`,
+`microCenter.stores`, `walgreens.stores`; CVS has no locator).
 
 ```typescript
 // Sephora: 60 products per page. product() takes a result's url (faster)
@@ -647,7 +648,63 @@ each; Sephora `product` costs 2. Micro Center
 `search` and `product` cost 2 and `stores` 1. Walgreens `search`, `product` and
 `stores` cost 2 and `stock` 4. CVS `product` can take 10-30+ seconds, so it
 raises the request timeout to `CVS_PRODUCT_TIMEOUT` (120s) when the client's is
-shorter; it never lowers it.
+shorter; it never lowers it. Every `sephora` call raises the request timeout
+to `SEPHORA_TIMEOUT` (120s) the same way (0.94.0).
+
+#### Sephora Canada
+
+Sephora Canada (sephora.com/ca, Sephora's Canadian store: 152 stores per its
+store list on Nov 25, 2026), new in 0.94.0 on `client.sephora`: pass
+`country: "ca"` to `search`, `category` and `product`; `brand`, `brands`,
+`suggestions`, `offers`, `stores` and `store` are Sephora Canada only and need
+no country. Canadian beauty prices in CAD (The Ordinary, Dior, Rare Beauty,
+Supergoop and the rest of the catalogue) with sale prices and dated offers.
+Credits: `search`, `category`, `brand`, `brands`, `suggestions`, `stores` and
+`store` 1 each; `product` and `offers` 2 (US credits are the same and
+unchanged). Product and SKU ids are the same as on sephora.com, with CAD prices
+as Sephora Canada gives them (French prices such as `33,00 $` are read as
+33.00); `language: "fr"` returns French names, descriptions and facet values
+with the same ids and prices. Sephora publishes no public product or store API.
+See the
+[Sephora API page](https://scavio.dev/sephora-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+```ts
+// CAD price, list and sale price, sale scope, filters and facets.
+await client.sephora.search({ query: "lip oil", country: "ca", filters: { on_sale: true }, include_facets: true });
+// Every SKU with price, sale price, in_stock and only_few_left; the 10 latest
+// reviews (no reviewer names) and Sephora's own AI review summary, labelled.
+const item = (await client.sephora.product({ product_id: "P428500", country: "ca" })) as any;
+for (const s of item.data.skus) console.log(s.sku_id, s.size, s.price, s.in_stock, s.only_few_left);
+await client.sephora.brands();
+await client.sephora.brand({ brand: "the-ordinary", sort: "best_selling" });
+await client.sephora.suggestions({ query: "lip" });
+const offers = (await client.sephora.offers()) as any;
+for (const o of offers.data.offers) console.log(o.title, o.eligibility, o.promo_code, o.end_date, o.app_only);
+await client.sephora.stores({ province: "QC" });
+await client.sephora.store({ store: "toronto-eaton-centre" }); // address, phone, hours
+```
+
+Captured 2026-11-26: Dior Sauvage Eau de Parfum (`P428500`) at 128 to 300 CAD,
+the 3.4 oz / 100 ml SKU 2038131 at 200 CAD with `in_stock: true` and
+`only_few_left: false`; the Sephora Collection Oil Infusion Hydrating Lip Oil
+(`P518068`) at a sale price of 10.50 CAD (list 15.00) in a `lip oil` search; 26
+offers, among them 30% off Sephora Collection with `end_date`
+2026-11-30T23:59:00.000-08:00; and 152 stores on the store list (ON 64, QC 26,
+AB 22, BC 22). Listings take `sort`, `filters` (`brand`, `on_sale`, `new`,
+`clean`, `rating` 1-4, `min_price`, `max_price`, `facets`, or a list of
+`{ facet, value }`) and `include_facets`; a brand keyword such as
+`the ordinary` answers that brand's products with a `redirect`. `zip` is US
+only (a 400 with `country: "ca"`). `review_summary` is Sephora's own
+AI-generated summary of customer reviews and is labelled as Sephora's; read it
+as Sephora's summary, not as a fact. Offers carry `end_date` as given and no
+start date; app-only offers are flagged `app_only`. Store address and phone are
+public business data, returned as captured. Not available for Canada: stock per
+store, a store finder by postal code, the full review list with its sorts or a
+star filter, UPC (`upc` is always `null`: the pages show none), Beauty Insider
+prices, cart or checkout, price history (poll and store the answers). For the
+same product at other Canadian retailers use `client.dermstore`
+(`country: "ca"`), `client.amazon` (`country: "ca"`) and `client.walmart`
+(`domain: "ca"`); match on brand, name and size.
 
 ### Whole Foods, Harbor Freight, PetSmart, Petco, iHerb, Chewy and Menards
 

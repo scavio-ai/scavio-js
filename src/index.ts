@@ -80,7 +80,7 @@ export { LowesNamespace } from "./namespaces/lowes.js";
 export { SamsClubNamespace } from "./namespaces/sams-club.js";
 export { CanadianTireNamespace } from "./namespaces/canadian-tire.js";
 export { DollarGeneralNamespace } from "./namespaces/dollar-general.js";
-export { SephoraNamespace } from "./namespaces/sephora.js";
+export { SephoraNamespace, SEPHORA_TIMEOUT } from "./namespaces/sephora.js";
 export { UltaNamespace } from "./namespaces/ulta.js";
 export { AldiNamespace } from "./namespaces/aldi.js";
 export { MicroCenterNamespace } from "./namespaces/micro-center.js";
@@ -1270,6 +1270,18 @@ export type {
   SephoraSearchOptions,
   SephoraCategoryOptions,
   SephoraProductOptions,
+  SephoraCountry,
+  SephoraCaLanguage,
+  SephoraCaProvince,
+  SephoraCaFacetFilter,
+  SephoraCaFilters,
+  SephoraCaListingOptions,
+  SephoraBrandOptions,
+  SephoraBrandsOptions,
+  SephoraSuggestionsOptions,
+  SephoraOffersOptions,
+  SephoraStoresOptions,
+  SephoraStoreOptions,
 } from "./namespaces/sephora.js";
 export type {
   UltaSearchOptions,
