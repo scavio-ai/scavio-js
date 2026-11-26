@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 146 platforms on one API key, plus `extract()` to read
+data across 154 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), RONA (Canada, store prices for up to 60 articles at one store with exact units, stores, stock near a store), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), Space NK (UK, Ireland, the Netherlands, Australia), Lookfantastic (10 country sites, 22 currencies), Cult Beauty, YesStyle (prices per shipping country), Notino (27 storefronts, 30-day lowest price), Douglas (15 storefronts, RRP and 30-day low), Boots (UK and Ireland, store availability), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), RockAuto (parts by vehicle for every brand and tier, 15 display currencies), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PC Express (Canada, the same product code priced at each Loblaw banner's default store: Real Canadian Superstore, No Frills, Loblaws, Maxi and 6 more; deal end dates, PC Optimum offers, pickup stores), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, BJ's Wholesale Club (US, coupons and the club directory), Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), RONA (Canada, store prices for up to 60 articles at one store with exact units, stores, stock near a store), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), Space NK (UK, Ireland, the Netherlands, Australia), Lookfantastic (10 country sites, 22 currencies), Cult Beauty, YesStyle (prices per shipping country), Notino (27 storefronts, 30-day lowest price), Douglas (15 storefronts, RRP and 30-day low), Boots (UK and Ireland, store availability), ALDI, Micro Center, Newegg (US, Canada and 9 Global storefronts, every seller's offer), Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), RockAuto (parts by vehicle for every brand and tier, 15 display currencies), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PC Express (Canada, the same product code priced at each Loblaw banner's default store: Real Canadian Superstore, No Frills, Loblaws, Maxi and 6 more; deal end dates, PC Optimum offers, pickup stores), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Academy Sports + Outdoors (US, exact units per store), REI (US, store pickup status near a ZIP), Foot Locker, Zappos and 6pm (exact warehouse units per size, width and color), Fanatics, Gap Inc. (Gap, Old Navy, Banana Republic, Athleta; US and Canada, store stock by size), Bath & Body Works (US and Canada, offers and store pickup), Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Rakuten (cash back rates and coupons in the US, UK and Canada), Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -547,6 +547,35 @@ warehouses on us and 2 per warehouse on ca). The clearance price codes are the
 member-community decode of Costco shelf prices; Costco does not publish them,
 and only items Costco lists online are covered.
 
+### [BJ's Wholesale Club](https://scavio.dev/docs/bjs-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+BJ's Wholesale Club (bjs.com, the US warehouse club): one product in full,
+keyword search and category listings (40 results, as the page lists them) with
+the online price, sale dates and whether an item is in stock online or in
+club, the category tree, product reviews, the guest coupon book and the club
+directory by state. Where BJ's shows a member-only price to a visitor, the
+answer flags it and gives the list price only; a club-only item has no online
+price. Search is priced for the club BJ's assigns to the visit: a club cannot
+be chosen, and there is no club price, club stock or ZIP club finder. US only,
+prices in USD. 7 endpoints on `client.bjs` (new in 0.100.0): `product`,
+`search`, `category`, `categories`, `reviews`, `coupons`, `clubs`. See the
+[BJ's Wholesale Club API
+page](https://scavio.dev/bjs-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.bjs.search({ query: "coffee" })) as any;
+console.log(res.data.total, res.data.count, res.data.priced_for);
+for (const it of res.data.results.slice(0, 5)) console.log(it.name, it.price, it.member_only_price, it.club_only);
+const clubs = (await client.bjs.clubs({ state: "NY" })) as any;
+for (const club of clubs.data.clubs.slice(0, 5)) console.log(club.club_id, club.name, club.state);
+```
+
+Every call raises the request timeout to `BJS_TIMEOUT` (240s) and never lowers
+a longer client timeout; failed calls and refused inputs are not charged, a
+not-found is charged.
+
 ### Lowe's, Sam's Club, Canadian Tire and Dollar General
 
 Four store-level retailers, new in 0.31.0. Each call answers for ONE store you
@@ -1011,6 +1040,35 @@ and store the answers). For the same model at other Canadian retailers use
 `client.amazon` (`country: "ca"`), `client.walmart` (`domain: "ca"`),
 `client.costco` (`country: "ca"`) and `client.canadianTire`; match on brand and
 model.
+
+### [Newegg](https://scavio.dev/docs/newegg-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Newegg (newegg.com, the US computer and electronics store): keyword search,
+category listings and the deal stores (Shell Shocker, Black Friday) with the
+price, list price, instant rebate, shipping and the seller; the category menu;
+one item in full; every seller's offer on an item by condition; reviews; a
+marketplace seller's store and its products; and search suggestions. Country
+us, ca or one of 9 Newegg Global storefronts (local currency, part of the
+catalog). When Newegg serves a different item than the one requested, the
+answer shows both. 10 endpoints on `client.newegg` (new in 0.100.0): `search`,
+`category`, `categories`, `product`, `offers`, `reviews`, `deals`, `seller`,
+`sellerProducts`, `suggestions`. See the [Newegg API
+page](https://scavio.dev/newegg-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 2 credits each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.newegg.search({ query: "rtx 5070" })) as any;
+console.log(res.data.total, res.data.count);
+for (const it of res.data.items.slice(0, 5)) console.log(it.title, it.price, it.list_price, it.in_stock);
+const offers = (await client.newegg.offers({ item_number: "19-113-877", sort: "price" })) as any;
+console.log(offers.data.total, offers.data.tabs.map((t: any) => [t.condition, t.lowest_price]));
+for (const o of offers.data.offers.slice(0, 5)) console.log(o.price, o.condition, o.shipping.free, o.seller.marketplace);
+```
+
+Every call raises the request timeout to `NEWEGG_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
 
 ### [TCGplayer](https://scavio.dev/docs/tcgplayer-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
@@ -1933,6 +1991,64 @@ Every call raises the request timeout to `MACYS_TIMEOUT` (120s) and never
 lowers a longer client timeout. An unknown product, category or store id is a
 404.
 
+### [Gap Inc.](https://scavio.dev/docs/gap-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Gap Inc. (gap.com): one API for Gap, Old Navy, Banana Republic, Athleta, Gap
+Factory and Banana Republic Factory (brand). Keyword search and category
+listings with the regular price, the price shown and whether it is a promotion
+or a markdown; the category tree; one product with every color and size;
+prices for up to 100 colors in one call; stores near a ZIP, a postal code or a
+point and one store with hours; the in, low or out pickup stock of sizes at up
+to 10 stores; search suggestions, trending searches and the deal pages.
+Country us or ca (English or French), prices in USD or CAD. A checkout code is
+never applied to a price. 11 endpoints on `client.gap` (new in 0.100.0):
+`search`, `category`, `categories`, `product`, `prices`, `stores`, `store`,
+`storeStock`, `suggestions`, `trending`, `deals`. See the [Gap Inc. API
+page](https://scavio.dev/gap-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.gap.search({ query: "jeans", brand: "gap" })) as any;
+console.log(res.data.brand_name, res.data.total, res.data.pages);
+for (const it of res.data.items.slice(0, 5)) console.log(it.name, it.regular_price, it.effective_price, it.price_type);
+const stock = (await client.gap.storeStock({ store_ids: ["220", "1519", "1456"], sku_ids: ["4035400023503"] })) as any;
+for (const sku of stock.data.skus) console.log(sku.sku_id, sku.stores.map((s: any) => [s.store_id, s.status]));
+```
+
+Every call raises the request timeout to `GAP_TIMEOUT` (240s) and never lowers
+a longer client timeout; failed calls and refused inputs are not charged, a
+not-found is charged.
+
+### [Bath & Body Works](https://scavio.dev/docs/bathandbodyworks-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Bath & Body Works (bathandbodyworks.com, the US body care and home fragrance
+retailer, and bathandbodyworks.ca): keyword search and category listings (48
+results, as the site shows them) with the price, list price, promotions,
+fragrance and size; the category tree; one product in full; a product's
+promotions with their start and end times; the current offers; whether one
+store takes a pickup order for a product and the most it lets you reserve; the
+store directory and one store; and a product's rating with its newest reviews.
+Country us or ca, prices in USD or CAD. 10 endpoints on
+`client.bathandbodyworks` (new in 0.100.0): `search`, `category`,
+`categories`, `product`, `promotions`, `offers`, `storeAvailability`, `store`,
+`stores`, `reviewsSummary`. See the [Bath & Body Works API
+page](https://scavio.dev/bathandbodyworks-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.bathandbodyworks.search({ query: "candle", sort: "top_rated" })) as any;
+console.log(res.data.total, res.data.count, res.data.currency);
+for (const it of res.data.products.slice(0, 5)) console.log(it.name, it.size, it.price, it.promotions.map((p: any) => p.callout));
+const pickup = (await client.bathandbodyworks.storeAvailability({ store_id: "BBW00010", product_id: "028029548" })) as any;
+console.log(pickup.data.store.name, pickup.data.store_orderable, pickup.data.pickup_purchase_limit);
+```
+
+Every call raises the request timeout to `BATHANDBODYWORKS_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
 ### [Saks Fifth Avenue](https://scavio.dev/docs/saks-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
 Nine endpoints, new in 0.44.0, 2 credits each, on `client.saks`: `search`,
@@ -2055,6 +2171,35 @@ for (const c of coupons.data.offers) console.log(c.code, c.description, c.ends, 
 
 Every call raises the request timeout to `KOHLS_TIMEOUT` (120s) and never
 lowers a longer client timeout. An unknown product id or brand is a 404.
+
+### [Rakuten](https://scavio.dev/docs/rakuten-stores?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Rakuten (rakuten.com, the cashback site formerly Ebates; rakuten.co.uk and
+rakuten.ca too): the store directory with each store's cash back rate and was
+rate, one store with its rate, terms and coupons, a store's coupons, a rate
+check for up to 100 stores in one call, search over stores, coupons and
+products, search suggestions, a category of stores, the event deal pages
+(Black Friday, Cyber Monday, the coupons hub) and the card-linked in-store
+offers. Country us, gb or ca (English or French). Rates are as Rakuten writes
+them; Rakuten gives no rate end dates, and its shopping-trip links are never
+returned. 9 endpoints on `client.rakuten` (new in 0.100.0): `stores`, `store`,
+`storeCoupons`, `rates`, `search`, `suggestions`, `category`, `deals`,
+`inStore`. See the [Rakuten API
+page](https://scavio.dev/rakuten-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.rakuten.stores({ sort: "cashback" })) as any;
+console.log(res.data.total, res.data.pages);
+for (const st of res.data.stores.slice(0, 5)) console.log(st.name, st.rate_text, st.was_text, st.elevated);
+const rates = (await client.rakuten.rates({ store_ids: ["8333", "7206", "3930", "9528"] })) as any;
+for (const st of rates.data.stores) console.log(st.name, st.rate_text, st.amount, st.type);
+```
+
+Every call raises the request timeout to `RAKUTEN_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
 
 ### [JCPenney](https://scavio.dev/docs/jcpenney-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
@@ -2228,6 +2373,65 @@ lowers a longer client timeout; `product` and `reviews` raise it to
 `DICKS_PRODUCT_TIMEOUT` (240s), and failed calls are not charged. An
 unknown product id, category or brand is a 404.
 
+### [Academy Sports + Outdoors](https://scavio.dev/docs/academy-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Academy Sports + Outdoors (academy.com, the US sporting goods retailer):
+keyword search, category and deal listings (Hot Deals, Clearance, Black
+Friday, the Flash Sale) with the price, was price, saving and Academy's deal
+tags, sorted and filtered by any facet; one product in full with every
+variant; the exact units one store holds for pickup per variant; stores near a
+ZIP or a point and store details with hours; the category tree; and search
+suggestions. US only, prices in USD and national (the same at every store).
+Product types are described as Academy lists them. 9 endpoints on
+`client.academy` (new in 0.100.0): `search`, `product`, `storeAvailability`,
+`stores`, `store`, `category`, `categories`, `deals`, `suggestions`. See the
+[Academy Sports + Outdoors API
+page](https://scavio.dev/academy-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.academy.search({ query: "yeti tumbler" })) as any;
+console.log(res.data.total, res.data.total_pages);
+for (const it of res.data.items.slice(0, 5)) console.log(it.name, it.price, it.was_price, it.percent_off);
+const stock = (await client.academy.storeAvailability({ part_number: "111805768", store_id: "19", state: "TX" })) as any;
+console.log(stock.data.in_store_units_total, stock.data.variants_in_stock_at_store);
+for (const v of stock.data.variants.slice(0, 5)) console.log(v.sku_id, v.store_status, v.in_store_units);
+```
+
+Every call raises the request timeout to `ACADEMY_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [REI](https://scavio.dev/docs/rei-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+REI (rei.com, the US outdoor co-op): keyword search, category listings and the
+deal pages (sale and clearance, REI Outlet) with the price, regular price,
+percent off and flags, sorted and filtered by facets or one store; one product
+in full with every SKU; reviews; the pickup status of one SKU at the REI
+stores near a ZIP, a city or a point (in stock, ship to store or unavailable:
+REI publishes no unit counts); stores and one store with hours; and search
+suggestions. US only, prices in USD as shown to a visitor who is not signed
+in; no used gear online and no member prices. 9 endpoints on `client.rei` (new
+in 0.100.0): `search`, `category`, `deals`, `product`, `reviews`,
+`storeStock`, `stores`, `store`, `suggestions`. See the [REI API
+page](https://scavio.dev/rei-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 2 credits each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.rei.search({ query: "rain jacket" })) as any;
+console.log(res.data.total, res.data.total_pages);
+for (const it of res.data.items.slice(0, 5)) console.log(it.brand, it.name, it.price, it.regular_price, it.sale);
+const stock = (await client.rei.storeStock({ sku: "2437020001", zip: "98101" })) as any;
+console.log(stock.data.in_stock_count, stock.data.ship_to_store_count);
+for (const row of stock.data.stores.slice(0, 5)) console.log(row.store.name, row.status, row.estimated_arrival);
+```
+
+Every call raises the request timeout to `REI_TIMEOUT` (240s) and never lowers
+a longer client timeout; failed calls and refused inputs are not charged, a
+not-found is charged.
+
 ### [Foot Locker](https://scavio.dev/docs/footlocker-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
 Ten endpoints on `client.footlocker` (new in 0.49.0), 1 credit each:
@@ -2301,6 +2505,37 @@ Every call raises the request timeout to `FOOTLOCKER_TIMEOUT` (120s) and
 never lowers a longer client timeout; `reviews` and `questions` raise it to
 `FOOTLOCKER_REVIEWS_TIMEOUT` (240s), and failed calls are not charged.
 Unknown SKUs, categories and brands are a charged 404.
+
+### [Zappos](https://scavio.dev/docs/zappos-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Zappos (zappos.com, the US shoe and clothing store) and 6pm (6pm.com, its
+outlet site; site): keyword search or a catalog browse by facets, sorted, with
+the price, original price, percent off and units on hand; one product with
+every color and size and the exact warehouse units per size, width and color;
+customer reviews with comfort, look and fit ratings; customer questions; the
+lowest price of each color as Zappos gives it; category facets; and search
+suggestions. Reviews, questions and lowest prices come from zappos.com. US
+only, prices in USD; no stores. No reviewer names. 7 endpoints on
+`client.zappos` (new in 0.100.0): `search`, `product`, `reviews`, `questions`,
+`lowestPrices`, `categories`, `suggestions`. See the [Zappos API
+page](https://scavio.dev/zappos-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.zappos.search({ query: "running shoes" })) as any;
+console.log(res.data.total, res.data.total_pages);
+for (const it of res.data.items.slice(0, 5)) console.log(it.brand, it.name, it.price, it.original_price, it.on_hand);
+const shoe = (await client.zappos.product({ product_id: "10002909" })) as any;
+console.log(shoe.data.name, shoe.data.total_on_hand, shoe.data.in_stock_sku_count);
+for (const style of shoe.data.styles.slice(0, 3)) {
+  console.log(style.color, style.price, style.skus.slice(0, 4).map((s: any) => [s.size, s.width, s.on_hand]));
+}
+```
+
+Every call raises the request timeout to `ZAPPOS_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
 
 ### [SportChek](https://scavio.dev/docs/sportchek-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) and [Mark's](https://scavio.dev/docs/marks-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

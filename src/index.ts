@@ -757,6 +757,102 @@ export type {
   ExpediaPriceCalendarOptions,
   ExpediaSuggestionsOptions,
 } from "./namespaces/expedia.js";
+export { AcademyNamespace, ACADEMY_TIMEOUT } from "./namespaces/academy.js";
+export type {
+  AcademySearchOptions,
+  AcademyProductOptions,
+  AcademyStoreAvailabilityOptions,
+  AcademyStoresOptions,
+  AcademyStoreOptions,
+  AcademyCategoryOptions,
+  AcademyCategoriesOptions,
+  AcademyDealsOptions,
+  AcademySuggestionsOptions,
+} from "./namespaces/academy.js";
+export { BathandbodyworksNamespace, BATHANDBODYWORKS_TIMEOUT } from "./namespaces/bathandbodyworks.js";
+export type {
+  BathandbodyworksSearchOptions,
+  BathandbodyworksCategoryOptions,
+  BathandbodyworksCategoriesOptions,
+  BathandbodyworksProductOptions,
+  BathandbodyworksPromotionsOptions,
+  BathandbodyworksOffersOptions,
+  BathandbodyworksStoreAvailabilityOptions,
+  BathandbodyworksStoreOptions,
+  BathandbodyworksStoresOptions,
+  BathandbodyworksReviewsSummaryOptions,
+} from "./namespaces/bathandbodyworks.js";
+export { GapNamespace, GAP_TIMEOUT } from "./namespaces/gap.js";
+export type {
+  GapSearchOptions,
+  GapCategoryOptions,
+  GapCategoriesOptions,
+  GapProductOptions,
+  GapPricesOptions,
+  GapStoresOptions,
+  GapStoreOptions,
+  GapStoreStockOptions,
+  GapSuggestionsOptions,
+  GapTrendingOptions,
+  GapDealsOptions,
+} from "./namespaces/gap.js";
+export { RakutenNamespace, RAKUTEN_TIMEOUT } from "./namespaces/rakuten.js";
+export type {
+  RakutenStoresOptions,
+  RakutenStoreOptions,
+  RakutenStoreCouponsOptions,
+  RakutenRatesOptions,
+  RakutenSearchOptions,
+  RakutenSuggestionsOptions,
+  RakutenCategoryOptions,
+  RakutenDealsOptions,
+  RakutenInStoreOptions,
+} from "./namespaces/rakuten.js";
+export { BjsNamespace, BJS_TIMEOUT } from "./namespaces/bjs.js";
+export type {
+  BjsProductOptions,
+  BjsSearchOptions,
+  BjsCategoryOptions,
+  BjsCategoriesOptions,
+  BjsReviewsOptions,
+  BjsCouponsOptions,
+  BjsClubsOptions,
+} from "./namespaces/bjs.js";
+export { ZapposNamespace, ZAPPOS_TIMEOUT } from "./namespaces/zappos.js";
+export type {
+  ZapposSearchOptions,
+  ZapposProductOptions,
+  ZapposReviewsOptions,
+  ZapposQuestionsOptions,
+  ZapposLowestPricesOptions,
+  ZapposCategoriesOptions,
+  ZapposSuggestionsOptions,
+} from "./namespaces/zappos.js";
+export { NeweggNamespace, NEWEGG_TIMEOUT } from "./namespaces/newegg.js";
+export type {
+  NeweggSearchOptions,
+  NeweggCategoryOptions,
+  NeweggCategoriesOptions,
+  NeweggProductOptions,
+  NeweggOffersOptions,
+  NeweggReviewsOptions,
+  NeweggDealsOptions,
+  NeweggSellerOptions,
+  NeweggSellerProductsOptions,
+  NeweggSuggestionsOptions,
+} from "./namespaces/newegg.js";
+export { ReiNamespace, REI_TIMEOUT } from "./namespaces/rei.js";
+export type {
+  ReiSearchOptions,
+  ReiCategoryOptions,
+  ReiDealsOptions,
+  ReiProductOptions,
+  ReiReviewsOptions,
+  ReiStoreStockOptions,
+  ReiStoresOptions,
+  ReiStoreOptions,
+  ReiSuggestionsOptions,
+} from "./namespaces/rei.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
