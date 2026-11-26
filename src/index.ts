@@ -576,6 +576,23 @@ export type {
   MarksBrandsOptions,
   MarksCategoriesOptions,
 } from "./namespaces/marks.js";
+export { RonaNamespace, RONA_TIMEOUT } from "./namespaces/rona.js";
+export type {
+  RonaLanguage,
+  RonaSort,
+  RonaPageSize,
+  RonaLanguageOption,
+  RonaListFilters,
+  RonaSearchOptions,
+  RonaProductOptions,
+  RonaPricesOptions,
+  RonaCategoryOptions,
+  RonaCategoriesOptions,
+  RonaStoresOptions,
+  RonaStoreOptions,
+  RonaStockOptions,
+  RonaDealsOptions,
+} from "./namespaces/rona.js";
 export { ThredupNamespace, THREDUP_TIMEOUT } from "./namespaces/thredup.js";
 export type {
   ThredupDepartment,

@@ -53,6 +53,7 @@ import { SamsClubNamespace } from "./namespaces/sams-club.js";
 import { CanadianTireNamespace } from "./namespaces/canadian-tire.js";
 import { SportchekNamespace } from "./namespaces/sportchek.js";
 import { MarksNamespace } from "./namespaces/marks.js";
+import { RonaNamespace } from "./namespaces/rona.js";
 import { DollarGeneralNamespace } from "./namespaces/dollar-general.js";
 import { DollarTreeNamespace } from "./namespaces/dollartree.js";
 import { DiscountTireNamespace } from "./namespaces/discounttire.js";
@@ -274,6 +275,7 @@ export class Scavio extends ScavioCore {
   readonly canadianTire: CanadianTireNamespace;
   readonly sportchek: SportchekNamespace;
   readonly marks: MarksNamespace;
+  readonly rona: RonaNamespace;
   readonly dollarGeneral: DollarGeneralNamespace;
   readonly dollartree: DollarTreeNamespace;
   readonly discounttire: DiscountTireNamespace;
@@ -412,6 +414,7 @@ export class Scavio extends ScavioCore {
     this.canadianTire = new CanadianTireNamespace(this);
     this.sportchek = new SportchekNamespace(this);
     this.marks = new MarksNamespace(this);
+    this.rona = new RonaNamespace(this);
     this.dollarGeneral = new DollarGeneralNamespace(this);
     this.dollartree = new DollarTreeNamespace(this);
     this.discounttire = new DiscountTireNamespace(this);

@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 111 platforms on one API key, plus `extract()` to read
+data across 112 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), RONA (Canada, store prices for up to 60 articles at one store with exact units, stores, stock near a store), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), ALDI, Micro Center, Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Foot Locker, Fanatics, Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -2372,6 +2372,74 @@ const store = (await client.marks.store({ store_id: "589" })) as any;
 Every call raises the request timeout to `SPORTCHEK_TIMEOUT` /
 `MARKS_TIMEOUT` (240s) and never lowers a longer client timeout; failed calls
 and refused inputs are not charged, a not-found is charged.
+
+### [RONA](https://scavio.dev/docs/rona-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+RONA (rona.ca, the Canadian home improvement retailer: RONA+ and RONA stores,
+about 425 corporate and affiliated dealer stores per RONA inc.): store prices
+in CAD for up to 60 article numbers at one store in one call, with the regular
+price, rebate and exact store units; keyword search, category and weekly deals
+lists priced at the store you choose; one product with the sale end RONA
+shows; the 403 stores on RONA's store locator; one store's hours; and which
+stores near a store have an article. Nine endpoints on `client.rona` (new in
+0.95.0): `search`, `product`, `prices`, `category`, `categories`, `stores`,
+`store`, `stock` and `deals`. RONA has no public API. Pair a RONA item with
+`client.homeDepot` and `country: "ca"` for Home Depot Canada in the same city:
+match the same grade and length, or the same model. See the
+[RONA API page](https://scavio.dev/rona-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: `prices`, `categories`, `stores` and `store` 1; `search` and
+  `deals` 2 (3 with `store_id`; `search` 2 more when RONA redirects the term);
+  `product` 3; `stock` 3; `category` 2 (3 with `store_id`), or 1 with
+  `family_id` and `store_id`. `credits_used` in the response is what was
+  charged.
+- Canada only, prices in CAD; `language` is `en` (default) or `fr` on every
+  method (article numbers and prices are the same in both).
+- Without `store_id`, `search`, `category` and `deals` are priced at the store
+  RONA's site picks for the visit (`store.requested` false); with `store_id`
+  prices and units are that store's.
+- RONA prices some goods per store. Captured 2026-11-26: 2-in x 4-in x 8-ft SPF
+  Select Lumber (0971073) was 4.35 CAD at store 41460 (Quebec), 4.22 at 55130
+  (Ontario) and 4.19 at 62860 (Alberta), while the DEWALT 20 V MAX Brushless
+  Compact Drill/Driver Kit on sale (00277649) was 118 (regular 219) at all
+  three.
+- `units` are exact store units; `null` means RONA showed no count, not zero.
+  Article numbers are strings (leading zeros count).
+- `product` returns `sale_ends_text` as RONA shows it ("until Dec 10th,
+  2026") and `sale_ends` as an ISO date only when it is unambiguous; rating
+  and review count only.
+- `stock`: RONA offers no nearby-store list for some articles (lumber), and
+  the list can come back empty now and then (call once more).
+- Not available: review text, search suggestions, postal-code store lookup
+  (pass latitude and longitude, or a city or province), the printed flyer,
+  cart or checkout, price history (poll and store the answers).
+
+```typescript
+// Find stores by province, city or banner, or nearest a point.
+const near = (await client.rona.stores({ latitude: 43.6426, longitude: -79.3871, limit: 5 })) as any;
+for (const s of near.data.stores) console.log(s.store_id, s.name, s.banner, s.relationship, s.distance_km);
+
+// The same articles at three stores (up to 60 articles per call, 1 credit).
+const skus = ["0971073", "0938002", "0938042", "00277649"];
+for (const store_id of ["41460", "55130", "62860"]) {
+  const res = (await client.rona.prices({ skus, store_id })) as any;
+  for (const it of res.data.items) console.log(store_id, it.sku, it.name, it.price, it.regular_price, it.units, it.aisle);
+}
+
+// Search and deals priced at one store; one product with its sale end text.
+const hits = (await client.rona.search({ query: "2x4", store_id: "41460" })) as any;
+const deals = (await client.rona.deals({ store_id: "55130" })) as any;
+const p = (await client.rona.product({ sku: "00277649", store_id: "55130" })) as any;
+console.log(p.data.price, p.data.regular_price, p.data.rebate, p.data.sale_ends_text, p.data.sale_ends);
+
+// Which stores near a store have an article.
+const stock = (await client.rona.stock({ sku: "00277649", store_id: "62860" })) as any;
+console.log(stock.data.count, stock.data.in_stock_count);
+```
+
+Every call raises the request timeout to `RONA_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found (an unknown article, category or store) is charged.
 
 ### [Fanatics](https://scavio.dev/docs/fanatics-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
