@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 135 platforms on one API key, plus `extract()` to read
+data across 146 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -15,9 +15,9 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
 - **Cars** — Cars.com, Autotrader (KBB fair price range), CarGurus (expected price and deal rating; US, Canada, UK), CarMax (no-haggle prices, recent offers per model year), Carvana (prices, KBB values, shipping costs), TrueCar (price rating, dealer fees, national price stats), Edmunds (deal rating, Edmunds Suggested Price per trim, appraisal values), Kelley Blue Book (car values at a ZIP, 17 price types)
 - **Collector-car auctions** — Bring a Trailer (results, sale prices and model price history)
-- **Liquidation auctions** — Nellis Auction (open lots in 6 US shopping locations with the current bid and Nellis's own Estimated Retail Price, a sold lot's final price by id, bid history without bidder names)
-- **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Trulia (neighborhood survey and market snapshot), StreetEasy (NYC listings and market data), Rent.com and Apartment Guide, RentCafe (US and Canada), Booking, Airbnb, Vrbo, Tripadvisor
-- **Reviews and local** — Trustpilot, Yelp, G2, Capterra, Glassdoor, App Store, Google Play
+- **Liquidation auctions** — Nellis Auction (open lots in 6 US shopping locations with the current bid and Nellis's own Estimated Retail Price, a sold lot's final price by id, bid history without bidder names), EstateSales.net (estate sales near a ZIP with their dates, the companies running them and marketplace items)
+- **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Trulia (neighborhood survey and market snapshot), StreetEasy (NYC listings and market data), Rent.com and Apartment Guide, RentCafe (US and Canada), Movoto (listings and market trends), HotPads (rents, rent history, fees), Apartment List (rent report), Compass, AffordableHousing.com (Section 8 rentals, waiting lists, housing authorities), Lennar (new homes, promotions), Extra Space Storage and Public Storage (self-storage unit prices), Booking, Airbnb, Vrbo, Expedia (hotel prices for your dates, price calendars), Tripadvisor
+- **Reviews and local** — Trustpilot, Goodreads (book ratings and reader reviews), Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House, Company Enrich (contacts and owner from a website or a Google Maps place)
 - **Ads transparency** — Google Ads Transparency Center, Meta Ad Library
 - **Social and video** — YouTube, TikTok, Instagram, Threads, X, LinkedIn, Reddit, Kuaishou
@@ -3965,6 +3965,35 @@ lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found (an unknown id, or a category with no open lots) is
 charged.
 
+### [EstateSales.net](https://scavio.dev/docs/estatesales-sales?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+EstateSales.net (estatesales.net, the US estate sale directory): estate sales,
+auctions and moving sales near a ZIP code or city with the dates, sale type,
+picture count and the company running it; one sale in full with every date,
+terms, description and pictures; a metro's estate sale companies and one
+company's profile and sales; keyword search over sales and marketplace items;
+and one marketplace item with its price, bids and shipping. US only, prices in
+USD. A private sale gives its city, state and ZIP only; a company's contact
+details are public business data. 6 endpoints on `client.estatesales` (new in
+0.99.0): `sales`, `sale`, `companies`, `company`, `search`, `item`. See the
+[EstateSales.net API
+page](https://scavio.dev/estatesales-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.estatesales.sales({ zip: "75201" })) as any;
+console.log(res.data.total_count, res.data.count);
+for (const s of res.data.sales.slice(0, 5)) console.log(s.name, s.type_name, s.city, s.starts_at_local, s.picture_count);
+const sale = (await client.estatesales.sale({ sale_id: "5114622" })) as any;
+console.log(sale.data.name, sale.data.location.city, sale.data.picture_count);
+for (const d of sale.data.dates) console.log(d.starts_at_local, d.ends_at_local);
+```
+
+Every call raises the request timeout to `ESTATESALES_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
 ### [Bring a Trailer](https://scavio.dev/docs/bringatrailer-results?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
 Bring a Trailer (bringatrailer.com, the online collector-car auction site):
@@ -5705,6 +5734,228 @@ Every call raises the request timeout to `RENTCAFE_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 
+### [Movoto](https://scavio.dev/docs/movoto-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Movoto (movoto.com, the US home search site owned by Lower): homes for sale,
+sold or for rent by city and state, ZIP, county, neighborhood or school zone
+(50 a page, with Movoto's market summary, snapshot and top ZIP codes and
+neighborhoods); one home in full with its features, price history and schools;
+a city's or ZIP code's market trends (median list price, price per square
+foot, days on market, inventory, by home type); search-box suggestions; and
+one school page. US only, prices in USD. No listing-agent names or contact
+details are returned; brokerage company names are. 5 endpoints on
+`client.movoto` (new in 0.99.0): `search`, `property`, `marketTrends`,
+`suggestions`, `school`. See the [Movoto API
+page](https://scavio.dev/movoto-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.movoto.search({ city: "Austin", state: "TX" })) as any;
+console.log(res.data.total, res.data.pages);
+for (const h of res.data.listings.slice(0, 5)) console.log(h.address.full, h.price, h.beds, h.baths, h.sqft);
+const trends = (await client.movoto.marketTrends({ city: "Los Angeles", state: "CA" })) as any;
+console.log(trends.data.summary);
+for (const c of trends.data.stat_cards) console.log(c.title, c.value, c.change);
+```
+
+Every call raises the request timeout to `MOVOTO_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [HotPads](https://scavio.dev/docs/hotpads-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+HotPads (hotpads.com, Zillow Group's rental search site): rentals in an area
+(apartments, houses, rooms, by-owner and more) grouped by building with the
+rent range, beds, baths, square feet and special offers, filtered and sorted;
+one listing or building in full with floor plans, office hours, amenities and
+pet policies; a listing's rent history; its move-in and monthly costs and
+fees; and area suggestions. US only, rents in USD. No landlord names or phone
+numbers are returned. 5 endpoints on `client.hotpads` (new in 0.99.0):
+`search`, `listing`, `priceHistory`, `fees`, `suggestions`. See the [HotPads
+API
+page](https://scavio.dev/hotpads-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.hotpads.search({ area: "brooklyn-new-york-ny", beds: 1, sort: "price_low" })) as any;
+console.log(res.data.title, res.data.total_units, res.data.min_price);
+for (const b of res.data.buildings.slice(0, 5))
+  for (const it of b.listings) console.log(it.title, it.price_min, it.price_max, it.address.street);
+const fees = (await client.hotpads.fees({ listing_alias: "24ga0pwypzg8y" })) as any;
+console.log(fees.data.base_rent.min, fees.data.monthly_total.min, fees.data.move_in_total.min);
+```
+
+Every call raises the request timeout to `HOTPADS_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Apartment List](https://scavio.dev/docs/apartmentlist-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Apartment List (apartmentlist.com, the US rental search site): rentals in a
+city, neighborhood or ZIP code with the rent range and rent per bed count,
+units available, the soonest move-in date and rent specials (20 a page,
+filtered and sorted); one listing with every floor plan and unit price;
+Apartment List's published rent report for a city (median rents, month and
+year growth, the metro table); a place's market summary; review summaries for
+a city's listings; and place suggestions. US only, rents in USD. 6 endpoints
+on `client.apartmentlist` (new in 0.99.0): `suggestions`, `search`, `listing`,
+`rentReport`, `marketSummary`, `reviewSummaries`. See the [Apartment List API
+page](https://scavio.dev/apartmentlist-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.apartmentlist.search({ city: "Austin", state: "TX" })) as any;
+console.log(res.data.total_listings, res.data.total_units, res.data.pages);
+for (const it of res.data.listings.slice(0, 5)) console.log(it.name, it.price_min, it.price_max, it.units_available);
+const report = (await client.apartmentlist.rentReport({ city: "Chicago", state: "IL" })) as any;
+const g = report.data.at_a_glance;
+console.log(g.median_rent_1br, g.median_rent_2br, g.rent_growth_year);
+```
+
+Every call raises the request timeout to `APARTMENTLIST_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Compass](https://scavio.dev/docs/compass-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Compass (compass.com, the US real estate brokerage): homes for sale, for rent
+or sold in an area with the price, beds, baths, square feet, status and open
+houses, filtered and sorted; one listing in full with pricing (monthly
+charges, financing terms), dates, price history, key details, schools and the
+building; and place suggestions. US, prices in USD; 2 credits per call.
+Brokerage names only, never agent names. 3 endpoints on `client.compass` (new
+in 0.99.0): `search`, `listing`, `suggestions`. See the [Compass API
+page](https://scavio.dev/compass-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 2 credits each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.compass.search({ area: "manhattan-ny", mode: "for_sale", beds_min: 2, price_max: 2000000 })) as any;
+console.log(res.data.total, res.data.reachable, res.data.pages);
+for (const it of res.data.listings.slice(0, 5)) console.log(it.address, it.price_text, it.beds, it.baths, it.status);
+const home = (await client.compass.listing({ url: res.data.listings[0].url })) as any;
+console.log(home.data.pricing.price, home.data.pricing.monthly_charges, home.data.days_on_market);
+```
+
+Every call raises the request timeout to `COMPASS_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [AffordableHousing.com](https://scavio.dev/docs/affordablehousing-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+AffordableHousing.com (affordablehousing.com, the US affordable and Section 8
+rental site): rentals in a state, city, county or ZIP code with the rent
+range, beds, baths, Section 8 acceptance and income restrictions, filtered by
+price, pets, utilities, age and accessibility; one listing in full; place
+suggestions; open and opening-soon Section 8 and public housing waiting lists;
+one housing authority (public housing agency) with its waitlist status; and a
+state's housing authorities. US only, rents in USD. The agency's public phone
+number is returned, never a landlord's contact details. 6 endpoints on
+`client.affordablehousing` (new in 0.99.0): `search`, `listing`,
+`suggestions`, `waitingLists`, `housingAuthority`, `housingAuthorities`. See
+the [AffordableHousing.com API
+page](https://scavio.dev/affordablehousing-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: `search` and `suggestions` 2 credits, the other endpoints 1.
+`credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.affordablehousing.search({ state: "TX", city: "Houston", sort: "price_asc" })) as any;
+console.log(res.data.total, res.data.pages);
+for (const it of res.data.listings.slice(0, 5)) console.log(it.title, it.rent_min, it.rent_max, it.section8_accepted);
+const pha = (await client.affordablehousing.housingAuthorities({ state: "CA" })) as any;
+for (const a of pha.data.agencies.slice(0, 5)) console.log(a.name, a.waitlist_status, a.jurisdiction);
+```
+
+Every call raises the request timeout to `AFFORDABLEHOUSING_TIMEOUT` (240s)
+and never lowers a longer client timeout; failed calls and refused inputs are
+not charged, a not-found is charged.
+
+### [Lennar](https://scavio.dev/docs/lennar-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Lennar (lennar.com, the US homebuilder): new homes, homesites, plans and
+communities in a market, state, city, point or map box with the price, was
+price, beds, baths and square feet, filtered by home type, availability,
+features and schools; one community with its plans, homesites, HOA fee and tax
+rate; one plan; one homesite; a master-planned community; every market and one
+market's cities and filter codes; suggestions; a link resolved to its record;
+a market's current promotions; and a monthly payment estimate for a homesite.
+US only, prices in USD. For new-home price tracking, incentive monitoring and
+market comparisons. 11 endpoints on `client.lennar` (new in 0.99.0): `search`,
+`community`, `plan`, `home`, `masterPlanned`, `markets`, `market`,
+`suggestions`, `resolve`, `promotions`, `payment`. See the [Lennar API
+page](https://scavio.dev/lennar-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.lennar.search({ market: "DAL", sort: "price_asc" })) as any;
+console.log(res.data.total, res.data.count);
+for (const h of res.data.homes.slice(0, 5)) console.log(h.address, h.price, h.was_price, h.beds, h.sqft);
+const com = (await client.lennar.community({ comnum: "22704" })) as any;
+console.log(com.data.name, com.data.base_price, com.data.hoa_fee, com.data.tax_rate_percent);
+for (const p of com.data.plans.slice(0, 3)) console.log(p.name, p.starting_price, p.available_homesites);
+```
+
+Every call raises the request timeout to `LENNAR_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Extra Space Storage](https://scavio.dev/docs/extraspace-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Extra Space Storage (extraspace.com, the US self-storage REIT): self-storage
+facilities near a ZIP code, city, place or point (up to 120, nearest first)
+with the starting price by unit size, promotions, rating and features,
+filtered by climate control, drive-up, indoor, vehicle storage, 24-hour access
+and unit size; one facility with every unit and its price; a facility's
+reviews (no reviewer names); a city's published storage prices by unit size;
+and Extra Space's locations by state. US only, prices in USD. 5 endpoints on
+`client.extraspace` (new in 0.99.0): `search`, `facility`, `reviews`,
+`cityPrices`, `locations`. See the [Extra Space Storage API
+page](https://scavio.dev/extraspace-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.extraspace.search({ term: "90012" })) as any;
+console.log(res.data.total, res.data.count);
+for (const f of res.data.facilities.slice(0, 5)) console.log(f.name, f.distance_mi, f.starting_at.small, f.starting_at.large);
+const city = (await client.extraspace.cityPrices({ city: "Dallas", state: "TX" })) as any;
+for (const r of city.data.price_stats.slice(1, 5)) console.log(r.category, r.store_count, r.lowest, r.average, r.highest);
+```
+
+Every call raises the request timeout to `EXTRASPACE_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Public Storage](https://scavio.dev/docs/publicstorage-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Public Storage (publicstorage.com, the US self-storage operator, also in
+Canada): self-storage facilities near a place with the starting price,
+distance, hours and features, filtered by climate control, drive-up, 24/7
+access, business, vehicle, RV and boat storage and unit size; one facility
+with every unit's online price, in-store rent, promotion and move-in cost; and
+a US facility's reviews (no reviewer names). `market` us or ca (USD or CAD),
+`language` en or fr in Canada. 3 endpoints on `client.publicstorage` (new in
+0.99.0): `search`, `facility`, `reviews`. See the [Public Storage API
+page](https://scavio.dev/publicstorage-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.publicstorage.search({ location: "75201", sort: "price_low" })) as any;
+for (const f of res.data.facilities.slice(0, 5)) console.log(f.name, f.distance, f.starting_from, f.currency);
+const fac = (await client.publicstorage.facility({ store_id: "2044" })) as any;
+for (const u of fac.data.units.slice(0, 5)) console.log(u.name, u.online_price, u.in_store_rent, u.move_in_cost);
+```
+
+Every call raises the request timeout to `PUBLICSTORAGE_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
 ### Booking
 
 ```typescript
@@ -5772,6 +6023,37 @@ console.log(home.data.property_type, home.data.space.bedrooms, home.data.default
 ```
 
 Every call raises the request timeout to `VRBO_TIMEOUT` (250s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Expedia](https://scavio.dev/docs/expedia-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Expedia (expedia.com, Expedia Group's travel booking site): hotels and stays
+for a place or region id and dates with the nightly price, the stay total, the
+was price, rating and review count, sorted and filtered by star rating,
+amenity and guest rating (the top results of Expedia's first page; `partial`
+flags a 3-result answer); one property in full with amenities, fees, policies
+and Expedia's own summary lines (fetched without dates); a property's price
+calendar for every day Expedia shows; and destination suggestions. 51
+market-languages (`market`), each in its own language and currency. No
+reviews, dated room rates or flights. 4 endpoints on `client.expedia` (new in
+0.99.0): `search`, `property`, `priceCalendar`, `suggestions`. See the
+[Expedia API
+page](https://scavio.dev/expedia-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: billed on actual cost: 2 credits per call (1 on some New Zealand,
+Korea and Indonesia pages). `credits_used` in the response is what was
+charged.
+
+```typescript
+const res = (await client.expedia.search({ destination: "Las Vegas, NV", check_in: "2027-01-25", check_out: "2027-01-28", adults: 2 })) as any;
+console.log(res.data.destination_name, res.data.matched_total, res.data.count, res.data.partial);
+for (const p of res.data.properties) console.log(p.property_id, p.name, p.price.nightly, p.price.total, p.rating.score);
+const hotel = (await client.expedia.property({ id: "17117062" })) as any;
+console.log(hotel.data.name, hotel.data.stars, hotel.data.rating.score, hotel.data.fees.slice(0, 2));
+```
+
+Every call raises the request timeout to `EXPEDIA_TIMEOUT` (250s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 
@@ -5960,6 +6242,35 @@ and topics appear only when Trustpilot has them for the requested `language`.
 TrustScore to stars, so 4 includes TrustScore 3.8 and up. An unknown business,
 review or category returns a 404 (`NotFoundError`) and is billed. No TrustScore
 history is returned.
+
+### [Goodreads](https://scavio.dev/docs/goodreads-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Goodreads (goodreads.com, Amazon's book community): book, author, quote and
+list search; one book with its rating, rating distribution, genres, series,
+editions and awards; reader reviews with Goodreads' own sort and star,
+language and edition filters (no reviewer names); suggestions; an author and
+their books; a series; a work's editions; a Listopia list, a book's lists and
+list search; quotes; a genre page; and new releases by genre or month. One
+global English site. 14 endpoints on `client.goodreads` (new in 0.99.0):
+`search`, `book`, `reviews`, `suggestions`, `author`, `authorBooks`, `series`,
+`editions`, `list`, `bookLists`, `listSearch`, `quotes`, `genre`,
+`newReleases`. Goodreads retired its official API (no new developer keys since
+2020). See the [Goodreads API
+page](https://scavio.dev/goodreads-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.goodreads.search({ query: "dune" })) as any;
+for (const b of res.data.results.slice(0, 5)) console.log(b.book_id, b.title, b.rating, b.ratings_count, b.published);
+const book = (await client.goodreads.book({ book_id: "44767458" })) as any;
+console.log(book.data.title, book.data.rating, book.data.ratings_count, book.data.reviews_count);
+console.log(book.data.genres.slice(0, 3).map((g: any) => g.name));
+```
+
+Every call raises the request timeout to `GOODREADS_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
 
 ### SEC EDGAR
 

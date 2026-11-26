@@ -656,6 +656,107 @@ export type {
   KbbDealerOptions,
   KbbMakesModelsOptions,
 } from "./namespaces/kbb.js";
+export { MovotoNamespace, MOVOTO_TIMEOUT } from "./namespaces/movoto.js";
+export type {
+  MovotoSearchOptions,
+  MovotoPropertyOptions,
+  MovotoMarketTrendsOptions,
+  MovotoSuggestionsOptions,
+  MovotoSchoolOptions,
+} from "./namespaces/movoto.js";
+export { HotpadsNamespace, HOTPADS_TIMEOUT } from "./namespaces/hotpads.js";
+export type {
+  HotpadsSearchOptions,
+  HotpadsListingOptions,
+  HotpadsPriceHistoryOptions,
+  HotpadsFeesOptions,
+  HotpadsSuggestionsOptions,
+} from "./namespaces/hotpads.js";
+export { ApartmentlistNamespace, APARTMENTLIST_TIMEOUT } from "./namespaces/apartmentlist.js";
+export type {
+  ApartmentlistSuggestionsOptions,
+  ApartmentlistSearchOptions,
+  ApartmentlistListingOptions,
+  ApartmentlistRentReportOptions,
+  ApartmentlistMarketSummaryOptions,
+  ApartmentlistReviewSummariesOptions,
+} from "./namespaces/apartmentlist.js";
+export { CompassNamespace, COMPASS_TIMEOUT } from "./namespaces/compass.js";
+export type {
+  CompassSearchOptions,
+  CompassListingOptions,
+  CompassSuggestionsOptions,
+} from "./namespaces/compass.js";
+export { AffordablehousingNamespace, AFFORDABLEHOUSING_TIMEOUT } from "./namespaces/affordablehousing.js";
+export type {
+  AffordablehousingSearchOptions,
+  AffordablehousingListingOptions,
+  AffordablehousingSuggestionsOptions,
+  AffordablehousingWaitingListsOptions,
+  AffordablehousingHousingAuthorityOptions,
+  AffordablehousingHousingAuthoritiesOptions,
+} from "./namespaces/affordablehousing.js";
+export { LennarNamespace, LENNAR_TIMEOUT } from "./namespaces/lennar.js";
+export type {
+  LennarSearchOptions,
+  LennarCommunityOptions,
+  LennarPlanOptions,
+  LennarHomeOptions,
+  LennarMasterPlannedOptions,
+  LennarMarketsOptions,
+  LennarMarketOptions,
+  LennarSuggestionsOptions,
+  LennarResolveOptions,
+  LennarPromotionsOptions,
+  LennarPaymentOptions,
+} from "./namespaces/lennar.js";
+export { ExtraspaceNamespace, EXTRASPACE_TIMEOUT } from "./namespaces/extraspace.js";
+export type {
+  ExtraspaceSearchOptions,
+  ExtraspaceFacilityOptions,
+  ExtraspaceReviewsOptions,
+  ExtraspaceCityPricesOptions,
+  ExtraspaceLocationsOptions,
+} from "./namespaces/extraspace.js";
+export { PublicstorageNamespace, PUBLICSTORAGE_TIMEOUT } from "./namespaces/publicstorage.js";
+export type {
+  PublicstorageSearchOptions,
+  PublicstorageFacilityOptions,
+  PublicstorageReviewsOptions,
+} from "./namespaces/publicstorage.js";
+export { EstatesalesNamespace, ESTATESALES_TIMEOUT } from "./namespaces/estatesales.js";
+export type {
+  EstatesalesSalesOptions,
+  EstatesalesSaleOptions,
+  EstatesalesCompaniesOptions,
+  EstatesalesCompanyOptions,
+  EstatesalesSearchOptions,
+  EstatesalesItemOptions,
+} from "./namespaces/estatesales.js";
+export { GoodreadsNamespace, GOODREADS_TIMEOUT } from "./namespaces/goodreads.js";
+export type {
+  GoodreadsSearchOptions,
+  GoodreadsBookOptions,
+  GoodreadsReviewsOptions,
+  GoodreadsSuggestionsOptions,
+  GoodreadsAuthorOptions,
+  GoodreadsAuthorBooksOptions,
+  GoodreadsSeriesOptions,
+  GoodreadsEditionsOptions,
+  GoodreadsListOptions,
+  GoodreadsBookListsOptions,
+  GoodreadsListSearchOptions,
+  GoodreadsQuotesOptions,
+  GoodreadsGenreOptions,
+  GoodreadsNewReleasesOptions,
+} from "./namespaces/goodreads.js";
+export { ExpediaNamespace, EXPEDIA_TIMEOUT } from "./namespaces/expedia.js";
+export type {
+  ExpediaSearchOptions,
+  ExpediaPropertyOptions,
+  ExpediaPriceCalendarOptions,
+  ExpediaSuggestionsOptions,
+} from "./namespaces/expedia.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
