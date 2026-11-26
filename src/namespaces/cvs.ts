@@ -1,6 +1,6 @@
 import type { Scavio } from "../client.js";
 
-// CVS: 3 endpoints, 1 credit each. Front-store products (no pharmacy).
+// CVS: 3 endpoints; search and stock 1 credit, product 2. Front-store products (no pharmacy).
 //
 // Prices are the same at every store; stock is one store's. There is no store
 // locator: the store number is on every cvs.com store page ("Store ID: #7019")
@@ -63,7 +63,7 @@ export class CvsNamespace {
    * images and every variant (SKU id, UPC, size, price, rating). An unknown
    * product is a 404. Can take 10-30+ seconds.
    *
-   * Costs 1 credit.
+   * Costs 2 credits.
    */
   async product(options: CvsProductOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/cvs/product", options, undefined, CVS_PRODUCT_TIMEOUT);
