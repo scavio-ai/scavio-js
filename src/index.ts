@@ -1132,6 +1132,61 @@ export type {
   CarrefourbrCouponsOptions,
   CarrefourbrCategoriesOptions,
 } from "./namespaces/carrefourbr.js";
+export { TerabyteNamespace, TERABYTE_TIMEOUT } from "./namespaces/terabyte.js";
+export type {
+  TerabyteSearchOptions,
+  TerabyteProductOptions,
+  TerabyteReviewsOptions,
+  TerabyteCategoryOptions,
+  TerabyteBrandOptions,
+  TerabyteDealsOptions,
+  TerabyteCouponsOptions,
+  TerabyteTrendingSearchesOptions,
+  TerabytePcBuilderOptions,
+} from "./namespaces/terabyte.js";
+export { CobasiNamespace, COBASI_TIMEOUT } from "./namespaces/cobasi.js";
+export type {
+  CobasiSearchOptions,
+  CobasiCategoryOptions,
+  CobasiBrandOptions,
+  CobasiDealsOptions,
+  CobasiProductOptions,
+  CobasiReviewsOptions,
+  CobasiQuestionsOptions,
+  CobasiAvailabilityOptions,
+  CobasiSuggestionsOptions,
+  CobasiStoresOptions,
+  CobasiStoreOptions,
+} from "./namespaces/cobasi.js";
+export { NetshoesNamespace, NETSHOES_TIMEOUT } from "./namespaces/netshoes.js";
+export type {
+  NetshoesSearchOptions,
+  NetshoesListOptions,
+  NetshoesProductOptions,
+  NetshoesOffersOptions,
+  NetshoesInventoryOptions,
+  NetshoesShippingOptions,
+  NetshoesReviewsOptions,
+  NetshoesQuestionsOptions,
+  NetshoesDailyDealOptions,
+  NetshoesSellerOptions,
+  NetshoesPopularSearchesOptions,
+} from "./namespaces/netshoes.js";
+export { EstantevirtualNamespace, ESTANTEVIRTUAL_TIMEOUT } from "./namespaces/estantevirtual.js";
+export type {
+  EstantevirtualSearchOptions,
+  EstantevirtualIsbnOptions,
+  EstantevirtualBookOptions,
+  EstantevirtualCopiesOptions,
+  EstantevirtualCopyOptions,
+  EstantevirtualShippingOptions,
+  EstantevirtualSellerOptions,
+  EstantevirtualSellerBooksOptions,
+  EstantevirtualSellerReviewsOptions,
+  EstantevirtualSellersOptions,
+  EstantevirtualCategoryOptions,
+  EstantevirtualListOptions,
+} from "./namespaces/estantevirtual.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
