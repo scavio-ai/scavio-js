@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 164 platforms on one API key, plus `extract()` to read
+data across 171 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, BJ's Wholesale Club (US, coupons and the club directory), Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), RONA (Canada, store prices for up to 60 articles at one store with exact units, stores, stock near a store), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), Space NK (UK, Ireland, the Netherlands, Australia), Lookfantastic (10 country sites, 22 currencies), Cult Beauty, YesStyle (prices per shipping country), Notino (27 storefronts, 30-day lowest price), Douglas (15 storefronts, RRP and 30-day low), Boots (UK and Ireland, store availability), ALDI, Micro Center, Newegg (US, Canada and 9 Global storefronts, every seller's offer), Sweetwater (US, units on hand and serial-numbered instruments), Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), RockAuto (parts by vehicle for every brand and tier, 15 display currencies), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PC Express (Canada, the same product code priced at each Loblaw banner's default store: Real Canadian Superstore, No Frills, Loblaws, Maxi and 6 more; deal end dates, PC Optimum offers, pickup stores), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Belk (US, coupons and exact store units), Dick's Sporting Goods, Academy Sports + Outdoors (US, exact units per store), REI (US, store pickup status near a ZIP), L.L.Bean (US, Canada and 12 countries, exact store units), Foot Locker, Zappos and 6pm (exact warehouse units per size, width and color), Fanatics, Gap Inc. (Gap, Old Navy, Banana Republic, Athleta; US and Canada, store stock by size), Abercrombie & Fitch and Hollister (16 storefronts, exact store units), Bath & Body Works (US and Canada, offers and store pickup), Williams Sonoma, Pottery Barn, West Elm and the other Williams-Sonoma, Inc. brands (online stock ranges, delivery dates and store pickup), Bed Bath & Beyond (US, online stock and delivery dates), QVC and HSN (today's special, program guide and prices in 5 QVC markets), Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Rakuten (cash back rates and coupons in the US, UK and Canada), Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, BJ's Wholesale Club (US, coupons and the club directory), Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), RONA (Canada, store prices for up to 60 articles at one store with exact units, stores, stock near a store), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), Space NK (UK, Ireland, the Netherlands, Australia), Lookfantastic (10 country sites, 22 currencies), Cult Beauty, YesStyle (prices per shipping country), Notino (27 storefronts, 30-day lowest price), Douglas (15 storefronts, RRP and 30-day low), Boots (UK and Ireland, store availability), ALDI, Micro Center, Newegg (US, Canada and 9 Global storefronts, every seller's offer), Sweetwater (US, units on hand and serial-numbered instruments), Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), RockAuto (parts by vehicle for every brand and tier, 15 display currencies), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PC Express (Canada, the same product code priced at each Loblaw banner's default store: Real Canadian Superstore, No Frills, Loblaws, Maxi and 6 more; deal end dates, PC Optimum offers, pickup stores), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Belk (US, coupons and exact store units), Dick's Sporting Goods, Academy Sports + Outdoors (US, exact units per store), REI (US, store pickup status near a ZIP), L.L.Bean (US, Canada and 12 countries, exact store units), Foot Locker, Zappos and 6pm (exact warehouse units per size, width and color), Fanatics, Gap Inc. (Gap, Old Navy, Banana Republic, Athleta; US and Canada, store stock by size), Abercrombie & Fitch and Hollister (16 storefronts, exact store units), Bath & Body Works (US and Canada, offers and store pickup), Williams Sonoma, Pottery Barn, West Elm and the other Williams-Sonoma, Inc. brands (online stock ranges, delivery dates and store pickup), Bed Bath & Beyond (US, online stock and delivery dates), QVC and HSN (today's special, program guide and prices in 5 QVC markets), Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, KaBuM! (Brazil, card and Pix prices, offers with units left), Magazine Luiza (Brazil, Pix prices, coupons and deal end times), Casas Bahia with Extra and Ponto (Brazil, every seller's price), Buscape and Zoom (Brazil price comparison, store offers and daily price history), Drogasil and Droga Raia (Brazil pharmacy retail, store pickup), Leroy Merlin (Brazil regional prices and store units, plus Italy, Spain, Portugal, Poland, Romania and France), eBay, Rakuten (cash back rates and coupons in the US, UK and Canada), Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -17,7 +17,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 - **Collector-car auctions** — Bring a Trailer (results, sale prices and model price history)
 - **Liquidation auctions** — Nellis Auction (open lots in 6 US shopping locations with the current bid and Nellis's own Estimated Retail Price, a sold lot's final price by id, bid history without bidder names), EstateSales.net (estate sales near a ZIP with their dates, the companies running them and marketplace items)
 - **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Trulia (neighborhood survey and market snapshot), StreetEasy (NYC listings and market data), Rent.com and Apartment Guide, RentCafe (US and Canada), Movoto (listings and market trends), HotPads (rents, rent history, fees), Apartment List (rent report), Compass, AffordableHousing.com (Section 8 rentals, waiting lists, housing authorities), Lennar (new homes, promotions), Extra Space Storage and Public Storage (self-storage unit prices), U-Haul (truck rental rates and self-storage in the US and Canada), Booking, Airbnb, Vrbo, Expedia (hotel prices for your dates, price calendars), Tripadvisor
-- **Reviews and local** — Trustpilot, Goodreads (book ratings and reader reviews), Barnes & Noble (book prices, bestsellers and store pickup), ThriftBooks (used book prices per format and condition), Yelp, G2, Capterra, Glassdoor, App Store, Google Play
+- **Reviews and local** — Trustpilot, Reclame Aqui (Brazil company reputation and complaints), Goodreads (book ratings and reader reviews), Barnes & Noble (book prices, bestsellers and store pickup), ThriftBooks (used book prices per format and condition), Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House, Company Enrich (contacts and owner from a website or a Google Maps place)
 - **Ads transparency** — Google Ads Transparency Center, Meta Ad Library
 - **Social and video** — YouTube, TikTok, Instagram, Threads, X, LinkedIn, Reddit, Kuaishou
@@ -5480,6 +5480,191 @@ buy-box seller. Reviews translated into the site's language keep
 zero-result search is an empty, billed page; an unknown product, item or seller
 nickname, or a listing with no public questions, is a billed 404.
 
+### [KaBuM!](https://scavio.dev/docs/kabum-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+KaBuM! (kabum.com.br, the Brazilian computer and electronics retailer):
+keyword search and category listings (up to 100 a page, 5 sorts, facets) with
+the card price, the Pix price (Pix is Brazil's instant payment) and the
+running offer with its units left; the department and category tree; one
+product with its spec sheet and, for a marketplace item, the seller's business
+name, CNPJ and score; shipping options and dates to a CEP (a Brazilian postal
+code); reviews with KaBuM!'s own summary (no reviewer names); and the Black
+Friday and standing offers campaigns. Prices in BRL as shown to a visitor who
+is not signed in, never a Prime price. 7 endpoints on `client.kabum` (new in
+0.103.0): `search`, `category`, `categories`, `product`, `shipping`,
+`reviews`, `offers`. See the [KaBuM! API
+page](https://scavio.dev/kabum-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.kabum.search({ query: "cadeira gamer" })) as any;
+console.log(res.data.total, res.data.total_pages, res.data.currency);
+for (const it of res.data.items.slice(0, 5)) console.log(it.name, it.price, it.cash_price, it.list_price, it.stock);
+const deals = (await client.kabum.offers({ campaign: "blackfriday" })) as any;
+console.log(deals.data.campaign.name, deals.data.campaign.ends_at);
+for (const it of deals.data.items.slice(0, 5)) console.log(it.name, it.cash_price, it.offer_units_left, it.ends_at);
+```
+
+Every call raises the request timeout to `KABUM_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Magazine Luiza](https://scavio.dev/docs/magalu-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Magazine Luiza (magazineluiza.com.br, Magalu, the Brazilian retailer and
+marketplace): keyword search, category and deal listings (40 a page, 8 sorts,
+brand, seller, price, rating and attribute filters) with the price, the Pix
+price (Pix is Brazil's instant payment), the coupon, the deal end time and the
+seller; one product with installments, coupons, the seller's business data,
+variants, specs and questions; reviews (no reviewer names); search
+suggestions; Magalu stores by state and city; and one store with its address
+and phone. Prices in BRL; shipping by CEP and store stock are not published. 8
+endpoints on `client.magalu` (new in 0.103.0): `search`, `category`, `deals`,
+`product`, `reviews`, `suggestions`, `stores`, `store`. See the [Magazine
+Luiza API
+page](https://scavio.dev/magalu-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 2 credits each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.magalu.search({ query: "geladeira frost free" })) as any;
+console.log(res.data.total, res.data.total_pages, res.data.currency);
+for (const it of res.data.items.slice(0, 5)) console.log(it.title, it.price, it.pix_price, it.coupon, it.deal_ends_at, it.seller.name);
+const item = (await client.magalu.product({ product_id: "238058800" })) as any;
+console.log(item.data.title, item.data.price, item.data.pix_price, item.data.pix_discount_percent);
+console.log(item.data.best_installment.description, item.data.seller.name, item.data.coupons);
+```
+
+Every call raises the request timeout to `MAGALU_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Casas Bahia](https://scavio.dev/docs/casasbahia-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Casas Bahia (casasbahia.com.br) and its Extra (extra.com.br) and Ponto
+(pontofrio.com.br) storefronts, chosen with site: keyword search and category
+listings (20 a page, 5 sorts, facet filters, own-store filter) with brand,
+rating and status; list items carry no prices, so read product with an item's
+sku; one product with the price, the Pix price (Pix is Brazil's instant
+payment), installment plans and every seller's offer, specs, dimensions and
+the page's reviews and questions; and the category menu. Prices in BRL. 4
+endpoints on `client.casasbahia` (new in 0.103.0): `search`, `category`,
+`product`, `categories`. See the [Casas Bahia API
+page](https://scavio.dev/casasbahia-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 2 credits each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.casasbahia.search({ query: "geladeira frost free", site: "casasbahia" })) as any;
+console.log(res.data.total, res.data.total_pages);
+for (const it of res.data.items.slice(0, 5)) console.log(it.sku, it.title, it.brand, it.status); // list items carry no prices
+const item = (await client.casasbahia.product({ sku: "55066339" })) as any;
+console.log(item.data.name, item.data.price, item.data.pix_price, item.data.offer_count);
+for (const s of item.data.sellers) console.log(s);
+```
+
+Every call raises the request timeout to `CASASBAHIA_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Buscape](https://scavio.dev/docs/buscape-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Buscape and Zoom (buscape.com.br, zoom.com.br, Brazil's price comparison
+sites; one catalog, chosen with site): keyword search, category and deal
+listings with each product's lowest price and stores; one product with its
+specs, the editors' pros and cons and store reviews (no reviewer names); every
+store's offer for a product with cash and installment prices; up to 12 months
+of the daily lowest price; the current lowest price; the campaign landing
+pages; a store's coupons; search suggestions; and shipping estimates to a CEP
+(a Brazilian postal code). Prices in BRL; store and coupon links are not
+returned. 12 endpoints on `client.buscape` (new in 0.103.0): `search`,
+`category`, `categories`, `product`, `offers`, `priceHistory`, `lowestPrice`,
+`deals`, `dealLanding`, `store`, `suggestions`, `shipping`. See the [Buscape
+API
+page](https://scavio.dev/buscape-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const offers = (await client.buscape.offers({ product_id: "13994006", sort: "price_asc" })) as any;
+console.log(offers.data.total, offers.data.store_count, offers.data.best_offer.price);
+for (const o of offers.data.offers.slice(0, 5)) console.log(o.store.name, o.price, o.installment_total, o.stock);
+const hist = (await client.buscape.priceHistory({ product_id: "12755140" })) as any;
+console.log(hist.data.lowest.price, hist.data.lowest.date, hist.data.latest.price);
+for (const p of hist.data.points.slice(-7)) console.log(p.date, p.price);
+```
+
+Every call raises the request timeout to `BUSCAPE_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Drogasil and Droga Raia](https://scavio.dev/docs/rdsaude-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Drogasil and Droga Raia (drogasil.com.br, drogaraia.com.br, the pharmacy
+chains of RD Saude, chosen with site): keyword, product code or EAN search,
+category and deal listings (Oferta do Dia, % Especial, coupons, Black Friday)
+with the price, list price and discount; the category tree; one product with
+its variants and kits; prices for up to 48 product codes in one call; store
+pickup yes or no for up to 5 product x store checks; stores near a CEP (a
+Brazilian postal code) or by state, city and services; reviews with the site's
+own summary (no reviewer names); and search suggestions. Regulatory flags are
+returned exactly as the site gives them. Prices in BRL, the site's default
+online price. 11 endpoints on `client.rdsaude` (new in 0.103.0): `search`,
+`category`, `categories`, `product`, `prices`, `storeAvailability`, `stores`,
+`storesSearch`, `reviews`, `deals`, `suggestions`. See the [Drogasil and Droga
+Raia API
+page](https://scavio.dev/rdsaude-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.rdsaude.search({ query: "protetor solar" })) as any;
+console.log(res.data.site_name, res.data.total, res.data.currency);
+for (const it of res.data.items.slice(0, 5)) console.log(it.name, it.brand, it.price, it.list_price, it.in_stock);
+const pickup = (await client.rdsaude.storeAvailability({ skus: ["38155"], store_ids: ["200", "210"], site: "drogaraia" })) as any;
+for (const sku of pickup.data.skus) console.log(sku.name, sku.stores.map((s: any) => [s.store_id, s.pickup_available]));
+```
+
+Every call raises the request timeout to `RDSAUDE_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Leroy Merlin](https://scavio.dev/docs/leroymerlin-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Leroy Merlin (the home improvement retailer) in Brazil, Italy, Spain,
+Portugal, Poland, Romania and France (country br, it, es, pt, pl, ro or fr):
+keyword search (not France) and category listings with the price, original
+price and promotion; one product with its specs, deliveries and marketplace
+offers; exact store units with the aisle (Brazil only); stores and one store
+with its hours; reviews (no reviewer names); and, for Brazil, shipping quotes
+to a CEP (a Brazilian postal code), CEP lookup, the 28 price regions and the
+department tree; search suggestions (it, es, pt, pl) and the Italian offers
+listing. Brazil prices are set per region (region required). European listings
+carry full details for the products the page shows in full and the rest as
+ids. Prices in BRL, EUR, PLN or RON. 13 endpoints on `client.leroymerlin` (new
+in 0.103.0): `search`, `category`, `product`, `storeStock`, `stores`, `store`,
+`reviews`, `shipping`, `cep`, `regions`, `categories`, `suggestions`,
+`offers`. See the [Leroy Merlin API
+page](https://scavio.dev/leroymerlin-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: billed on what the request spent in its market: 1 credit in Brazil,
+Italy and Romania (Italian product and category pages 2), 2 in Spain, Portugal
+and Poland, 5 in France. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.leroymerlin.search({ country: "br", query: "furadeira", region: "grande_sao_paulo" })) as any;
+console.log(res.data.total, res.data.total_pages, res.data.currency);
+for (const p of res.data.products.slice(0, 5)) console.log(p.id, p.name, p.price, p.original_price, p.unit, p.in_stock);
+const stock = (await client.leroymerlin.storeStock({ country: "br", id: "85277934", region: "rio_de_janeiro" })) as any;
+console.log(stock.data.unit, stock.data.total_units, stock.data.in_stock_count);
+for (const st of stock.data.stores) console.log(st.name, st.units, st.aisle, st.pickup_in_store);
+```
+
+Every call raises the request timeout to `LEROYMERLIN_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
 ### YouTube
 
 Credit cost varies by endpoint: `transcript` costs 5; `streams` costs 3;
@@ -6728,6 +6913,38 @@ and topics appear only when Trustpilot has them for the requested `language`.
 TrustScore to stars, so 4 includes TrustScore 3.8 and up. An unknown business,
 review or category returns a 404 (`NotFoundError`) and is billed. No TrustScore
 history is returned.
+
+### [Reclame Aqui](https://scavio.dev/docs/reclameaqui-company-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Reclame Aqui (reclameaqui.com.br, Brazil's consumer complaint and company
+reputation site): company search; one company's reputation by period
+(complaints, answered and solved percent, would-do-business-again percent,
+score and status), its main problems and segment position; the company's
+complaints filtered by status, category, product, problem or words; one
+complaint with its replies; complaint search across every company; the site's
+11 ranking lists; and the segments with their best and worst companies. Text
+in Portuguese as published; consumer names, emails and phones are never
+returned. 8 endpoints on `client.reclameaqui` (new in 0.103.0):
+`companySearch`, `company`, `complaints`, `complaint`, `complaintSearch`,
+`rankings`, `segments`, `segmentRanking`. See the [Reclame Aqui API
+page](https://scavio.dev/reclameaqui-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each; `complaints` 2 by `shortname` (the company id is
+looked up first; 3 when the company page is read too). `credits_used` in the
+response is what was charged.
+
+```typescript
+const co = (await client.reclameaqui.company({ shortname: "nubank" })) as any;
+console.log(co.data.name, co.data.id, co.data.verified);
+for (const r of co.data.reputation) console.log(r.period, r.status_label, r.final_score, r.solved_percent, r.complaints);
+const res = (await client.reclameaqui.complaints({ company_id: co.data.id, status: "resolved" })) as any;
+console.log(res.data.total, res.data.total_pages);
+for (const c of res.data.complaints.slice(0, 5)) console.log(c.id, c.title, c.status, c.solved, c.score);
+```
+
+Every call raises the request timeout to `RECLAMEAQUI_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
 
 ### [Goodreads](https://scavio.dev/docs/goodreads-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 

@@ -977,6 +977,90 @@ export type {
   BedbathbeyondStoresOptions,
   BedbathbeyondDealsOptions,
 } from "./namespaces/bedbathbeyond.js";
+export { KabumNamespace, KABUM_TIMEOUT } from "./namespaces/kabum.js";
+export type {
+  KabumSearchOptions,
+  KabumCategoryOptions,
+  KabumCategoriesOptions,
+  KabumProductOptions,
+  KabumShippingOptions,
+  KabumReviewsOptions,
+  KabumOffersOptions,
+} from "./namespaces/kabum.js";
+export { MagaluNamespace, MAGALU_TIMEOUT } from "./namespaces/magalu.js";
+export type {
+  MagaluSearchOptions,
+  MagaluCategoryOptions,
+  MagaluDealsOptions,
+  MagaluProductOptions,
+  MagaluReviewsOptions,
+  MagaluSuggestionsOptions,
+  MagaluStoresOptions,
+  MagaluStoreOptions,
+} from "./namespaces/magalu.js";
+export { CasasbahiaNamespace, CASASBAHIA_TIMEOUT } from "./namespaces/casasbahia.js";
+export type {
+  CasasbahiaSearchOptions,
+  CasasbahiaCategoryOptions,
+  CasasbahiaProductOptions,
+  CasasbahiaCategoriesOptions,
+} from "./namespaces/casasbahia.js";
+export { BuscapeNamespace, BUSCAPE_TIMEOUT } from "./namespaces/buscape.js";
+export type {
+  BuscapeSearchOptions,
+  BuscapeCategoryOptions,
+  BuscapeCategoriesOptions,
+  BuscapeProductOptions,
+  BuscapeOffersOptions,
+  BuscapePriceHistoryOptions,
+  BuscapeLowestPriceOptions,
+  BuscapeDealsOptions,
+  BuscapeDealLandingOptions,
+  BuscapeStoreOptions,
+  BuscapeSuggestionsOptions,
+  BuscapeShippingOptions,
+} from "./namespaces/buscape.js";
+export { RdsaudeNamespace, RDSAUDE_TIMEOUT } from "./namespaces/rdsaude.js";
+export type {
+  RdsaudeSearchOptions,
+  RdsaudeCategoryOptions,
+  RdsaudeCategoriesOptions,
+  RdsaudeProductOptions,
+  RdsaudePricesOptions,
+  RdsaudeStoreAvailabilityOptions,
+  RdsaudeStoresOptions,
+  RdsaudeStoresSearchOptions,
+  RdsaudeReviewsOptions,
+  RdsaudeDealsOptions,
+  RdsaudeSuggestionsOptions,
+} from "./namespaces/rdsaude.js";
+export { ReclameaquiNamespace, RECLAMEAQUI_TIMEOUT } from "./namespaces/reclameaqui.js";
+export type {
+  ReclameaquiCompanySearchOptions,
+  ReclameaquiCompanyOptions,
+  ReclameaquiComplaintsOptions,
+  ReclameaquiComplaintOptions,
+  ReclameaquiComplaintSearchOptions,
+  ReclameaquiRankingsOptions,
+  ReclameaquiSegmentsOptions,
+  ReclameaquiSegmentRankingOptions,
+} from "./namespaces/reclameaqui.js";
+export { LeroymerlinNamespace, LEROYMERLIN_TIMEOUT } from "./namespaces/leroymerlin.js";
+export type {
+  LeroymerlinSearchOptions,
+  LeroymerlinCategoryOptions,
+  LeroymerlinProductOptions,
+  LeroymerlinStoreStockOptions,
+  LeroymerlinStoresOptions,
+  LeroymerlinStoreOptions,
+  LeroymerlinReviewsOptions,
+  LeroymerlinShippingOptions,
+  LeroymerlinCepOptions,
+  LeroymerlinRegionsOptions,
+  LeroymerlinCategoriesOptions,
+  LeroymerlinSuggestionsOptions,
+  LeroymerlinOffersOptions,
+} from "./namespaces/leroymerlin.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
