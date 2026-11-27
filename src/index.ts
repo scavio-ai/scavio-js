@@ -1061,6 +1061,40 @@ export type {
   LeroymerlinSuggestionsOptions,
   LeroymerlinOffersOptions,
 } from "./namespaces/leroymerlin.js";
+export { NaturaNamespace, NATURA_TIMEOUT } from "./namespaces/natura.js";
+export type {
+  NaturaSearchOptions,
+  NaturaCategoryOptions,
+  NaturaCategoriesOptions,
+  NaturaProductOptions,
+  NaturaSuggestionsOptions,
+  NaturaStoresOptions,
+  NaturaDealsOptions,
+} from "./namespaces/natura.js";
+export { BoticarioNamespace, BOTICARIO_TIMEOUT } from "./namespaces/boticario.js";
+export type {
+  BoticarioSearchOptions,
+  BoticarioCategoryOptions,
+  BoticarioCategoriesOptions,
+  BoticarioDealsOptions,
+  BoticarioPromotionsOptions,
+  BoticarioProductOptions,
+  BoticarioPricesOptions,
+  BoticarioReviewsOptions,
+  BoticarioStoresOptions,
+  BoticarioPickupOptions,
+  BoticarioSuggestionsOptions,
+} from "./namespaces/boticario.js";
+export { CentauroNamespace, CENTAURO_TIMEOUT } from "./namespaces/centauro.js";
+export type {
+  CentauroSearchOptions,
+  CentauroCategoryOptions,
+  CentauroDealsOptions,
+  CentauroProductOptions,
+  CentauroFreightOptions,
+  CentauroStoresOptions,
+  CentauroSuggestionsOptions,
+} from "./namespaces/centauro.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
