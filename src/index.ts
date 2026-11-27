@@ -1232,6 +1232,23 @@ export type {
   DafitiProductOptions,
   DafitiSizesOptions,
 } from "./namespaces/dafiti.js";
+export { RiachueloNamespace, RIACHUELO_TIMEOUT, RIACHUELO_SEARCH_TIMEOUT } from "./namespaces/riachuelo.js";
+export type {
+  RiachueloSearchOptions,
+  RiachueloCategoryOptions,
+  RiachueloDealsOptions,
+  RiachueloProductOptions,
+} from "./namespaces/riachuelo.js";
+export { PetzNamespace, PETZ_TIMEOUT } from "./namespaces/petz.js";
+export type {
+  PetzSearchOptions,
+  PetzCategoryOptions,
+  PetzBrandOptions,
+  PetzDealsOptions,
+  PetzProductOptions,
+  PetzStoresOptions,
+  PetzStoreOptions,
+} from "./namespaces/petz.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,

@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 185 platforms on one API key, plus `extract()` to read
+data across 187 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,7 +9,7 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, BJ's Wholesale Club (US, coupons and the club directory), Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), RONA (Canada, store prices for up to 60 articles at one store with exact units, stores, stock near a store), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), Space NK (UK, Ireland, the Netherlands, Australia), Lookfantastic (10 country sites, 22 currencies), Cult Beauty, YesStyle (prices per shipping country), Notino (27 storefronts, 30-day lowest price), Douglas (15 storefronts, RRP and 30-day low), Boots (UK and Ireland, store availability), ALDI, Micro Center, Newegg (US, Canada and 9 Global storefronts, every seller's offer), Sweetwater (US, units on hand and serial-numbered instruments), Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), RockAuto (parts by vehicle for every brand and tier, 15 display currencies), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PC Express (Canada, the same product code priced at each Loblaw banner's default store: Real Canadian Superstore, No Frills, Loblaws, Maxi and 6 more; deal end dates, PC Optimum offers, pickup stores), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Belk (US, coupons and exact store units), Dick's Sporting Goods, Academy Sports + Outdoors (US, exact units per store), REI (US, store pickup status near a ZIP), L.L.Bean (US, Canada and 12 countries, exact store units), Foot Locker, Zappos and 6pm (exact warehouse units per size, width and color), Fanatics, Gap Inc. (Gap, Old Navy, Banana Republic, Athleta; US and Canada, store stock by size), Abercrombie & Fitch and Hollister (16 storefronts, exact store units), Bath & Body Works (US and Canada, offers and store pickup), Williams Sonoma, Pottery Barn, West Elm and the other Williams-Sonoma, Inc. brands (online stock ranges, delivery dates and store pickup), Bed Bath & Beyond (US, online stock and delivery dates), QVC and HSN (today's special, program guide and prices in 5 QVC markets), Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, KaBuM! (Brazil, card and Pix prices, offers with units left), Magazine Luiza (Brazil, Pix prices, coupons and deal end times), Casas Bahia with Extra and Ponto (Brazil, every seller's price), Buscape and Zoom (Brazil price comparison, store offers and daily price history), Drogasil and Droga Raia (Brazil pharmacy retail, store pickup), Leroy Merlin (Brazil regional prices and store units, plus Italy, Spain, Portugal, Poland, Romania and France), Natura (beauty prices and shades in Brazil, Argentina, Chile, Colombia, Mexico and Peru), O Boticario and Eudora (Brazil beauty, card and Pix prices, store pickup), Centauro (Brazil sporting goods, prices per size, freight and store pickup by CEP), Enjoei (Brazil second-hand fashion, shops, sold listings and buyer reviews), Atacadao (Brazil cash-and-carry, store prices with quantity tiers, stores and flyers), Carrefour Brasil (grocery prices by CEP and the marketplace, delivery and coupons), Terabyteshop (Brazil PC parts, card and Pix prices, coupons and the PC builder), Cobasi (Brazil pet supplies, prices per size, subscription prices, pickup and delivery by CEP), Netshoes (Brazil sporting goods, every seller's offer per size, online stock and shipping by CEP), Estante Virtual (Brazil used and new books, copies, ISBN lookup, sebos and shipping by CEP), C&A Brasil (Brazil fashion, prices per size, delivery quotes and pickup points by CEP), Lojas Renner (Brazil fashion, stock levels, store card installments and stores by CEP), Pichau (Brazil PC parts, card and Pix prices, deals with units left, benchmarks and coupons), Dafiti (Brazil fashion marketplace, units per size, delivery type and partner stores), eBay, Rakuten (cash back rates and coupons in the US, UK and Canada), Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, BJ's Wholesale Club (US, coupons and the club directory), Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), RONA (Canada, store prices for up to 60 articles at one store with exact units, stores, stock near a store), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), Space NK (UK, Ireland, the Netherlands, Australia), Lookfantastic (10 country sites, 22 currencies), Cult Beauty, YesStyle (prices per shipping country), Notino (27 storefronts, 30-day lowest price), Douglas (15 storefronts, RRP and 30-day low), Boots (UK and Ireland, store availability), ALDI, Micro Center, Newegg (US, Canada and 9 Global storefronts, every seller's offer), Sweetwater (US, units on hand and serial-numbered instruments), Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), RockAuto (parts by vehicle for every brand and tier, 15 display currencies), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PC Express (Canada, the same product code priced at each Loblaw banner's default store: Real Canadian Superstore, No Frills, Loblaws, Maxi and 6 more; deal end dates, PC Optimum offers, pickup stores), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Belk (US, coupons and exact store units), Dick's Sporting Goods, Academy Sports + Outdoors (US, exact units per store), REI (US, store pickup status near a ZIP), L.L.Bean (US, Canada and 12 countries, exact store units), Foot Locker, Zappos and 6pm (exact warehouse units per size, width and color), Fanatics, Gap Inc. (Gap, Old Navy, Banana Republic, Athleta; US and Canada, store stock by size), Abercrombie & Fitch and Hollister (16 storefronts, exact store units), Bath & Body Works (US and Canada, offers and store pickup), Williams Sonoma, Pottery Barn, West Elm and the other Williams-Sonoma, Inc. brands (online stock ranges, delivery dates and store pickup), Bed Bath & Beyond (US, online stock and delivery dates), QVC and HSN (today's special, program guide and prices in 5 QVC markets), Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, KaBuM! (Brazil, card and Pix prices, offers with units left), Magazine Luiza (Brazil, Pix prices, coupons and deal end times), Casas Bahia with Extra and Ponto (Brazil, every seller's price), Buscape and Zoom (Brazil price comparison, store offers and daily price history), Drogasil and Droga Raia (Brazil pharmacy retail, store pickup), Leroy Merlin (Brazil regional prices and store units, plus Italy, Spain, Portugal, Poland, Romania and France), Natura (beauty prices and shades in Brazil, Argentina, Chile, Colombia, Mexico and Peru), O Boticario and Eudora (Brazil beauty, card and Pix prices, store pickup), Centauro (Brazil sporting goods, prices per size, freight and store pickup by CEP), Enjoei (Brazil second-hand fashion, shops, sold listings and buyer reviews), Atacadao (Brazil cash-and-carry, store prices with quantity tiers, stores and flyers), Carrefour Brasil (grocery prices by CEP and the marketplace, delivery and coupons), Terabyteshop (Brazil PC parts, card and Pix prices, coupons and the PC builder), Cobasi (Brazil pet supplies, prices per size, subscription prices, pickup and delivery by CEP), Netshoes (Brazil sporting goods, every seller's offer per size, online stock and shipping by CEP), Estante Virtual (Brazil used and new books, copies, ISBN lookup, sebos and shipping by CEP), C&A Brasil (Brazil fashion, prices per size, delivery quotes and pickup points by CEP), Lojas Renner (Brazil fashion, stock levels, store card installments and stores by CEP), Pichau (Brazil PC parts, card and Pix prices, deals with units left, benchmarks and coupons), Dafiti (Brazil fashion marketplace, units per size, delivery type and partner stores), Riachuelo (Brazil fashion, sold-out flags and units per size, campaign deals and reviews), Petz (Brazil pet store, subscription and Clubz member prices, stock units and stores), eBay, Rakuten (cash back rates and coupons in the US, UK and Canada), Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
@@ -6172,6 +6172,77 @@ console.log(sz.data.size_count, sz.data.sizes_in_stock);
 ```
 
 Every call raises the request timeout to `DAFITI_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Riachuelo](https://scavio.dev/docs/riachuelo-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Riachuelo (riachuelo.com.br, the Brazilian fashion retailer): keyword search,
+category and campaign listings (24 a page, pages 1-500, in the site's 6 sorts,
+filtered by the listing's own filters for size, colour, gender, subcategory,
+brand and category group) with the price, the list price, the discount, the
+promotion tag, the seller and every colour and size with its sold-out flag and
+units, as the listing card carries them (the search total includes sold-out
+products); by default the deals listing is a department's Black Friday page (a
+seasonal page, so it changes or ends with the campaign), or any other campaign
+page by path; and one product by sku or link with composition, attributes, the
+rating summary and the reviews the product page itself shows (no reviewer
+names). Prices in BRL; the product page lists no stock per size, and there are
+no shipping quotes, store stock or search suggestions. 4 endpoints on
+`client.riachuelo` (new in 0.106.0): `search`, `category`, `deals`, `product`.
+See the [Riachuelo API
+page](https://scavio.dev/riachuelo-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.riachuelo.search({ query: "vestido" })) as any;
+console.log(res.data.total, res.data.total_pages, res.data.has_more);
+for (const it of res.data.items.slice(0, 5)) console.log(it.sku, it.name, it.price, it.list_price, it.sold_out, it.variations.map((v: any) => [v.size, v.units]));
+const item = (await client.riachuelo.product({ sku: "16519710" })) as any;
+console.log(item.data.name, item.data.price, item.data.list_price, item.data.availability, item.data.rating.average, item.data.rating.count);
+for (const r of item.data.reviews) console.log(r.rating, r.size, r.date, r.text);
+const deals = (await client.riachuelo.deals({ department: "masculino" })) as any;
+console.log(deals.data.campaign, deals.data.total);
+```
+
+Every call raises the request timeout to `RIACHUELO_TIMEOUT` (180s; `search`
+`RIACHUELO_SEARCH_TIMEOUT`, 300s) and never lowers a longer client timeout;
+failed calls and refused inputs are not charged, a not-found is charged.
+
+### [Petz](https://scavio.dev/docs/petz-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Petz (petz.com.br, the Brazilian pet store of Grupo Petz Cobasi): keyword
+search, category, brand and deals listings (the Promoções page or one of its
+themed collections, with no validity dates published; 20 a page, pages 1-50,
+by relevance, price or newest; a search counts at most 1,000 products) with
+the price, the list price, the Assinatura Petz subscription price, the Clubz
+loyalty member price, stock_units (capped at 100, with stock_capped) and every
+size or variant with its own price; one product by product_id or link with
+specs, the rating summary, the 3 latest reviews (no reviewer names) and each
+variant's prices and stock; and the store directory, about 270 stores with
+address, phone, hours and whether online orders can be picked up there,
+narrowed by state and city, plus one store by slug or link. Prices in BRL; no
+per-store stock or prices, prices by CEP, review paging, search suggestions,
+Pix prices, installments or shipping. 7 endpoints on `client.petz` (new in
+0.106.0): `search`, `category`, `brand`, `deals`, `product`, `stores`,
+`store`. See the [Petz API
+page](https://scavio.dev/petz-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.petz.search({ query: "ração golden" })) as any;
+console.log(res.data.total, res.data.total_capped, res.data.total_pages);
+for (const it of res.data.items.slice(0, 5)) console.log(it.product_id, it.name, it.price, it.subscription_price, it.clubz?.price, it.stock_units, it.stock_capped);
+const item = (await client.petz.product({ product_id: "191628" })) as any;
+console.log(item.data.name, item.data.price, item.data.list_price, item.data.rating.average, item.data.rating.count);
+for (const v of item.data.variations) console.log(v.name, v.price, v.subscription_price, v.stock_units, v.available);
+const stores = (await client.petz.stores({ state: "SP" })) as any;
+for (const st of stores.data.stores.slice(0, 5)) console.log(st.name, st.address.city, st.pickup, st.hours);
+```
+
+Every call raises the request timeout to `PETZ_TIMEOUT` (300s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 

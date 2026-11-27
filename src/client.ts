@@ -137,6 +137,8 @@ import { CeaNamespace } from "./namespaces/cea.js";
 import { RennerNamespace } from "./namespaces/renner.js";
 import { PichauNamespace } from "./namespaces/pichau.js";
 import { DafitiNamespace } from "./namespaces/dafiti.js";
+import { RiachueloNamespace } from "./namespaces/riachuelo.js";
+import { PetzNamespace } from "./namespaces/petz.js";
 import { MicroCenterNamespace } from "./namespaces/micro-center.js";
 import { WalgreensNamespace } from "./namespaces/walgreens.js";
 import { CvsNamespace } from "./namespaces/cvs.js";
@@ -432,6 +434,8 @@ export class Scavio extends ScavioCore {
   readonly renner: RennerNamespace;
   readonly pichau: PichauNamespace;
   readonly dafiti: DafitiNamespace;
+  readonly riachuelo: RiachueloNamespace;
+  readonly petz: PetzNamespace;
   readonly microCenter: MicroCenterNamespace;
   readonly walgreens: WalgreensNamespace;
   readonly cvs: CvsNamespace;
@@ -644,6 +648,8 @@ export class Scavio extends ScavioCore {
     this.renner = new RennerNamespace(this);
     this.pichau = new PichauNamespace(this);
     this.dafiti = new DafitiNamespace(this);
+    this.riachuelo = new RiachueloNamespace(this);
+    this.petz = new PetzNamespace(this);
     this.microCenter = new MicroCenterNamespace(this);
     this.walgreens = new WalgreensNamespace(this);
     this.cvs = new CvsNamespace(this);
