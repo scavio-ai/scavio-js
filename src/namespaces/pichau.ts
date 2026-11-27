@@ -222,7 +222,7 @@ export class PichauNamespace {
 
   /**
    * One product page of Pichau (pichau.com.br, Brazil's PC-parts store). Scavio fetches the public
-   * Pichau page on request, as a browser shows it after loading. Brazil: Portuguese text, prices in
+   * Pichau page on request as a visitor sees it. Brazil: Portuguese text, prices in
    * BRL as shown to a visitor who is not signed in. By url_key or link: the live offer (units left,
    * units sold), the benchmark FPS the site shows on PCs and a prebuilt PC's or kit's component
    * list. Slower than product (usually 30-160 s). Costs 1 credit.
