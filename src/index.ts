@@ -1187,6 +1187,51 @@ export type {
   EstantevirtualCategoryOptions,
   EstantevirtualListOptions,
 } from "./namespaces/estantevirtual.js";
+export { CeaNamespace, CEA_TIMEOUT } from "./namespaces/cea.js";
+export type {
+  CeaSearchOptions,
+  CeaCategoryOptions,
+  CeaBrandOptions,
+  CeaDealsOptions,
+  CeaFacetsOptions,
+  CeaSuggestionsOptions,
+  CeaCategoriesOptions,
+  CeaProductOptions,
+  CeaShippingOptions,
+  CeaStoresOptions,
+} from "./namespaces/cea.js";
+export { RennerNamespace, RENNER_TIMEOUT } from "./namespaces/renner.js";
+export type {
+  RennerSearchOptions,
+  RennerCategoryOptions,
+  RennerDealsOptions,
+  RennerProductOptions,
+  RennerSkuPriceOptions,
+  RennerStoresOptions,
+} from "./namespaces/renner.js";
+export { PichauNamespace, PICHAU_TIMEOUT } from "./namespaces/pichau.js";
+export type {
+  PichauSearchOptions,
+  PichauCategoryOptions,
+  PichauBrandOptions,
+  PichauDealsOptions,
+  PichauProductOptions,
+  PichauProductLiveOptions,
+  PichauReviewsOptions,
+  PichauInstallmentsOptions,
+  PichauCouponsOptions,
+  PichauCategoriesOptions,
+  PichauSuggestionsOptions,
+} from "./namespaces/pichau.js";
+export { DafitiNamespace, DAFITI_TIMEOUT } from "./namespaces/dafiti.js";
+export type {
+  DafitiSearchOptions,
+  DafitiCategoryOptions,
+  DafitiBrandOptions,
+  DafitiDealsOptions,
+  DafitiProductOptions,
+  DafitiSizesOptions,
+} from "./namespaces/dafiti.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
