@@ -853,6 +853,69 @@ export type {
   ReiStoreOptions,
   ReiSuggestionsOptions,
 } from "./namespaces/rei.js";
+export { QvcNamespace, QVC_TIMEOUT } from "./namespaces/qvc.js";
+export type {
+  QvcSearchOptions,
+  QvcProductOptions,
+  QvcProductsOptions,
+  QvcTodaysSpecialOptions,
+  QvcOnAirOptions,
+  QvcProgramGuideOptions,
+  QvcRecentlyAiredOptions,
+  QvcCategoryOptions,
+  QvcSuggestionsOptions,
+  QvcReviewsOptions,
+} from "./namespaces/qvc.js";
+export { BarnesandnobleNamespace, BARNESANDNOBLE_TIMEOUT } from "./namespaces/barnesandnoble.js";
+export type {
+  BarnesandnobleSearchOptions,
+  BarnesandnobleProductOptions,
+  BarnesandnobleStoreAvailabilityOptions,
+  BarnesandnobleStoresOptions,
+  BarnesandnobleStoreOptions,
+  BarnesandnobleSuggestionsOptions,
+  BarnesandnobleBestsellersOptions,
+  BarnesandnobleCategoryOptions,
+  BarnesandnobleCategoriesOptions,
+  BarnesandnobleDealsOptions,
+} from "./namespaces/barnesandnoble.js";
+export { ThriftbooksNamespace, THRIFTBOOKS_TIMEOUT } from "./namespaces/thriftbooks.js";
+export type {
+  ThriftbooksSearchOptions,
+  ThriftbooksIsbnOptions,
+  ThriftbooksWorkOptions,
+  ThriftbooksEditionOptions,
+  ThriftbooksCopiesOptions,
+  ThriftbooksEditionsOptions,
+  ThriftbooksReviewsOptions,
+  ThriftbooksSuggestionsOptions,
+} from "./namespaces/thriftbooks.js";
+export { UhaulNamespace, UHAUL_TIMEOUT } from "./namespaces/uhaul.js";
+export type {
+  UhaulTruckQuoteOptions,
+  UhaulLocationsOptions,
+  UhaulLocationOptions,
+  UhaulStorageSearchOptions,
+  UhaulStorageFacilityOptions,
+  UhaulReviewsOptions,
+  UhaulSuggestionsOptions,
+  UhaulSuppliesOptions,
+} from "./namespaces/uhaul.js";
+export { WilliamssonomaNamespace, WILLIAMSSONOMA_TIMEOUT } from "./namespaces/williamssonoma.js";
+export type {
+  WilliamssonomaProductOptions,
+  WilliamssonomaConfiguratorOptions,
+  WilliamssonomaDeliveryEstimateOptions,
+  WilliamssonomaStockOptions,
+  WilliamssonomaStorePickupOptions,
+  WilliamssonomaStoresOptions,
+  WilliamssonomaFloorSamplesOptions,
+  WilliamssonomaCategoriesOptions,
+  WilliamssonomaCategoryOptions,
+  WilliamssonomaSearchOptions,
+  WilliamssonomaPopularSearchesOptions,
+  WilliamssonomaReviewsOptions,
+} from "./namespaces/williamssonoma.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,

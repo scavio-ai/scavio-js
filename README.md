@@ -1,7 +1,7 @@
 # Scavio
 
 TypeScript SDK for the [Scavio API](https://scavio.dev?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme) — real-time structured web
-data across 154 platforms on one API key, plus `extract()` to read
+data across 159 platforms on one API key, plus `extract()` to read
 any URL as clean Markdown, and `extract.map()` / `extract.crawl()` /
 `extract.batch()` to map, crawl and batch-extract whole websites.
 
@@ -9,15 +9,15 @@ Structured JSON in, structured JSON out. No per-site parsers to maintain.
 
 - **Search and SERP** — Google (organic, news, maps, shopping, flights, hotels, trends, AI Mode)
 - **AI assistants** — ChatGPT and Gemini answers with the sources they cite and the products they recommend
-- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, BJ's Wholesale Club (US, coupons and the club directory), Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), RONA (Canada, store prices for up to 60 articles at one store with exact units, stores, stock near a store), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), Space NK (UK, Ireland, the Netherlands, Australia), Lookfantastic (10 country sites, 22 currencies), Cult Beauty, YesStyle (prices per shipping country), Notino (27 storefronts, 30-day lowest price), Douglas (15 storefronts, RRP and 30-day low), Boots (UK and Ireland, store availability), ALDI, Micro Center, Newegg (US, Canada and 9 Global storefronts, every seller's offer), Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), RockAuto (parts by vehicle for every brand and tier, 15 display currencies), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PC Express (Canada, the same product code priced at each Loblaw banner's default store: Real Canadian Superstore, No Frills, Loblaws, Maxi and 6 more; deal end dates, PC Optimum offers, pickup stores), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Academy Sports + Outdoors (US, exact units per store), REI (US, store pickup status near a ZIP), Foot Locker, Zappos and 6pm (exact warehouse units per size, width and color), Fanatics, Gap Inc. (Gap, Old Navy, Banana Republic, Athleta; US and Canada, store stock by size), Bath & Body Works (US and Canada, offers and store pickup), Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Rakuten (cash back rates and coupons in the US, UK and Canada), Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
+- **E-commerce** — Amazon, Walmart, Costco, Lowe's, Sam's Club, BJ's Wholesale Club (US, coupons and the club directory), Canadian Tire, SportChek and Mark's (Canada, prices with the was price and sale end date, units at the assigned store; Mark's also in French via L'Equipeur), RONA (Canada, store prices for up to 60 articles at one store with exact units, stores, stock near a store), Dollar General, Dollar Tree (US case prices next to unit prices, units at a store and its nearby stores), Discount Tire (US tire prices by store, tires that fit a vehicle, exact units at the stores near a ZIP), Vevor (tools and equipment prices on 13 storefronts in their own currencies, was price only during a deal, shipping by state), Sephora (US and Sephora Canada: CAD prices, sale prices, dated offers, stores), Ulta Beauty, Dermstore (US and Canada skincare prices, RRP and offer text per brand, offers with end times), Space NK (UK, Ireland, the Netherlands, Australia), Lookfantastic (10 country sites, 22 currencies), Cult Beauty, YesStyle (prices per shipping country), Notino (27 storefronts, 30-day lowest price), Douglas (15 storefronts, RRP and 30-day low), Boots (UK and Ireland, store availability), ALDI, Micro Center, Newegg (US, Canada and 9 Global storefronts, every seller's offer), Walgreens, CVS, Whole Foods, Kroger (with QFC and Fred Meyer), Publix, IKEA (55 markets), Wayfair (US, Canada, UK, Ireland), Ashley Furniture (US, plus Canada, Mexico, the Philippines, Saudi Arabia and Turkey), Maisons du Monde (France, Belgium, Luxembourg, the Netherlands, Germany, Spain, Italy, Portugal, Switzerland), Harbor Freight, AutoZone, O'Reilly Auto Parts (part-number cross-reference, store stock near a ZIP), RockAuto (parts by vehicle for every brand and tier, 15 display currencies), Ace Hardware (prices by store, units on hand, weekly ad), Tractor Supply (prices by store and price zone, store stock), Michaels (US and Canada, units at the stores near a ZIP), Nike (62 storefronts in 42 countries, sizes with GTIN, release calendar), Staples (US office supplies, price per unit and cost per page, units at the stores near a ZIP; Canada search and product), Instacart (US and Canada, prices by store at a ZIP), PC Express (Canada, the same product code priced at each Loblaw banner's default store: Real Canadian Superstore, No Frills, Loblaws, Maxi and 6 more; deal end dates, PC Optimum offers, pickup stores), PetSmart, Petco, iHerb, Chewy, Menards, Nordstrom, Nordstrom Rack, Best Buy (US and Best Buy Canada: exact units per store, EHF by province), Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Dick's Sporting Goods, Academy Sports + Outdoors (US, exact units per store), REI (US, store pickup status near a ZIP), Foot Locker, Zappos and 6pm (exact warehouse units per size, width and color), Fanatics, Gap Inc. (Gap, Old Navy, Banana Republic, Athleta; US and Canada, store stock by size), Bath & Body Works (US and Canada, offers and store pickup), Williams Sonoma, Pottery Barn, West Elm and the other Williams-Sonoma, Inc. brands (online stock ranges, delivery dates and store pickup), QVC and HSN (today's special, program guide and prices in 5 QVC markets), Argos (UK, store stock by postcode), Media Expert (Poland, Omnibus 30-day low and store stock), Action (19 storefronts in 16 countries, weekly deals), HEMA (the Netherlands, Belgium, France, Germany; store stock per store), Carrefour, Allegro, bol.com (the Netherlands and Belgium), Trendyol (Turkey plus 34 international storefronts), H&M (47 countries), Zara (102 storefronts), Uniqlo (41 markets), ASOS (235 countries), Fashion Nova (104 countries), Mercado Libre, eBay, Rakuten (cash back rates and coupons in the US, UK and Canada), Target, Home Depot (US and Home Depot Canada: prices and exact units per store), TikTok Shop
 - **Trading cards** — TCGplayer (Pokemon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana and 60+ more games)
 - **Video games** — Nintendo eShop (one game's price, sale price and sale end date in 46 countries, deals, releases and DLC)
 - **Second-hand marketplaces and classifieds** — Vinted (27 country sites, local currency and language), Mercari (US and Japan, sold prices), Depop (9 storefronts, shop sold prices), Poshmark (US and Canada, sold prices, closets), OfferUp (US local listings around a ZIP, asking prices by city, cars and trucks), thredUP (US store, estimated retail, sold listings), OLX (7 OLX Europe sites)
 - **Cars** — Cars.com, Autotrader (KBB fair price range), CarGurus (expected price and deal rating; US, Canada, UK), CarMax (no-haggle prices, recent offers per model year), Carvana (prices, KBB values, shipping costs), TrueCar (price rating, dealer fees, national price stats), Edmunds (deal rating, Edmunds Suggested Price per trim, appraisal values), Kelley Blue Book (car values at a ZIP, 17 price types)
 - **Collector-car auctions** — Bring a Trailer (results, sale prices and model price history)
 - **Liquidation auctions** — Nellis Auction (open lots in 6 US shopping locations with the current bid and Nellis's own Estimated Retail Price, a sold lot's final price by id, bid history without bidder names), EstateSales.net (estate sales near a ZIP with their dates, the companies running them and marketplace items)
-- **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Trulia (neighborhood survey and market snapshot), StreetEasy (NYC listings and market data), Rent.com and Apartment Guide, RentCafe (US and Canada), Movoto (listings and market trends), HotPads (rents, rent history, fees), Apartment List (rent report), Compass, AffordableHousing.com (Section 8 rentals, waiting lists, housing authorities), Lennar (new homes, promotions), Extra Space Storage and Public Storage (self-storage unit prices), Booking, Airbnb, Vrbo, Expedia (hotel prices for your dates, price calendars), Tripadvisor
-- **Reviews and local** — Trustpilot, Goodreads (book ratings and reader reviews), Yelp, G2, Capterra, Glassdoor, App Store, Google Play
+- **Real estate and travel** — Zillow, Redfin, Realtor.com, Rightmove, Trulia (neighborhood survey and market snapshot), StreetEasy (NYC listings and market data), Rent.com and Apartment Guide, RentCafe (US and Canada), Movoto (listings and market trends), HotPads (rents, rent history, fees), Apartment List (rent report), Compass, AffordableHousing.com (Section 8 rentals, waiting lists, housing authorities), Lennar (new homes, promotions), Extra Space Storage and Public Storage (self-storage unit prices), U-Haul (truck rental rates and self-storage in the US and Canada), Booking, Airbnb, Vrbo, Expedia (hotel prices for your dates, price calendars), Tripadvisor
+- **Reviews and local** — Trustpilot, Goodreads (book ratings and reader reviews), Barnes & Noble (book prices, bestsellers and store pickup), ThriftBooks (used book prices per format and condition), Yelp, G2, Capterra, Glassdoor, App Store, Google Play
 - **Jobs and companies** — Indeed, Glassdoor, SEC EDGAR, Companies House, Company Enrich (contacts and owner from a website or a Google Maps place)
 - **Ads transparency** — Google Ads Transparency Center, Meta Ad Library
 - **Social and video** — YouTube, TikTok, Instagram, Threads, X, LinkedIn, Reddit, Kuaishou
@@ -2048,6 +2048,70 @@ console.log(pickup.data.store.name, pickup.data.store_orderable, pickup.data.pic
 Every call raises the request timeout to `BATHANDBODYWORKS_TIMEOUT` (240s) and
 never lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
+
+### [Williams-Sonoma](https://scavio.dev/docs/williamssonoma-product?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Williams-Sonoma, Inc. brands (Williams Sonoma, Pottery Barn, Pottery Barn
+Kids, Pottery Barn Teen, West Elm, Rejuvenation and Mark and Graham; brand):
+one product in full with every SKU, its price, regular price and stock state
+(us, and ca for Williams Sonoma, Pottery Barn and West Elm in CAD); the fabric
+configurator of a configured piece; standard delivery dates to a ZIP; online
+stock ranges per SKU; store pickup per SKU at up to 10 stores; the brands'
+stores near a ZIP or a point; the stores showing a product as a floor sample;
+the category tree and one category listing; keyword search (page 1, 20
+products); the day's popular searches; and Williams Sonoma customer reviews.
+West Elm US search is not served. 12 endpoints on `client.williamssonoma` (new
+in 0.101.0): `product`, `configurator`, `deliveryEstimate`, `stock`,
+`storePickup`, `stores`, `floorSamples`, `categories`, `category`, `search`,
+`popularSearches`, `reviews`. See the [Williams-Sonoma API
+page](https://scavio.dev/williamssonoma-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each, 5 for `search` and `category`. `credits_used` in the
+response is what was charged.
+
+```typescript
+const item = (await client.williamssonoma.product({ brand: "williams_sonoma", product: "wusthof-classic-chefs-knife" })) as any;
+console.log(item.data.name, item.data.price.min, item.data.price.regular_min, item.data.on_sale);
+for (const sku of item.data.skus.slice(0, 5)) console.log(sku.sku, sku.name, sku.price, sku.regular_price, sku.stock);
+const pickup = (await client.williamssonoma.storePickup({ brand: "williams_sonoma", skus: ["1468824", "2600435"], stores: ["ST:0859", "ST:6016"] })) as any;
+for (const sku of pickup.data.skus) console.log(sku.sku, sku.stores.map((s: any) => [s.pickup_location_code, s.available_for_pickup]));
+```
+
+Every call raises the request timeout to `WILLIAMSSONOMA_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [QVC + HSN](https://scavio.dev/docs/qvc-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+QVC (qvc.com, qvcuk.com, qvc.de, qvc.it, qvc.jp) and HSN (hsn.com), the video
+shopping networks (site): keyword search with the price, QVC's everyday price,
+the special price (Today's Special Value, Black Friday Sale), easy pay, rating
+and stock; one product in full and up to 20 products in one call; today's
+special with its start and end times; what is on air now; the program guide by
+day and channel; the items HSN presented in one show hour; a qvc.com category
+or collection; search suggestions; and the first page of a product's reviews
+and questions as the product page shows it (no paging, no reviewer names). QVC
+market us, uk, de, it or jp in its own language and currency; HSN US only.
+Show names are kept as given; host and guest names are not included. 10
+endpoints on `client.qvc` (new in 0.101.0): `search`, `product`, `products`,
+`todaysSpecial`, `onAir`, `programGuide`, `recentlyAired`, `category`,
+`suggestions`, `reviews`. See the [QVC + HSN API
+page](https://scavio.dev/qvc-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.qvc.search({ query: "blender" })) as any;
+console.log(res.data.total, res.data.total_pages, res.data.currency);
+for (const it of res.data.items.slice(0, 5)) console.log(it.title, it.price, it.qvc_price, it.special_price, it.stock);
+const tsv = (await client.qvc.todaysSpecial()) as any;
+console.log(tsv.data.headline, tsv.data.window.starts_at, tsv.data.window.ends_at);
+console.log(tsv.data.item.title, tsv.data.item.price, tsv.data.item.qvc_price);
+```
+
+Every call raises the request timeout to `QVC_TIMEOUT` (240s) and never lowers
+a longer client timeout; failed calls and refused inputs are not charged, a
+not-found is charged.
 
 ### [Saks Fifth Avenue](https://scavio.dev/docs/saks-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
 
@@ -6191,6 +6255,34 @@ Every call raises the request timeout to `PUBLICSTORAGE_TIMEOUT` (240s) and
 never lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 
+### [U-Haul](https://scavio.dev/docs/uhaul-truck-quote?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+U-Haul (uhaul.com, the US and Canada truck rental and self-storage company):
+U-Haul's own truck rental rates for a one-way or in-town move on a date, from
+U-Haul's public quote form (nothing is reserved, and the quote names no pickup
+location); U-Haul locations near a place by service; one location;
+self-storage facilities near a place with the starting rate, rating and
+features, and one facility; customer reviews of a location or facility; place
+suggestions; and moving supplies prices in USD or CAD. US and Canada, on
+U-Haul's English, Spanish or French site. 8 endpoints on `client.uhaul` (new
+in 0.101.0): `truckQuote`, `locations`, `location`, `storageSearch`,
+`storageFacility`, `reviews`, `suggestions`, `supplies`. See the [U-Haul API
+page](https://scavio.dev/uhaul-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const quote = (await client.uhaul.truckQuote({ pickup: "Dallas, TX", dropoff: "Austin, TX", date: "2026-12-11" })) as any;
+console.log(quote.data.move_type, quote.data.allowed_miles, quote.data.available_count);
+for (const t of quote.data.trucks) console.log(t.name, t.available, t.rate, t.rate_kind);
+const storage = (await client.uhaul.storageSearch({ near: "Phoenix, AZ 85004", sort: "price" })) as any;
+for (const f of storage.data.facilities.slice(0, 5)) console.log(f.name, f.distance_text, f.starting_rate, f.rating);
+```
+
+Every call raises the request timeout to `UHAUL_TIMEOUT` (240s) and never
+lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
 ### Booking
 
 ```typescript
@@ -6505,6 +6597,65 @@ console.log(book.data.genres.slice(0, 3).map((g: any) => g.name));
 
 Every call raises the request timeout to `GOODREADS_TIMEOUT` (240s) and never
 lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [Barnes & Noble](https://scavio.dev/docs/barnesandnoble-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+Barnes & Noble (barnesandnoble.com, the US bookseller): keyword search and
+collection listings (24 results, as the site shows them) with the format,
+price, original price, sale flag, sales rank and rating, sorted and filtered
+by the site's own filters; one title by EAN or ISBN with every format the page
+links and a short overview excerpt; store pickup flags for a title at the
+stores near a ZIP, a city or a store (eligible and available, no unit counts);
+stores near a place or a point and one store with hours; search suggestions;
+the bestseller lists; the category menu; and the deal pages. Member offers are
+given as the page's offer text, never a member price. US only, prices in USD.
+10 endpoints on `client.barnesandnoble` (new in 0.101.0): `search`, `product`,
+`storeAvailability`, `stores`, `store`, `suggestions`, `bestsellers`,
+`category`, `categories`, `deals`. See the [Barnes & Noble API
+page](https://scavio.dev/barnesandnoble-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const res = (await client.barnesandnoble.search({ query: "project hail mary" })) as any;
+console.log(res.data.total, res.data.count);
+for (const it of res.data.items.slice(0, 5)) console.log(it.title, it.format, it.price, it.original_price, it.on_sale);
+const pickup = (await client.barnesandnoble.storeAvailability({ near: "60611", ean: "9780439023528" })) as any;
+console.log(pickup.data.count, pickup.data.available_count);
+for (const st of pickup.data.stores.slice(0, 5)) console.log(st.name, st.distance_miles, st.eligible, st.available);
+```
+
+Every call raises the request timeout to `BARNESANDNOBLE_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls and refused inputs are not
+charged, a not-found is charged.
+
+### [ThriftBooks](https://scavio.dev/docs/thriftbooks-search?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme)
+
+ThriftBooks (thriftbooks.com, the US online used-book seller): keyword search
+or a catalog browse with the bestseller, deals and new release lists, filtered
+by format, condition, language, genre and price; an ISBN lookup with the price
+of every format and condition; a work's format x condition table with the
+price, list price and quantity of each condition (a New quantity of 500 means
+500 or more); one edition with a short overview excerpt; every copy for sale
+of an edition; all editions of a work; customer reviews; and search
+suggestions. US storefront, prices in USD as a visitor who is not signed in
+sees them. 8 endpoints on `client.thriftbooks` (new in 0.101.0): `search`,
+`isbn`, `work`, `edition`, `copies`, `editions`, `reviews`, `suggestions`. See
+the [ThriftBooks API
+page](https://scavio.dev/thriftbooks-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
+
+- Credits: 1 credit each. `credits_used` in the response is what was charged.
+
+```typescript
+const book = (await client.thriftbooks.isbn({ isbn: "9780593135204" })) as any;
+console.log(book.data.work_id, book.data.low_price, book.data.high_price);
+const table = (await client.thriftbooks.work({ work_id: book.data.work_id })) as any;
+for (const fmt of table.data.formats) console.log(fmt.format, fmt.conditions.map((c: any) => [c.condition, c.price, c.quantity]));
+```
+
+Every call raises the request timeout to `THRIFTBOOKS_TIMEOUT` (240s) and
+never lowers a longer client timeout; failed calls and refused inputs are not
 charged, a not-found is charged.
 
 ### SEC EDGAR
