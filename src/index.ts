@@ -1095,6 +1095,43 @@ export type {
   CentauroStoresOptions,
   CentauroSuggestionsOptions,
 } from "./namespaces/centauro.js";
+export { EnjoeiNamespace, ENJOEI_TIMEOUT } from "./namespaces/enjoei.js";
+export type {
+  EnjoeiSearchOptions,
+  EnjoeiCategoryOptions,
+  EnjoeiCategoriesOptions,
+  EnjoeiProductOptions,
+  EnjoeiShopOptions,
+  EnjoeiShopListingsOptions,
+  EnjoeiShopSoldOptions,
+  EnjoeiShopReviewsOptions,
+  EnjoeiSuggestionsOptions,
+} from "./namespaces/enjoei.js";
+export { AtacadaoNamespace, ATACADAO_TIMEOUT } from "./namespaces/atacadao.js";
+export type {
+  AtacadaoSearchOptions,
+  AtacadaoCategoryOptions,
+  AtacadaoProductOptions,
+  AtacadaoStoresNearOptions,
+  AtacadaoStoresOptions,
+  AtacadaoStoreOptions,
+  AtacadaoFlyersOptions,
+  AtacadaoFacetsOptions,
+  AtacadaoSuggestionsOptions,
+  AtacadaoCategoriesOptions,
+} from "./namespaces/atacadao.js";
+export { CarrefourbrNamespace, CARREFOURBR_TIMEOUT } from "./namespaces/carrefourbr.js";
+export type {
+  CarrefourbrSearchOptions,
+  CarrefourbrCategoryOptions,
+  CarrefourbrCollectionOptions,
+  CarrefourbrProductOptions,
+  CarrefourbrDeliveryOptions,
+  CarrefourbrStoresOptions,
+  CarrefourbrSuggestionsOptions,
+  CarrefourbrCouponsOptions,
+  CarrefourbrCategoriesOptions,
+} from "./namespaces/carrefourbr.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
