@@ -916,6 +916,67 @@ export type {
   WilliamssonomaPopularSearchesOptions,
   WilliamssonomaReviewsOptions,
 } from "./namespaces/williamssonoma.js";
+export { BelkNamespace, BELK_TIMEOUT } from "./namespaces/belk.js";
+export type {
+  BelkSearchOptions,
+  BelkCategoryOptions,
+  BelkDealsOptions,
+  BelkCategoriesOptions,
+  BelkProductOptions,
+  BelkVariantOptions,
+  BelkStoreAvailabilityOptions,
+  BelkStoresOptions,
+  BelkStoreOptions,
+  BelkReviewsOptions,
+} from "./namespaces/belk.js";
+export { AbercrombieNamespace, ABERCROMBIE_TIMEOUT } from "./namespaces/abercrombie.js";
+export type {
+  AbercrombieSearchOptions,
+  AbercrombieProductOptions,
+  AbercrombieStoreStockOptions,
+  AbercrombieStoresOptions,
+  AbercrombieStoreOptions,
+  AbercrombieCategoryOptions,
+  AbercrombieCategoriesOptions,
+  AbercrombiePromotionsOptions,
+  AbercrombieReviewsOptions,
+  AbercrombieSuggestionsOptions,
+} from "./namespaces/abercrombie.js";
+export { LlbeanNamespace, LLBEAN_TIMEOUT } from "./namespaces/llbean.js";
+export type {
+  LlbeanSearchOptions,
+  LlbeanCategoryOptions,
+  LlbeanCategoriesOptions,
+  LlbeanProductOptions,
+  LlbeanStoreStockOptions,
+  LlbeanStoresOptions,
+  LlbeanReviewsOptions,
+  LlbeanReviewSummaryOptions,
+  LlbeanDeliveryEstimateOptions,
+  LlbeanSuggestionsOptions,
+  LlbeanDealsOptions,
+} from "./namespaces/llbean.js";
+export { SweetwaterNamespace, SWEETWATER_TIMEOUT } from "./namespaces/sweetwater.js";
+export type {
+  SweetwaterSearchOptions,
+  SweetwaterCategoryOptions,
+  SweetwaterProductOptions,
+  SweetwaterSerialUnitsOptions,
+  SweetwaterReviewsOptions,
+  SweetwaterDealsOptions,
+} from "./namespaces/sweetwater.js";
+export { BedbathbeyondNamespace, BEDBATHBEYOND_TIMEOUT } from "./namespaces/bedbathbeyond.js";
+export type {
+  BedbathbeyondSearchOptions,
+  BedbathbeyondCategoryOptions,
+  BedbathbeyondCategoriesOptions,
+  BedbathbeyondProductOptions,
+  BedbathbeyondDeliveryEstimateOptions,
+  BedbathbeyondReviewsOptions,
+  BedbathbeyondQuestionsOptions,
+  BedbathbeyondStoresOptions,
+  BedbathbeyondDealsOptions,
+} from "./namespaces/bedbathbeyond.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
