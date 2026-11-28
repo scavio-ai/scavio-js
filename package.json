@@ -1,6 +1,6 @@
 {
   "name": "scavio",
-  "version": "0.111.0",
+  "version": "0.112.0",
   "description": "TypeScript SDK for the Scavio API — real-time structured web data across 199 platforms on one API key: Google SERP, ChatGPT, Gemini, Amazon, Walmart, Costco, Best Buy, TCGplayer, Nintendo eShop, H&M, Zara, Uniqlo, ASOS, Fashion Nova, Argos, Media Expert, Action, HEMA, Vinted, Mercari, Depop, Poshmark, OfferUp, thredUP, Macy's, Saks Fifth Avenue, Kohl's, JCPenney, Belk, Dick's Sporting Goods, Academy Sports + Outdoors, REI, L.L.Bean, Foot Locker, Zappos, 6pm, Fanatics, Gap, Old Navy, Banana Republic, Athleta, Abercrombie & Fitch, Hollister, Bath & Body Works, Williams Sonoma, Pottery Barn, West Elm, Bed Bath & Beyond, QVC, HSN, Nordstrom, Nordstrom Rack, Lowe's, Sam's Club, BJ's Wholesale Club, Canadian Tire, SportChek, Mark's, RONA, Dollar General, Dollar Tree, Discount Tire, Vevor, Nellis Auction, EstateSales.net, Sephora, Ulta Beauty, Dermstore, Space NK, Lookfantastic, Cult Beauty, YesStyle, Notino, Douglas, Boots, ALDI, Micro Center, Newegg, Sweetwater, Walgreens, CVS, Whole Foods, Harbor Freight, AutoZone, O'Reilly Auto Parts, RockAuto, Cars.com, Autotrader, CarGurus, CarMax, Carvana, TrueCar, Edmunds, Kelley Blue Book, Bring a Trailer, Ace Hardware, Tractor Supply, Michaels, Nike, Staples, Instacart, PC Express, PetSmart, Petco, iHerb, Chewy, Menards, HEB, Kroger, Publix, IKEA, Wayfair, Ashley Furniture, Maisons du Monde, Carrefour, Allegro, bol.com, OLX, Trendyol, Mercado Libre, KaBuM!, Magazine Luiza, Casas Bahia, Extra, Ponto, Buscape, Zoom, Drogasil, Droga Raia, Leroy Merlin, Natura, O Boticario, Eudora, Centauro, Enjoei, Atacadao, Carrefour Brasil, Terabyteshop, Cobasi, Netshoes, Estante Virtual, C&A Brasil, Lojas Renner, Pichau, Dafiti, Riachuelo, Petz, Global Industrial, MSC Industrial Supply, Zoro, B-Stock, McMaster-Carr, Sally Beauty, CosmoProf, Liquidation.com, Ferguson, SupplyHouse.com, DigiKey, Mouser Electronics, RS Components, eBay, Rakuten, Zillow, Redfin, Realtor.com, Rightmove, Trulia, StreetEasy, Rent.com, Apartment Guide, RentCafe, Movoto, HotPads, Apartment List, Compass, AffordableHousing.com, Lennar, Extra Space Storage, Public Storage, U-Haul, Booking, Airbnb, Vrbo, Expedia, Yelp, Trustpilot, Reclame Aqui, Goodreads, Barnes & Noble, ThriftBooks, Indeed, Glassdoor, G2, App Store, Google Play, SEC EDGAR, Google Ads and Meta Ad Library, YouTube, TikTok, Instagram, X, LinkedIn, Reddit and more, plus extract() to read any URL as clean Markdown and extract.map/crawl/batch to map, crawl and batch-extract whole websites",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -475,6 +475,7 @@
     "kroger",
     "qfc",
     "fred-meyer",
+    "jay-c-foods",
     "publix-api",
     "publix",
     "publix-weekly-ad",

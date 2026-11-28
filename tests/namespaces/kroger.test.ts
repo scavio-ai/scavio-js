@@ -33,6 +33,9 @@ const ENDPOINTS: Row[] = [
   ["coupons", { store_id: "70100011", page: 2, category: "Dairy", query: "milk" }, "/api/v1/kroger/coupons"],
   ["coupons", { zip: "98101", banner: "qfc" }, "/api/v1/kroger/coupons"],
   ["suggestions", { query: "almond mi", banner: "qfc", store_id: "70500847" }, "/api/v1/kroger/suggestions"],
+  ["search", { query: "coffee", banner: "jaycfoods" }, "/api/v1/kroger/search"],
+  ["prices", { store_id: "02400073", upcs: ["0002550030407"] }, "/api/v1/kroger/prices"],
+  ["stores", { zip: "47274", banner: "jaycfoods" }, "/api/v1/kroger/stores"],
 ];
 
 type Ns = Record<string, (opts?: Record<string, unknown>) => Promise<unknown>>;

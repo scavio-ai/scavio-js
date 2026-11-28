@@ -1,7 +1,7 @@
 import type { Scavio } from "../client.js";
 
-// Kroger: 8 endpoints on kroger.com and the QFC (qfc.com) and Fred Meyer
-// (fredmeyer.com) banners. Every endpoint takes banner (kroger when omitted).
+// Kroger: 8 endpoints on kroger.com and the QFC (qfc.com), Fred Meyer
+// (fredmeyer.com) and Jay C Food Stores (jaycfoods.com) banners. Every endpoint takes banner (kroger when omitted).
 // Other Kroger banners (Ralphs, King Soopers, Fry's, Harris Teeter, ...) are
 // not supported yet. search() and product() cost 2 credits, prices() 3, the
 // rest 1. Prices are integer cents (price 399 = $3.99).
@@ -23,12 +23,14 @@ export const KROGER_TIMEOUT = 120_000;
 
 /**
  * The store banner: kroger (kroger.com, default), qfc (QFC, qfc.com:
- * Washington and Oregon) or fred_meyer (Fred Meyer, fredmeyer.com: the
- * Pacific Northwest and Alaska). Prices differ by banner and by store. With a
- * store_id the banner is optional: QFC ids start with 705, Fred Meyer ids
- * with 701, anything else is kroger.
+ * Washington and Oregon), fred_meyer (Fred Meyer, fredmeyer.com: the
+ * Pacific Northwest and Alaska) or jaycfoods (Jay C Food Stores,
+ * jaycfoods.com: southern Indiana). Prices differ by banner and by store.
+ * With a store_id the banner is optional: QFC ids start with 705, Fred Meyer
+ * ids with 701; 024 ids are Jay C Food Stores or Kroger stores, told apart by
+ * the store's own record; anything else is kroger.
  */
-export type KrogerBanner = "kroger" | "qfc" | "fred_meyer";
+export type KrogerBanner = "kroger" | "qfc" | "fred_meyer" | "jaycfoods";
 
 export interface KrogerSearchOptions {
   /** Search keywords (1-200 characters). */
@@ -42,7 +44,8 @@ export interface KrogerSearchOptions {
 
 export interface KrogerProductOptions {
   /**
-   * Full or relative product URL on kroger.com, qfc.com or fredmeyer.com
+   * Full or relative product URL on kroger.com, qfc.com, fredmeyer.com or
+   * jaycfoods.com
    * (products[].url of search()). An absolute URL sets the banner; a banner
    * that contradicts its host is a 400.
    */
@@ -83,7 +86,7 @@ export interface KrogerStoresOptions {
 }
 
 export interface KrogerCategoryOptions {
-  /** A category listing URL (/pl/<name>/<id>) on kroger.com, qfc.com or fredmeyer.com; its host sets the banner. */
+  /** A category listing URL (/pl/<name>/<id>) on kroger.com, qfc.com, fredmeyer.com or jaycfoods.com; its host sets the banner. */
   url?: string;
   /** The digits at the end of a /pl/ URL, e.g. "08190" (alternative to url). Shared across banners. */
   taxonomy_id?: string;
@@ -128,7 +131,7 @@ export interface KrogerSuggestionsOptions {
   /**
    * A store's 8-digit location_id. Optional: without it the banner's store
    * nearest a representative ZIP is used (Kroger 45202, QFC 98101, Fred Meyer
-   * 97201).
+   * 97201, Jay C Food Stores 47274 Seymour, IN).
    */
   store_id?: string;
   [key: string]: unknown;
@@ -142,8 +145,8 @@ export class KrogerNamespace {
   }
 
   /**
-   * Search Kroger, QFC or Fred Meyer products by keyword: banner, store (the
-   * store the site chose to price the results), total, count and products
+   * Search Kroger, QFC, Fred Meyer or Jay C Food Stores products by keyword:
+   * banner, store (the store the site chose to price the results), total, count and products
    * with upc, name, brand, url, image, price, list_price, promo_price with
    * promo_ends_at, price_display, unit_price_display, nfor / nfor_price, size,
    * in_stock (null without a stock record), stock_level, SNAP eligibility,
@@ -157,7 +160,8 @@ export class KrogerNamespace {
   }
 
   /**
-   * One Kroger, QFC or Fred Meyer product by URL or UPC: the search fields plus
+   * One Kroger, QFC, Fred Meyer or Jay C Food Stores product by URL or UPC:
+   * the search fields plus
    * description, nutrition facts, ingredients, allergens, images, country of
    * origin, dimensions, weight, dietary flags, the aisle at the store
    * (store_location), breadcrumbs, banner and store (chosen by the site).
