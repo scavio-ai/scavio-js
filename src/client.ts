@@ -146,6 +146,8 @@ import { BstockNamespace } from "./namespaces/bstock.js";
 import { McmasterNamespace } from "./namespaces/mcmaster.js";
 import { SallybeautyNamespace } from "./namespaces/sallybeauty.js";
 import { LiquidationNamespace } from "./namespaces/liquidation.js";
+import { FergusonNamespace } from "./namespaces/ferguson.js";
+import { SupplyhouseNamespace } from "./namespaces/supplyhouse.js";
 import { MicroCenterNamespace } from "./namespaces/micro-center.js";
 import { WalgreensNamespace } from "./namespaces/walgreens.js";
 import { CvsNamespace } from "./namespaces/cvs.js";
@@ -450,6 +452,8 @@ export class Scavio extends ScavioCore {
   readonly mcmaster: McmasterNamespace;
   readonly sallybeauty: SallybeautyNamespace;
   readonly liquidation: LiquidationNamespace;
+  readonly ferguson: FergusonNamespace;
+  readonly supplyhouse: SupplyhouseNamespace;
   readonly microCenter: MicroCenterNamespace;
   readonly walgreens: WalgreensNamespace;
   readonly cvs: CvsNamespace;
@@ -671,6 +675,8 @@ export class Scavio extends ScavioCore {
     this.mcmaster = new McmasterNamespace(this);
     this.sallybeauty = new SallybeautyNamespace(this);
     this.liquidation = new LiquidationNamespace(this);
+    this.ferguson = new FergusonNamespace(this);
+    this.supplyhouse = new SupplyhouseNamespace(this);
     this.microCenter = new MicroCenterNamespace(this);
     this.walgreens = new WalgreensNamespace(this);
     this.cvs = new CvsNamespace(this);

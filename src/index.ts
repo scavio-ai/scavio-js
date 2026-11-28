@@ -1309,6 +1309,23 @@ export type {
   LiquidationManifestOptions,
   LiquidationClosedOptions,
 } from "./namespaces/liquidation.js";
+export { FergusonNamespace, FERGUSON_TIMEOUT, FERGUSON_PRODUCT_TIMEOUT } from "./namespaces/ferguson.js";
+export type {
+  FergusonSort,
+  FergusonSearchOptions,
+  FergusonCategoryOptions,
+  FergusonProductOptions,
+} from "./namespaces/ferguson.js";
+export { SupplyhouseNamespace, SUPPLYHOUSE_TIMEOUT, SUPPLYHOUSE_CATEGORIES_TIMEOUT } from "./namespaces/supplyhouse.js";
+export type {
+  SupplyhouseSearchOptions,
+  SupplyhouseCategoryOptions,
+  SupplyhouseBrandOptions,
+  SupplyhouseProductOptions,
+  SupplyhouseReviewsOptions,
+  SupplyhouseQuestionsOptions,
+  SupplyhouseCategoriesOptions,
+} from "./namespaces/supplyhouse.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
