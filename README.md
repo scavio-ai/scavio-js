@@ -6042,10 +6042,15 @@ specifications; the delivery quote for one size at a CEP (a Brazilian postal
 code): the delivery options with price and estimate, and the stores near the
 CEP that can hand that size over; and the pickup points near a CEP, which
 include third-party pickup lockers and counters (Clique Retire) next to the
-C&A stores. Prices in BRL; promotion collections are given by id only; no
-reviews, EAN or store unit counts. 10 endpoints on `client.cea` (new in
-0.106.0): `search`, `category`, `brand`, `deals`, `facets`, `suggestions`,
-`categories`, `product`, `shipping`, `stores`. See the [C&A Brasil API
+C&A stores; and one product's customer reviews by product id, as the product
+page shows them (up to 100 a page, newest or most helpful, positive, negative,
+with photos or one star rating), with the star histogram, the size and colour
+bought, fit answers, photos and the store's reply (reviewer names are never
+returned; reviews can lag the page by up to 4 hours). Prices in BRL; promotion
+collections are given by id only; no EAN or store unit counts. 11 endpoints on
+`client.cea` (new in 0.106.0; `reviews` new in 0.107.0): `search`, `category`,
+`brand`, `deals`, `facets`, `suggestions`, `categories`, `product`,
+`shipping`, `stores`, `reviews`. See the [C&A Brasil API
 page](https://scavio.dev/cea-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
 
 - Credits: 1 credit each. `credits_used` in the response is what was charged.
@@ -6059,6 +6064,9 @@ for (const s of item.data.sizes) console.log(s.sku, s.size, s.available, s.price
 const ship = (await client.cea.shipping({ sku: "6493983", cep: "01310100" })) as any;
 for (const o of ship.data.delivery_options) console.log(o.name, o.price, o.estimate);
 for (const st of ship.data.pickup_stores) console.log(st.name, st.distance_km, st.estimate);
+const rv = (await client.cea.reviews({ product_id: "3700395", filter: "negative" })) as any;
+console.log(rv.data.rating.average, rv.data.rating.histogram, rv.data.review_counts.negative);
+for (const r of rv.data.reviews) console.log(r.rating, r.date, r.purchase_date, r.attributes, r.purchased);
 ```
 
 Every call raises the request timeout to `CEA_TIMEOUT` (240s) and never lowers
@@ -6078,10 +6086,15 @@ product with the Cartão Renner plan next to other cards, the aggregate rating
 and each size's availability flags (flags, not unit counts); price and stock
 flags for one size; and the stores for a CEP's (a Brazilian postal code) city
 or region (stores outside the CEP's state that the site returns are left out
-and reported in a note). Prices in BRL; listings are slow at the source
-(usually 30-200 s); no review texts, shipping quotes or search suggestions. 6
-endpoints on `client.renner` (new in 0.106.0): `search`, `category`, `deals`,
-`product`, `skuPrice`, `stores`. See the [Lojas Renner API
+and reported in a note); and one product's customer reviews by product id or
+link, as the product page shows them (up to 100 a page, newest or most
+helpful, positive, negative, with photos or one star rating), with size and
+fit answers, photos and the store's reply (the store's average and count, no
+star histogram; reviewer names are never returned; reviews can lag the page by
+up to 4 hours). Prices in BRL; listings are slow at the source (usually 30-200
+s); no shipping quotes or search suggestions. 7 endpoints on `client.renner`
+(new in 0.106.0; `reviews` new in 0.107.0): `search`, `category`, `deals`,
+`product`, `skuPrice`, `stores`, `reviews`. See the [Lojas Renner API
 page](https://scavio.dev/renner-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
 
 - Credits: 1 credit each. `credits_used` in the response is what was charged.
@@ -6095,6 +6108,9 @@ console.log(item.data.price, item.data.installments.store_card, item.data.instal
 for (const s of item.data.sizes) console.log(s.size, s.sku, s.available, s.omni_stock);
 const one = (await client.renner.skuPrice({ product_id: "931758127", sku: "931758135" })) as any;
 console.log(one.data.size, one.data.price, one.data.list_price, one.data.available, one.data.max_quantity);
+const rv = (await client.renner.reviews({ product_id: "846044605", sort: "most_helpful" })) as any;
+console.log(rv.data.total, rv.data.rating.average, rv.data.rating.count, rv.data.has_more);
+for (const r of rv.data.reviews) console.log(r.rating, r.date, r.recommends, r.helpful_votes, r.photos.length);
 ```
 
 Every call raises the request timeout to `RENNER_TIMEOUT` (300s) and never
@@ -6153,9 +6169,14 @@ sku or link with the seller by store name, the specs and every size with units
 (exact from 0 to 10; above that the site gives more than 10, not a count) and
 the delivery type (Dafiti's own stock, a partner store's stock delivered by
 Dafiti, or sent by the partner store); and every size of one sku, faster than
-product, for a stock check. Prices in BRL; no review texts, shipping quotes or
-search suggestions. 6 endpoints on `client.dafiti` (new in 0.106.0): `search`,
-`category`, `brand`, `deals`, `product`, `sizes`. See the [Dafiti API
+product, for a stock check; and one product's customer reviews by sku (or
+product_id or link, slower), as the product page shows them (up to 100 a page,
+newest or most helpful, positive, negative, with photos or one star rating),
+with the star histogram, size and comfort answers, photos and the store's
+reply (reviewer names are never returned; reviews can lag the page by up to 4
+hours). Prices in BRL; no shipping quotes or search suggestions. 7 endpoints
+on `client.dafiti` (new in 0.106.0; `reviews` new in 0.107.0): `search`,
+`category`, `brand`, `deals`, `product`, `sizes`, `reviews`. See the [Dafiti API
 page](https://scavio.dev/dafiti-api?utm_source=npm-scavio-js&utm_medium=package&utm_campaign=readme).
 
 - Credits: 1 credit each. `credits_used` in the response is what was charged.
@@ -6169,6 +6190,9 @@ console.log(item.data.availability, item.data.price, item.data.pix_price, item.d
 for (const s of item.data.sizes) console.log(s.size, s.sku, s.units, s.more_than_10, s.delivery_type);
 const sz = (await client.dafiti.sizes({ sku: "AS296SCU17ARY" })) as any;
 console.log(sz.data.size_count, sz.data.sizes_in_stock);
+const rv = (await client.dafiti.reviews({ sku: "SA232SHF08PKSX", rating: 1 })) as any;
+console.log(rv.data.rating.histogram, rv.data.review_counts);
+for (const r of rv.data.reviews) console.log(r.rating, r.title, r.date, r.store_reply);
 ```
 
 Every call raises the request timeout to `DAFITI_TIMEOUT` (240s) and never

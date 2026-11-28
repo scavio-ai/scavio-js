@@ -1199,6 +1199,7 @@ export type {
   CeaProductOptions,
   CeaShippingOptions,
   CeaStoresOptions,
+  CeaReviewsOptions,
 } from "./namespaces/cea.js";
 export { RennerNamespace, RENNER_TIMEOUT } from "./namespaces/renner.js";
 export type {
@@ -1208,6 +1209,7 @@ export type {
   RennerProductOptions,
   RennerSkuPriceOptions,
   RennerStoresOptions,
+  RennerReviewsOptions,
 } from "./namespaces/renner.js";
 export { PichauNamespace, PICHAU_TIMEOUT } from "./namespaces/pichau.js";
 export type {
@@ -1231,6 +1233,7 @@ export type {
   DafitiDealsOptions,
   DafitiProductOptions,
   DafitiSizesOptions,
+  DafitiReviewsOptions,
 } from "./namespaces/dafiti.js";
 export { RiachueloNamespace, RIACHUELO_TIMEOUT, RIACHUELO_SEARCH_TIMEOUT } from "./namespaces/riachuelo.js";
 export type {

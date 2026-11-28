@@ -1,7 +1,7 @@
 import type { Scavio } from "../client.js";
 
 // C&A Brasil (cea.com.br, the Brazilian arm of the C&A fashion chain) search, category, brand,
-// deals, facets, suggestions, categories, product, shipping and stores endpoints; Brazil only,
+// deals, facets, suggestions, categories, product, shipping, stores and reviews endpoints; Brazil only,
 // prices in BRL per size, delivery quote and pickup points by CEP, 1 credit each. Generated from
 // the backend routes: every option and its doc mirrors the API's own request schema. The server
 // enforces the value rules and the one-of rules (send one of an id or a link). Every call raises
@@ -136,6 +136,25 @@ export interface CeaStoresOptions {
   [key: string]: unknown;
 }
 
+export interface CeaReviewsOptions {
+  /**
+   * The product id (items[].product_id or product_id of the product endpoint), not a size sku or
+   * the reference.
+   */
+  product_id: string | number;
+  /** Reviews page, 1-200 (default 1). */
+  page?: number;
+  /** Reviews per page, 1-100 (default 20). */
+  per_page?: number;
+  /** newest (default) or most_helpful (the most helpful votes at the top). */
+  sort?: "newest" | "most_helpful";
+  /** all (default), positive (ratings 3-5), negative (ratings 1-2) or with_photos. */
+  filter?: "all" | "positive" | "negative" | "with_photos";
+  /** Reviews with this star rating (1-5). Not combined with filter. */
+  rating?: number;
+  [key: string]: unknown;
+}
+
 export class CeaNamespace {
   constructor(private client: Scavio) {}
 
@@ -241,5 +260,19 @@ export class CeaNamespace {
    */
   async stores(options: CeaStoresOptions): Promise<Record<string, unknown>> {
     return this.post("stores", options);
+  }
+
+  /**
+   * The customer reviews of one product of C&A Brasil (cea.com.br, the Brazilian arm of the C&A
+   * fashion chain). Scavio fetches the public C&A Brasil page on request. Brazil: Portuguese
+   * (pt-BR) text. By product_id, with the star histogram, positive, negative and with-photo counts
+   * and the size and colour bought where the review carries it,
+   * as the product page shows them, up to 100 per page, sorted newest or most_helpful, filtered
+   * positive, negative or with_photos, or one star rating. Reviews can lag the page by up to 4
+   * hours. Review text is the customer's own; reviewer names are never returned. No questions and
+   * answers. Costs 1 credit.
+   */
+  async reviews(options: CeaReviewsOptions): Promise<Record<string, unknown>> {
+    return this.post("reviews", options);
   }
 }

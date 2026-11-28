@@ -13,6 +13,8 @@ const ENDPOINTS: Row[] = [
   ["product", {"product_id": "15221282"}, B + "product"],
   ["product", {"sku": "AS296SCU17ARY"}, B + "product"],
   ["sizes", {"sku": "AS296SCU17ARY"}, B + "sizes"],
+  ["reviews", {"sku": "SA232SHF08PKSX"}, B + "reviews"],
+  ["reviews", {"product_id": "15221282", "rating": 1}, B + "reviews"],
 ];
 
 type Ns = Record<string, (opts?: Record<string, unknown>) => Promise<unknown>>;
@@ -51,11 +53,11 @@ describe("dafiti namespace", () => {
     expect(body()).toEqual({});
   });
 
-  it("has all 6 endpoints", () => {
+  it("has all 7 endpoints", () => {
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(client.dafiti)).filter(
       (m) => m !== "constructor" && m !== "post",
     );
-    expect(methods.sort()).toEqual(["brand", "category", "deals", "product", "search", "sizes"]);
+    expect(methods.sort()).toEqual(["brand", "category", "deals", "product", "reviews", "search", "sizes"]);
   });
 
   it("timeout: 240 s", () => {

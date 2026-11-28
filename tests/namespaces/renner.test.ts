@@ -12,6 +12,8 @@ const ENDPOINTS: Row[] = [
   ["product", {"product_id": "931758127", "sku": "931758135"}, B + "product"],
   ["skuPrice", {"product_id": "931758127", "sku": "931758135"}, B + "sku-price"],
   ["stores", {"cep": "01310-100"}, B + "stores"],
+  ["reviews", {"product_id": "846044605"}, B + "reviews"],
+  ["reviews", {"url": "https://www.lojasrenner.com.br/p/x/-/A-846044605-br.lr", "sort": "most_helpful", "page": 2}, B + "reviews"],
 ];
 
 type Ns = Record<string, (opts?: Record<string, unknown>) => Promise<unknown>>;
@@ -50,11 +52,11 @@ describe("renner namespace", () => {
     expect(body()).toEqual({});
   });
 
-  it("has all 6 endpoints", () => {
+  it("has all 7 endpoints", () => {
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(client.renner)).filter(
       (m) => m !== "constructor" && m !== "post",
     );
-    expect(methods.sort()).toEqual(["category", "deals", "product", "search", "skuPrice", "stores"]);
+    expect(methods.sort()).toEqual(["category", "deals", "product", "reviews", "search", "skuPrice", "stores"]);
   });
 
   it("timeout: 300 s", () => {

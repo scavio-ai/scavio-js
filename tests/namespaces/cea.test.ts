@@ -16,6 +16,8 @@ const ENDPOINTS: Row[] = [
   ["product", {"product_id": "4536055"}, B + "product"],
   ["shipping", {"sku": "6493983", "cep": "01310100"}, B + "shipping"],
   ["stores", {"cep": "01310100"}, B + "stores"],
+  ["reviews", {"product_id": "3700395"}, B + "reviews"],
+  ["reviews", {"product_id": 3700395, "filter": "with_photos", "per_page": 100}, B + "reviews"],
 ];
 
 type Ns = Record<string, (opts?: Record<string, unknown>) => Promise<unknown>>;
@@ -54,11 +56,11 @@ describe("cea namespace", () => {
     expect(body()).toEqual({});
   });
 
-  it("has all 10 endpoints", () => {
+  it("has all 11 endpoints", () => {
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(client.cea)).filter(
       (m) => m !== "constructor" && m !== "post",
     );
-    expect(methods.sort()).toEqual(["brand", "categories", "category", "deals", "facets", "product", "search", "shipping", "stores", "suggestions"]);
+    expect(methods.sort()).toEqual(["brand", "categories", "category", "deals", "facets", "product", "reviews", "search", "shipping", "stores", "suggestions"]);
   });
 
   it("timeout: 240 s", () => {

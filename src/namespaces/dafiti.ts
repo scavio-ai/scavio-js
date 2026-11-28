@@ -1,7 +1,7 @@
 import type { Scavio } from "../client.js";
 
-// Dafiti (dafiti.com.br, the Brazilian fashion marketplace) search, category, brand, deals, product
-// and sizes endpoints; Brazil only, prices in BRL, units per size, 1 credit each. Generated from
+// Dafiti (dafiti.com.br, the Brazilian fashion marketplace) search, category, brand, deals, product,
+// sizes and reviews endpoints; Brazil only, prices in BRL, units per size, 1 credit each. Generated from
 // the backend routes: every option and its doc mirrors the API's own request schema. The server
 // enforces the value rules and the one-of rules (send one of an id or a link). Every call raises
 // the request timeout to DAFITI_TIMEOUT and never lowers a longer client timeout. Failed upstream
@@ -67,6 +67,29 @@ export interface DafitiProductOptions {
 export interface DafitiSizesOptions {
   /** The Dafiti sku (items[].sku), or one size of it (sizes[].sku). */
   sku: string;
+  [key: string]: unknown;
+}
+
+export interface DafitiReviewsOptions {
+  /** The Dafiti sku (items[].sku; a size sku works too). The fastest way in. */
+  sku?: string;
+  /**
+   * The number at the end of a Dafiti product link (items[].product_id), instead of sku: the
+   * product page is read for the sku (slower, same credit).
+   */
+  product_id?: string;
+  /** A dafiti.com.br product link, instead of sku (slower, same credit). */
+  url?: string;
+  /** Reviews page, 1-200 (default 1). */
+  page?: number;
+  /** Reviews per page, 1-100 (default 20). */
+  per_page?: number;
+  /** newest (default) or most_helpful (the most helpful votes at the top). */
+  sort?: "newest" | "most_helpful";
+  /** all (default), positive (ratings 3-5), negative (ratings 1-2) or with_photos. */
+  filter?: "all" | "positive" | "negative" | "with_photos";
+  /** Reviews with this star rating (1-5). Not combined with filter. */
+  rating?: number;
   [key: string]: unknown;
 }
 
@@ -144,5 +167,19 @@ export class DafitiNamespace {
    */
   async sizes(options: DafitiSizesOptions): Promise<Record<string, unknown>> {
     return this.post("sizes", options);
+  }
+
+  /**
+   * The customer reviews of one product of Dafiti (dafiti.com.br, the Brazilian fashion
+   * marketplace). Scavio fetches the public dafiti.com.br pages on request. Brazil: Portuguese
+   * (pt-BR) text. By sku (or product_id / link, slower: the product page is read for the sku), with
+   * the star histogram and positive, negative and with-photo counts,
+   * as the product page shows them, up to 100 per page, sorted newest or most_helpful, filtered
+   * positive, negative or with_photos, or one star rating. Reviews can lag the page by up to 4
+   * hours. Review text is the customer's own; reviewer names are never returned. No questions and
+   * answers. Costs 1 credit.
+   */
+  async reviews(options: DafitiReviewsOptions): Promise<Record<string, unknown>> {
+    return this.post("reviews", options);
   }
 }
