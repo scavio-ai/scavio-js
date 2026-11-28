@@ -13,6 +13,7 @@ import type { Scavio } from "../client.js";
 //
 // Most endpoints cost 1 credit; US search, category, deals and clearance cost 2.
 // The multi-warehouse ones scale with the body:
+// product with include_online_stock (1 per 5 lookups counting the product call),
 // prices (2 credits at 10 warehouses), availability (1 per 5 warehouses),
 // warehouses (2 with country "ca") and gas (2 by location on ca; by
 // warehouse_ids, 1 per 5 on us and 2 per warehouse on ca).
@@ -98,6 +99,17 @@ export interface CostcoProductOptions {
   /** Up to 20 ids in one call (us and ca only). */
   item_ids?: string[];
   country?: CostcoCountry;
+  /**
+   * Add each item's live ship-to-home stock and estimated delivery date as
+   * `online_stock` (us and ca only). Works for items search does not return.
+   * `buyable` is a catalog flag, not stock.
+   */
+  include_online_stock?: boolean;
+  /**
+   * Delivery destination for `include_online_stock`: a 5-digit US ZIP, or a
+   * Canadian postal code with country "ca". Defaults to 98101 / M5V 2T6.
+   */
+  zip?: string;
   [key: string]: unknown;
 }
 
@@ -238,9 +250,13 @@ export class CostcoNamespace {
   /**
    * Full details for up to 20 items: description, features, specifications,
    * variants, member-only and purchase limits, delivery fee, and promotions
-   * with start and end dates. Pass `item_id` or `item_ids`.
+   * with start and end dates. Pass `item_id` or `item_ids`. With
+   * `include_online_stock`, each item adds `online_stock`: the live
+   * ship-to-home status (in_stock, low_stock, out_of_stock, back_order,
+   * presell, ship_restricted, or no_record) and estimated_delivery_date.
    *
-   * Costs 1 credit.
+   * Costs 1 credit; with `include_online_stock`, 1 credit per 5 lookups
+   * counting the product call (1-4 ids = 1, 20 = 5).
    */
   async product(options: CostcoProductOptions): Promise<Record<string, unknown>> {
     return this.client._post("/api/v1/costco/product", options);

@@ -80,6 +80,12 @@ describe("CostcoNamespace", () => {
     expect(body).toEqual({ item_ids: ["100334960", "1492456"] });
   });
 
+  it("product sends include_online_stock and zip as given", async () => {
+    await client.costco.product({ item_ids: ["2007497", "2007493"], include_online_stock: true, zip: "47274" });
+    const body = JSON.parse((vi.mocked(fetch).mock.calls[0]![1] as RequestInit).body as string);
+    expect(body).toEqual({ item_ids: ["2007497", "2007493"], include_online_stock: true, zip: "47274" });
+  });
+
   it("coupons and categories can be called with no arguments", async () => {
     await client.costco.coupons();
     await client.costco.categories();
