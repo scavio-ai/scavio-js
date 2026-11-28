@@ -1252,6 +1252,31 @@ export type {
   PetzStoresOptions,
   PetzStoreOptions,
 } from "./namespaces/petz.js";
+export { GlobalindustrialNamespace, GLOBALINDUSTRIAL_TIMEOUT } from "./namespaces/globalindustrial.js";
+export type {
+  GlobalindustrialSearchOptions,
+  GlobalindustrialCategoryOptions,
+  GlobalindustrialBrandOptions,
+  GlobalindustrialProductOptions,
+  GlobalindustrialClearanceOptions,
+} from "./namespaces/globalindustrial.js";
+export { MscNamespace, MSC_TIMEOUT, MSC_SLOW_TIMEOUT } from "./namespaces/msc.js";
+export type {
+  MscSearchOptions,
+  MscCategoryOptions,
+  MscProductOptions,
+  MscClearanceOptions,
+  MscLocationsOptions,
+} from "./namespaces/msc.js";
+export { ZoroNamespace, ZORO_TIMEOUT, ZORO_SLOW_TIMEOUT } from "./namespaces/zoro.js";
+export type {
+  ZoroSearchOptions,
+  ZoroCategoryOptions,
+  ZoroBrandOptions,
+  ZoroProductOptions,
+  ZoroAvailabilityOptions,
+  ZoroReviewsOptions,
+} from "./namespaces/zoro.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
