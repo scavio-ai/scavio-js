@@ -1351,6 +1351,19 @@ export type {
   RscomponentsCategoryOptions,
   RscomponentsBrandOptions,
 } from "./namespaces/rscomponents.js";
+export { MeijerNamespace, MEIJER_TIMEOUT } from "./namespaces/meijer.js";
+export type {
+  MeijerStoreId,
+  MeijerSearchOptions,
+  MeijerProductOptions,
+  MeijerCategoryOptions,
+  MeijerCategoriesOptions,
+  MeijerDealsOptions,
+  MeijerStoresOptions,
+  MeijerStoreOptions,
+  MeijerCouponsOptions,
+  MeijerReviewsOptions,
+} from "./namespaces/meijer.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,

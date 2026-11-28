@@ -151,6 +151,7 @@ import { SupplyhouseNamespace } from "./namespaces/supplyhouse.js";
 import { DigikeyNamespace } from "./namespaces/digikey.js";
 import { MouserNamespace } from "./namespaces/mouser.js";
 import { RscomponentsNamespace } from "./namespaces/rscomponents.js";
+import { MeijerNamespace } from "./namespaces/meijer.js";
 import { MicroCenterNamespace } from "./namespaces/micro-center.js";
 import { WalgreensNamespace } from "./namespaces/walgreens.js";
 import { CvsNamespace } from "./namespaces/cvs.js";
@@ -460,6 +461,7 @@ export class Scavio extends ScavioCore {
   readonly digikey: DigikeyNamespace;
   readonly mouser: MouserNamespace;
   readonly rscomponents: RscomponentsNamespace;
+  readonly meijer: MeijerNamespace;
   readonly microCenter: MicroCenterNamespace;
   readonly walgreens: WalgreensNamespace;
   readonly cvs: CvsNamespace;
@@ -686,6 +688,7 @@ export class Scavio extends ScavioCore {
     this.digikey = new DigikeyNamespace(this);
     this.mouser = new MouserNamespace(this);
     this.rscomponents = new RscomponentsNamespace(this);
+    this.meijer = new MeijerNamespace(this);
     this.microCenter = new MicroCenterNamespace(this);
     this.walgreens = new WalgreensNamespace(this);
     this.cvs = new CvsNamespace(this);
