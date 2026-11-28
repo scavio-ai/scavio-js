@@ -1277,6 +1277,38 @@ export type {
   ZoroAvailabilityOptions,
   ZoroReviewsOptions,
 } from "./namespaces/zoro.js";
+export { BstockNamespace, BSTOCK_TIMEOUT } from "./namespaces/bstock.js";
+export type {
+  BstockSearchOptions,
+  BstockLotOptions,
+  BstockStorefrontsOptions,
+  BstockFiltersOptions,
+} from "./namespaces/bstock.js";
+export { McmasterNamespace, MCMASTER_TIMEOUT, MCMASTER_SEARCH_TIMEOUT } from "./namespaces/mcmaster.js";
+export type {
+  McmasterProductOptions,
+  McmasterSearchOptions,
+  McmasterCategoriesOptions,
+} from "./namespaces/mcmaster.js";
+export { SallybeautyNamespace, SALLYBEAUTY_TIMEOUT, SALLYBEAUTY_REVIEWS_TIMEOUT } from "./namespaces/sallybeauty.js";
+export type {
+  SallybeautySearchOptions,
+  SallybeautyCategoryOptions,
+  SallybeautyClearanceOptions,
+  SallybeautyProductOptions,
+  SallybeautyStoresOptions,
+  SallybeautyStoreStockOptions,
+  SallybeautySuggestionsOptions,
+  SallybeautyBrandsOptions,
+  SallybeautyReviewsOptions,
+} from "./namespaces/sallybeauty.js";
+export { LiquidationNamespace, LIQUIDATION_TIMEOUT } from "./namespaces/liquidation.js";
+export type {
+  LiquidationSearchOptions,
+  LiquidationLotOptions,
+  LiquidationManifestOptions,
+  LiquidationClosedOptions,
+} from "./namespaces/liquidation.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
