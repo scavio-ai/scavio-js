@@ -1326,6 +1326,31 @@ export type {
   SupplyhouseQuestionsOptions,
   SupplyhouseCategoriesOptions,
 } from "./namespaces/supplyhouse.js";
+export { DigikeyNamespace, DIGIKEY_TIMEOUT } from "./namespaces/digikey.js";
+export type {
+  DigikeySearchCountry,
+  DigikeyCountry,
+  DigikeySearchOptions,
+  DigikeyProductOptions,
+  DigikeyCategoriesOptions,
+} from "./namespaces/digikey.js";
+export { MouserNamespace, MOUSER_TIMEOUT } from "./namespaces/mouser.js";
+export type {
+  MouserCategoriesCountry,
+  MouserCountry,
+  MouserSearchOptions,
+  MouserProductOptions,
+  MouserCategoriesOptions,
+  MouserManufacturerOptions,
+} from "./namespaces/mouser.js";
+export { RscomponentsNamespace, RSCOMPONENTS_TIMEOUT } from "./namespaces/rscomponents.js";
+export type {
+  RscomponentsCountry,
+  RscomponentsSearchOptions,
+  RscomponentsProductOptions,
+  RscomponentsCategoryOptions,
+  RscomponentsBrandOptions,
+} from "./namespaces/rscomponents.js";
 export { MercariNamespace, MERCARI_TIMEOUT } from "./namespaces/mercari.js";
 export type {
   MercariCountry,
